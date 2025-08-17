@@ -94,6 +94,7 @@ ex) [Feat] Add player movement controller
 #### 💡 정적 브랜치
 - `main` : 이틀 내지 사흘에 한 번, 모든 작업이 끝나고(17시 전후) 병합이 완료된 `develop` 브랜치를 `main` 브랜치로 병합한다. 룰셋에 의해 개인이 직접 커밋&푸시, 삭제가 안된다.
 - `develop` : 기능 구현 브랜치. 매일 17시 전후로 개인작업 내용을 병합한다. `Pull-Request`를 작성하여 코드리뷰 후 병합한다.
+- `qa_fix` : QA 버그 전용 브랜치. 버그 수정에 사용된다
 
 위 브랜치 들은 삭제하지 않는다
 
@@ -105,7 +106,8 @@ ex) [Feat] Add player movement controller
 
 #### ✅ 브랜치 작업 방식
 - 개개인의 브랜치를 만들어서 기능 구현을 한다.(ex. JYL_UIManager)
-- 매일 17시가 되면, 유니티 에러가 나지 않는다면 코드리뷰를 진행한다.
+- 매일 17시가 되면, 유니티 에러가 나지 않는다면 코드리뷰를 진행한다. 각 PR마다 담당자가 설명을 한다.
+- - **각각의 PR에 모든 개발 팀원들이 코드리뷰를 진행한다.** 개선 피드백, 칭찬 피드백 등을 수행하면서 코드를 이해하도록 한다.
 - 코드리뷰를 진행하고, `develop`으로 `Pull-Request`를 작성한다.
 - 매일 저녁에 다같이 `develop`에 병합할 때는 `[Merge] Daily merge {병합하는 브랜치} to {병합되는 곳 브랜치}` 로 작성한다.
 ```
@@ -113,6 +115,7 @@ ex) [Feat] Add player movement controller
 [Merge] Daily merge JYL_PlayerAttack to develop
 // 내용은 자유롭게 한글로 작성
 ```
+
 
 #### 💡 충돌 시 해결방법
 1. 본인의 브랜치가 `develop`으로의 `Pull-Request`에서 `Conflict`가 날 경우
