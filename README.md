@@ -1,14 +1,19 @@
 # Team7 Industry-Academia Corporate Project
 - 동계올림픽 선수단 단장 시뮬레이션 모바일 게임
 ## Game References
+- Sports City Tycoon
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/435f7df9-dc27-4657-8880-a2c9527de764">
+</p>
+- Pocket League Story
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/492ca98d-051e-44c4-96ec-0f6c4c9ccddc">
+</p>
+- Umamusume
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/43a3d088-3ec9-4cce-b0f3-253c06cc84b9">
+</p>
 
-![Image](https://github.com/user-attachments/assets/435f7df9-dc27-4657-8880-a2c9527de764)
-
-1. Sports City Tycoon
-![Image](https://github.com/user-attachments/assets/492ca98d-051e-44c4-96ec-0f6c4c9ccddc)
-2. Pocket League Story
-![Image](https://github.com/user-attachments/assets/43a3d088-3ec9-4cce-b0f3-253c06cc84b9)
-3. Umamusume
 
 - 선수를 영입하고, 훈련시키고, 대회에 나가 입상을 하는 게임.
 ---
