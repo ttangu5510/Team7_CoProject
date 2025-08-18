@@ -11,12 +11,15 @@ namespace SHG
   public class TimeFlowController : ITimeFlowController {
     static int WEEK_FOR_SEASON = 10;
     static int WEEK_FOR_YEAR = 4 * WEEK_FOR_SEASON;
+    static int START_YEAR = 2023;
+    static int START_WEEK = 1;
 
     public ReactiveProperty<Season> CurrentSeason { get; private set; }
     public ReactiveProperty<int> WeekInYear { get; private set; }
     public ReactiveProperty<int> Year { get; private set; }
     public ReactiveProperty<int> Month { get; private set; }
-    public (int year, int week) start;
+    (int year, int week) start;
+    int week;
 
     public void SetDate(int year, int weekInYear) {
       this.Year.Value = year;
@@ -25,13 +28,18 @@ namespace SHG
       this.CurrentSeason.Value = this.GetSeason(this.Month.Value);
     }
 
+    public TimeFlowController(): this(START_YEAR, START_WEEK)
+    {
+    }
+
     public TimeFlowController(int year, int week)
     {
+      this.week = week - 1;
       this.start = (year, week);
-      this.Month = new (week / WEEK_FOR_SEASON + 1);
+      this.WeekInYear =  new (week);
+      this.Month = new (this.week / 4 + 1);
       this.CurrentSeason = new (this.GetSeason(this.Month.Value));
       this.Year = new (year);
-      this.WeekInYear =  new (week);
     }
 
     public void ProgressWeek()
@@ -41,14 +49,14 @@ namespace SHG
 
     public void ProgressWeeks(int weeks)
     {
-      int week = this.WeekInYear.Value + weeks;
-      int yearToAdd = week / WEEK_FOR_YEAR;
-      week = week % WEEK_FOR_YEAR;
+      this.week += weeks;
+      int yearToAdd = this.week / WEEK_FOR_YEAR;
+      this.week = this.week % WEEK_FOR_YEAR;
       if (yearToAdd > 0) {
         this.Year.Value += yearToAdd;
       }
-      this.WeekInYear.Value = week;
-      this.Month.Value = week / WEEK_FOR_SEASON + 1;
+      this.WeekInYear.Value = this.week + 1;
+      this.Month.Value = this.week / WEEK_FOR_SEASON + 1;
       this.CurrentSeason.Value = this.GetSeason(this.Month.Value);
     }
 
