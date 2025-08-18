@@ -14,6 +14,9 @@ namespace SJL
         [SerializeField] private TextMeshProUGUI ageText;
         [SerializeField] private TextMeshProUGUI typeText;
 
+        [SerializeField] private Button informationButton;
+        [SerializeField] private Button recruitmentButton;
+
         public void SetPlayer(Player player)
         {
             nameText.text = player.name;
@@ -21,5 +24,25 @@ namespace SJL
             ageText.text = player.age.ToString();
             typeText.text = player.type;
         }
+
+        private void Start()
+        {
+            informationButton.onClick.AddListener(OnInformationButtonClicked);
+            recruitmentButton.onClick.AddListener(OnRecruitmentButtonClicked);
+        }
+
+        public void OnInformationButtonClicked()
+        {
+            // 선수 정보 버튼 클릭 시 동작
+            Debug.Log("선수 정보 버튼 클릭됨: " + nameText.text);
+        }
+
+        public void OnRecruitmentButtonClicked()
+        {
+            // 선수 영입 버튼 클릭 시 동작
+            Debug.Log("선수 영입 버튼 클릭됨: " + nameText.text);
+        }
+
+
     }
 }

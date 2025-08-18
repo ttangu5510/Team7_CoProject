@@ -19,12 +19,18 @@ namespace SJL
         private void Start()
         {
             // 샘플 데이터
-            playerList.Add(new Player { name = "신재원", grade = "일반등급", age = 21, type = "C" });
-            playerList.Add(new Player { name = "이민호", grade = "국대 후보", age = 20, type = "B" });
-            playerList.Add(new Player { name = "민만준", grade = "국가대표", age = 22, type = "A" });
-            playerList.Add(new Player { name = "안정환", grade = "일반등급", age = 19, type = "C" });
-            playerList.Add(new Player { name = "이규진", grade = "국대 후보", age = 24, type = "B" });
-            playerList.Add(new Player { name = "신희관", grade = "국가대표", age = 26, type = "A" });
+            playerList.Add(new Player { name = "신재원", grade = "일반등급", age = 21, type = "C",
+                stamina = 1, agility=1, flexibility=1, technique=1, speed=1, balance=1, fatigue=1, mental=1});
+            playerList.Add(new Player { name = "이민호", grade = "국대 후보", age = 20, type = "B",
+                stamina = 2, agility=2, flexibility=2, technique=2, speed=2, balance=2, fatigue=2, mental=2});
+            playerList.Add(new Player { name = "민만준", grade = "국가대표", age = 22, type = "A",
+                stamina = 3, agility=3, flexibility=3, technique=3, speed=3, balance=3, fatigue=3, mental=3});
+            playerList.Add(new Player { name = "안정환", grade = "일반등급", age = 19, type = "C",
+                stamina = 1, agility=1, flexibility=1, technique=1, speed=1, balance=1, fatigue=1, mental=1});
+            playerList.Add(new Player { name = "이규진", grade = "국대 후보", age = 24, type = "B",
+                stamina = 2, agility=2, flexibility=2, technique=2, speed=2, balance=2, fatigue=2, mental=2});
+            playerList.Add(new Player { name = "신희관", grade = "국가대표", age = 26, type = "A",
+                stamina = 3, agility=3, flexibility=3, technique=3, speed=3, balance=3, fatigue=3, mental=3});
 
             playerRecruitmentButton.onClick.AddListener(DisplayPlayers);
         }
