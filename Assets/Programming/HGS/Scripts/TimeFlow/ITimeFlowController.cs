@@ -19,8 +19,6 @@ namespace SHG
     public ReactiveProperty<Season> CurrentSeason { get; }
     /// <summary> 연도가 변경될 때 이벤트를 발생 </summary>
     public ReactiveProperty<int> Year { get; }
-    /// <summary> 월이 변경될 때 이벤트를 발생 </summary>
-    public ReactiveProperty<int> Month { get; }
     /// <summary> 주차가 변경될 때 이벤트를 발생 </summary>
     public ReactiveProperty<int> WeekInYear { get; }
     /// <summary> 1주의 시간을 흐르게 하는 역할 </summary>

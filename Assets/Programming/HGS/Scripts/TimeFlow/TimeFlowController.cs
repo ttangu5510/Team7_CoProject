@@ -17,15 +17,14 @@ namespace SHG
     public ReactiveProperty<Season> CurrentSeason { get; private set; }
     public ReactiveProperty<int> WeekInYear { get; private set; }
     public ReactiveProperty<int> Year { get; private set; }
-    public ReactiveProperty<int> Month { get; private set; }
     (int year, int week) start;
     int week;
 
     public void SetDate(int year, int weekInYear) {
       this.Year.Value = year;
-      this.Month.Value = weekInYear / WEEK_FOR_SEASON + 1;
+      this.week = weekInYear - 1;
       this.WeekInYear.Value = weekInYear;
-      this.CurrentSeason.Value = this.GetSeason(this.Month.Value);
+      this.CurrentSeason.Value = this.GetSeason(this.week);
     }
 
     public TimeFlowController(): this(START_YEAR, START_WEEK)
@@ -37,8 +36,7 @@ namespace SHG
       this.week = week - 1;
       this.start = (year, week);
       this.WeekInYear =  new (week);
-      this.Month = new (this.week / 4 + 1);
-      this.CurrentSeason = new (this.GetSeason(this.Month.Value));
+      this.CurrentSeason = new (this.GetSeason(this.week));
       this.Year = new (year);
     }
 
@@ -56,32 +54,12 @@ namespace SHG
         this.Year.Value += yearToAdd;
       }
       this.WeekInYear.Value = this.week + 1;
-      this.Month.Value = this.week / WEEK_FOR_SEASON + 1;
-      this.CurrentSeason.Value = this.GetSeason(this.Month.Value);
+      this.CurrentSeason.Value = this.GetSeason(this.week);
     }
 
-    Season GetSeason(in int month)
+    Season GetSeason(int week)
     {
-      switch (month) {
-        case 12:
-        case 1:
-        case 2:
-          return (Season.Winter);
-        case 3:
-        case 4:
-        case 5:
-          return (Season.Spring);
-        case 6:
-        case 7:
-        case 8:
-          return (Season.Summer);
-        case 9:
-        case 10:
-        case 11:
-          return (Season.Fall);
-        default: 
-          throw new ApplicationException($"{nameof(GetSeason)}: {month}");
-      }
+      return (Season)(week / WEEK_FOR_SEASON);
     }
   }
 }
