@@ -8,6 +8,7 @@ namespace SHG
     [Serializable]
     public struct Data : IFacilityData {
       public int MAX_UPGRADED_STAGE => 4;
+      public string Name => "의료 센터";
       public int[] NumberOfAthletes;
       public int[] RecoveryAmounts;
       public int[] MinimumFameForUpgrade;
@@ -22,7 +23,7 @@ namespace SHG
       }
     }
 
-    public string Name => "의료 센터";
+    public string Name => (this.data.Name);
     public ReactiveProperty<int> CurrentStage { get; private set; }
     public bool IsUpgradable => (this.CurrentStage.Value < this.data.MAX_UPGRADED_STAGE);
     public ReactiveProperty<int> NumberOfAthletes { get; private set; }

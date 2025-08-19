@@ -9,9 +9,10 @@ namespace SHG
     [Serializable]
     public struct Data : IFacilityData {
       public int MAX_UPGRADED_STAGE => 4;
+      public string Name => "훈련 센터";
       public int[] BonusStats;
-      int[] MinimumFameForUpgrade;
-      int[] CostForUpgrade;
+      public int[] MinimumFameForUpgrade;
+      public int[] CostForUpgrade;
 
       public int GetRequiredFameForUpgradeFrom(int stage) {
         return (this.MinimumFameForUpgrade[stage]);
@@ -22,7 +23,7 @@ namespace SHG
       }
     }
 
-    public string Name => "훈련 센터";
+    public string Name => (this.data.Name);
     public ReactiveProperty<int> CurrentStage { get; private set; }
     public ReactiveProperty<(ResourceType type, int amount)[]> ResourcesNeeded { get; private set; }
     public ReactiveProperty<int> BonusStat { get; private set; }

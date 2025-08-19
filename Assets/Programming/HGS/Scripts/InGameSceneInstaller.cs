@@ -9,6 +9,10 @@ namespace SHG
       this.Container.Bind<ITimeFlowController>()
         .To<TimeFlowController>()
         .AsSingle();
+
+      this.Container.Bind<IFacilitiesController>()
+        .To<IFacilitiesController>()
+        .AsSingle();
     }
   }
 }

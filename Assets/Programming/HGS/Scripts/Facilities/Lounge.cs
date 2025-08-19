@@ -8,6 +8,7 @@ namespace SHG
   {
     [Serializable]
     public struct Data : IFacilityData {
+      public string Name => "휴게실";
       public int MAX_UPGRADED_STAGE => 4;
       public int[] NumberOfAthletes;
       public int[] RecoveryAmounts;
@@ -23,7 +24,7 @@ namespace SHG
       }
     }
 
-    public string Name => "휴게실";
+    public string Name => (this.data.Name);
     public ReactiveProperty<int> CurrentStage { get; private set; }
     public ReactiveProperty<(ResourceType type, int amount)[]> ResourcesNeeded { get; private set; }
     public ReactiveProperty<int> NumberOfAthletes { get; private set; }
