@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UniRx;
 
@@ -12,6 +13,7 @@ namespace SHG
     public MedicalCenter MedicalCenter { get; }
     public ScoutCenter ScoutCenter { get; }
     public ReactiveProperty<(IFacility.FacilityType type, IFacility facility)?> Selected { get; }
+    public IObservable<IFacility> SelectedFacilityStream { get; }
 
     public void Init(IEnumerable<IFacilityData> data, Dictionary<string, int> startStages = null);
     T GetFacilityBy<T>(IFacility.FacilityType type) where T: IFacility;

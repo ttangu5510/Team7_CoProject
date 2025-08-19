@@ -19,5 +19,6 @@ namespace SHG
     public bool IsUpgradable { get; }
     public FacilityType Type { get; }
     public void Upgrade();
+    public int MaxUpgradeStage { get; }
   }
 }

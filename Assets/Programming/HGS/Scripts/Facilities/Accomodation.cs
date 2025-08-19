@@ -7,7 +7,7 @@ namespace SHG
   public class Accomodation : IFacility {
 
     [Serializable]
-    public struct Data : IFacilityData {
+    public struct FacilityData : IFacilityData {
       public string Name => "숙소";
       public int MAX_UPGRADED_STAGE => 4;
       public int[] NumberOfAthletes;
@@ -23,38 +23,41 @@ namespace SHG
       }
     }
 
-    public string Name => (this.data.Name);
+    public string Name => (this.Data.Name);
     public ReactiveProperty<int> CurrentStage { get; private set; }
-    public bool IsUpgradable => (this.CurrentStage.Value < this.data.MAX_UPGRADED_STAGE);
+    public bool IsUpgradable => (this.CurrentStage.Value < this.Data.MAX_UPGRADED_STAGE);
+    public ReactiveProperty<int> MaxNumberOfAthletes { get; private set; }
     public ReactiveProperty<int> NumberOfAthletes { get; private set; }
     public ReactiveProperty<(ResourceType type, int amount)[]> ResourcesNeeded { get; private set; }
     public IFacility.FacilityType Type => IFacility.FacilityType.Accomodation;
 
-    Data data;
+    public FacilityData Data { get; private set; }
 
-    public Accomodation(Data data, int startStage = 0)
+    public int MaxUpgradeStage => (this.Data.MAX_UPGRADED_STAGE);
+
+        public Accomodation(FacilityData data, int startStage = 0)
     {
-      this.data = data; 
+      this.Data = data; 
       this.CurrentStage = new (startStage);
       this.ResourcesNeeded = new (this.GetResourceNeededFrom(startStage));
-      this.NumberOfAthletes = new (data.NumberOfAthletes[startStage]);
-
+      this.MaxNumberOfAthletes = new (data.NumberOfAthletes[startStage]);
+      this.NumberOfAthletes = new(0);
     }
 
     public void Upgrade() {
       int stage = this.CurrentStage.Value + 1;
       this.CurrentStage.Value = stage;
-      this.NumberOfAthletes.Value = this.data.NumberOfAthletes[stage];
+      this.MaxNumberOfAthletes.Value = this.Data.NumberOfAthletes[stage];
       this.ResourcesNeeded.Value = this.GetResourceNeededFrom(stage);
     }
     
     (ResourceType type, int amount)[] GetResourceNeededFrom(int stage)
     {
-      if (stage < this.data.MAX_UPGRADED_STAGE) {
+      if (stage < this.Data.MAX_UPGRADED_STAGE) {
         return (new (ResourceType type, int amount)[] {
           (ResourceType.Fame, 
-           this.data.GetRequiredFameForUpgradeFrom(stage)),
-          (ResourceType.Money, this.data.GetUpgradeCostFrom(stage)) });
+           this.Data.GetRequiredFameForUpgradeFrom(stage)),
+          (ResourceType.Money, this.Data.GetUpgradeCostFrom(stage)) });
       }
       else {
         return (new (ResourceType type, int amount)[0]);

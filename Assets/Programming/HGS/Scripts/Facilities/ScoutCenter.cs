@@ -6,7 +6,7 @@ namespace SHG
   public class ScoutCenter : IFacility
   {
     [Serializable]
-    public struct Data : IFacilityData {
+    public struct FacilityData : IFacilityData {
       public int MAX_UPGRADED_STAGE => 4;
       public string Name => "스카우트 센터";
       public float[] ChancesForNationalGradeAthlete;
@@ -23,18 +23,19 @@ namespace SHG
       }
     }
 
-    public string Name => (this.data.Name);
-    public bool IsUpgradable => (this.CurrentStage.Value < this.data.MAX_UPGRADED_STAGE);
+    public string Name => (this.Data.Name);
+    public bool IsUpgradable => (this.CurrentStage.Value < this.Data.MAX_UPGRADED_STAGE);
     public ReactiveProperty<int> CurrentStage { get; private set; }
     public ReactiveProperty<float> ChanceForNationalGradeAthlete;
     public ReactiveProperty<float> BonusChanceForRecruitCoach;
     public ReactiveProperty<(ResourceType type, int amount)[]> ResourcesNeeded { get; private set; }
     public IFacility.FacilityType Type => IFacility.FacilityType.ScoutCenter;
-    Data data;
+    public FacilityData Data { get; private set; }
+    public int MaxUpgradeStage => (this.Data.MAX_UPGRADED_STAGE);
 
-    public ScoutCenter(Data data, int startStage = 0)
+    public ScoutCenter(FacilityData data, int startStage = 0)
     {
-      this.data = data; 
+      this.Data = data; 
       this.CurrentStage = new (startStage);
       this.ResourcesNeeded = new (this.GetResourceNeededFrom(startStage));
       this.ChanceForNationalGradeAthlete = new (data.ChancesForNationalGradeAthlete[startStage]);
@@ -45,17 +46,17 @@ namespace SHG
       int stage = this.CurrentStage.Value + 1;
       this.CurrentStage.Value = stage;
       this.ResourcesNeeded.Value = this.GetResourceNeededFrom(stage);
-      this.ChanceForNationalGradeAthlete.Value = this.data.ChancesForNationalGradeAthlete[stage];
-      this.BonusChanceForRecruitCoach.Value = this.data.BonusChancesForRecruitCoach[stage];
+      this.ChanceForNationalGradeAthlete.Value = this.Data.ChancesForNationalGradeAthlete[stage];
+      this.BonusChanceForRecruitCoach.Value = this.Data.BonusChancesForRecruitCoach[stage];
     }
     
     (ResourceType type, int amount)[] GetResourceNeededFrom(int stage)
     {
-      if (stage < this.data.MAX_UPGRADED_STAGE) {
+      if (stage < this.Data.MAX_UPGRADED_STAGE) {
         return (new (ResourceType type, int amount)[] {
           (ResourceType.Fame, 
-           this.data.GetRequiredFameForUpgradeFrom(stage)),
-          (ResourceType.Money, this.data.GetUpgradeCostFrom(stage)) });
+           this.Data.GetRequiredFameForUpgradeFrom(stage)),
+          (ResourceType.Money, this.Data.GetUpgradeCostFrom(stage)) });
       }
       else {
         return (new (ResourceType type, int amount)[0]);
