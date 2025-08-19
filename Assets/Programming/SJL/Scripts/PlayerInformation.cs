@@ -3,21 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class PlayerInformation : MonoBehaviour
+namespace SJL
 {
-    [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private TextMeshProUGUI gradeText;
-    [SerializeField] private TextMeshProUGUI ageText;
-    [SerializeField] private TextMeshProUGUI typeText;
-
-    public void SetPlayer(Player player)
+    public class PlayerInformation : MonoBehaviour
     {
-        nameText.text = player.name;
-        gradeText.text = player.grade;
-        ageText.text = player.age.ToString();
-        typeText.text = player.type;
+        [SerializeField] private TextMeshProUGUI nameText;
+        [SerializeField] private TextMeshProUGUI gradeText;
+        [SerializeField] private TextMeshProUGUI ageText;
+        [SerializeField] private TextMeshProUGUI typeText;
+
+        [SerializeField] private Slider staminaSlider;
+        [SerializeField] private Slider ThirstSlider;
+        [SerializeField] private Slider MentalitySlider;
+
+        public void SetPlayer(Player player)
+        {
+            nameText.text = player.name;
+            gradeText.text = player.grade;
+            ageText.text = player.age.ToString();
+            typeText.text = player.type;
+            staminaSlider.value = player.stamina;
+
+        }
+
+
     }
-
-
 }
