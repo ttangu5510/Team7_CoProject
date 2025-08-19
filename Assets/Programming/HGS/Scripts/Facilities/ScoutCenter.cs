@@ -29,6 +29,7 @@ namespace SHG
     public ReactiveProperty<float> ChanceForNationalGradeAthlete;
     public ReactiveProperty<float> BonusChanceForRecruitCoach;
     public ReactiveProperty<(ResourceType type, int amount)[]> ResourcesNeeded { get; private set; }
+    public IFacility.FacilityType Type => IFacility.FacilityType.ScoutCenter;
     Data data;
 
     public ScoutCenter(Data data, int startStage = 0)

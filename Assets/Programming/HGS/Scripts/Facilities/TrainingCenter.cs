@@ -28,6 +28,7 @@ namespace SHG
     public ReactiveProperty<(ResourceType type, int amount)[]> ResourcesNeeded { get; private set; }
     public ReactiveProperty<int> BonusStat { get; private set; }
     public bool IsUpgradable => (this.CurrentStage.Value < this.data.MAX_UPGRADED_STAGE);
+    public IFacility.FacilityType Type => IFacility.FacilityType.TrainingCenter;
     Data data;
 
     public TrainingCenter(Data data, int startStage = 0)

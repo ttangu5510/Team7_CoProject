@@ -30,6 +30,7 @@ namespace SHG
     public ReactiveProperty<int> NumberOfAthletes { get; private set; }
     public ReactiveProperty<int> RecoveryAmount { get; private set; }
     public bool IsUpgradable => (this.CurrentStage.Value < this.data.MAX_UPGRADED_STAGE);
+    public IFacility.FacilityType Type => IFacility.FacilityType.Lounge;
     Data data;
 
     public Lounge(Data data, int startStage = 0)

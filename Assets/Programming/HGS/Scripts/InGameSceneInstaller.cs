@@ -8,10 +8,17 @@ namespace SHG
     {
       this.Container.Bind<ITimeFlowController>()
         .To<TimeFlowController>()
-        .AsSingle();
+        .AsSingle()
+        .NonLazy();
+
+      /***************************************************/
+      // FIXME: Load facilities data
+      FacilitiesController facilitiesController = new ();
+      facilitiesController.Init(FacilityDummyData.AllData);
+      /***************************************************/
 
       this.Container.Bind<IFacilitiesController>()
-        .To<IFacilitiesController>()
+        .FromInstance(facilitiesController)
         .AsSingle();
     }
   }
