@@ -1,236 +1,331 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-
-public enum BasePanelType // 안전장치용 열거형
-{
-    Info,
-    Character,
-    QuestAchievement,
-    Competition,
-    CompetitionSchedule
-}
+using UnityEngine.UI;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 public class UIManager : MonoBehaviour
 {
     private static UIManager instance;
-    public static UIManager Instance { get { return instance; } }
+    public static UIManager Instance => instance;
 
+    [Header("Auto-Bind Roots")]
+    [SerializeField] private Transform panelsRoot;      // 비워두면 Panels 안에 들어있는 이름이 Panel.~~ 인 모든 판넬 자동 탐색
+    [SerializeField] private Canvas[] canvasScopes;     // 비워두면 씬의 모든 Canvas에서 이름이 Btn.~~ 인 모든 버튼을 자동 탐색
 
-    [Header("하단 UI(Header for SHG = Bottom UI)")]
-    [SerializeField] private GameObject infoPanel;
-    [SerializeField] private GameObject characterPanel;
-    [SerializeField] private GameObject questAchievementPanel;
-    [SerializeField] private GameObject competitionPanel;
-    [SerializeField] private GameObject competitionSchedulePanel;
+    [Header("Popup")]
+    [SerializeField] private GameObject popupBlocker;   // 팝업시 다른 터치를 막는 용도의 오브젝트
 
-    // 팝업시 다른 곳 상호작용을 막는 용도
-    [Header("팝업 (Header for SHG = Popup)")]
-    [SerializeField] private GameObject popupBlocker;
+    // ===== 문자열 키 기반 패널 관리 =====
+    private readonly Dictionary<string, GameObject> panels = new(); // key: normalized name
+    private string currentPanelKey; // null = 아무 패널도 안 열림
 
-    // 베이스 패널 관리용
-    private Dictionary<BasePanelType, GameObject> basePanels;
-    private BasePanelType? currentBasePanel; // 현재 열린 베이스 패널 (현재 열린 패널이 하나도 없을 수 있으니 null 값을 가지기 위해 ? 를 붙여 나타냄)
-
-    // 팝업 관리용 (겹칠 수 있으므로 스택으로 관리)
-    private Stack<GameObject> popupStack = new Stack<GameObject>();
+    // ===== 팝업 스택 =====
+    private readonly Stack<GameObject> popupStack = new();
 
     [Header("Toast")]
-    [SerializeField] private Transform toastRoot;      // Popups 아래에 빈 오브젝트 "ToastRoot" 하나 만들어 할당
-    [SerializeField] private GameObject toastPrefab;   // Popup.Toast 프리팹
-    [SerializeField] private int maxToasts = 3;        // 동시에 띄울 최대 개수
-    [SerializeField] private float toastLife = 1.8f;   // 화면에 머무는 시간(페이드 제외)
+    [SerializeField] private Transform toastRoot;
+    [SerializeField] private GameObject toastPrefab;
+    [SerializeField] private int maxToasts = 3;
+    [SerializeField] private float toastLife = 1.8f;
+    private readonly Queue<GameObject> activeToasts = new();
 
-    private readonly Queue<GameObject> activeToasts = new Queue<GameObject>();
+    [Header("Popup Sorting (optional)")]
+    [SerializeField] private int popupBaseOrder = 500;
+    [SerializeField] private int popupOrderStep = 10;
 
+    // ===== 키 정규화 유틸 =====
+    private const string PANEL_PREFIX = "Panel.";
+    private const string BUTTON_PREFIX = "Btn.";
 
-
-
-
-
-
-
+    // 공백제거, 소문자로 변경해주는 함수
+    private static string NormalizeKey(string raw)
+    {
+        if (string.IsNullOrEmpty(raw)) return string.Empty;
+        
+        return new string(raw.Where(ch => !char.IsWhiteSpace(ch)).ToArray()).ToLowerInvariant();
+    }
 
     private void Awake()
     {
-        // 싱글 톤
+        // ===== 싱글톤 보장 & 파괴 금지 =====
         if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
         else { Destroy(gameObject); return; }
 
-        // 베이스 패널 맵 구성
-        basePanels = new Dictionary<BasePanelType, GameObject>
-        {
-            { BasePanelType.Info, infoPanel },
-            { BasePanelType.Character, characterPanel },
-            { BasePanelType.QuestAchievement, questAchievementPanel },
-            { BasePanelType.Competition, competitionPanel },
-            { BasePanelType.CompetitionSchedule, competitionSchedulePanel },
-        };
+        // ===== 초기 바인딩 =====
+        AutoBindPanels();   // Panels 하위의 Panel.* 오브젝트를 사전에 등록
+        AutoBindButtons();  // BottomBar 하위의 Btn.* 버튼 클릭을 OpenPanel에 연결
 
-        // 시작 시 모두 끄기
-        foreach (var kv in basePanels) kv.Value?.SetActive(false);
+        // ===== 시작 상태 초기화 =====
+        foreach (var go in panels.Values) go?.SetActive(false);
         popupBlocker?.SetActive(false);
+        currentPanelKey = null;
     }
 
     private void Update()
     {
-        // 안드로이드 뒤로가기 대응
         if (Input.GetKeyDown(KeyCode.Escape))
             HandleBack();
     }
 
-
-
-
-    // 오픈 베이스 패널
-    public void OpenBasePanel(BasePanelType type)
+    // ===================== 자동 바인딩 =====================
+    private void AutoBindPanels()
     {
-        // 이미 같은 패널이면 토글로 닫기 (원하면 유지하도록 바꿔도 됨)
-        if (currentBasePanel.HasValue && currentBasePanel.Value.Equals(type))
+        panels.Clear();
+
+        // Panels 루트 자동 탐색(인스펙터 미할당 시)
+        if (!panelsRoot)
         {
-            CloseAllBasePanels();
+            var found = GameObject.Find("Panels");
+            if (found) panelsRoot = found.transform;
+        }
+
+        if (!panelsRoot)
+        {
+            Debug.LogWarning("[UIManager] 'Panels' 루트를 찾을 수 없습니다.");
             return;
         }
 
-        // 하나만 켜고 나머지 끄기
-        foreach (var kv in basePanels)
-            kv.Value?.SetActive(kv.Key == type);
+        // Panels 하위의 직계 자식 중 이름이 "Panel.<키>" 인 것만 등록
+        foreach (Transform t in panelsRoot)
+        {
+            string n = t.name;
+            if (!n.StartsWith(PANEL_PREFIX, StringComparison.OrdinalIgnoreCase)) continue;
 
-        currentBasePanel = type;
+            string keyRaw = n.Substring(PANEL_PREFIX.Length);
+            string key = NormalizeKey(keyRaw);
 
-        // 베이스 패널은 블로커 불필요 (탭 전환만 하니까)
-        if (popupStack.Count == 0)
-            popupBlocker?.SetActive(false);
+            if (string.IsNullOrEmpty(key))
+            {
+                Debug.LogWarning($"[UIManager] 잘못된 패널 이름: '{n}'");
+                continue;
+            }
 
-        // 입력/카메라 잠금이 필요하면 여기서 이벤트 쏘기
-        // e.g., PlayerInputBus.RaiseUIOpened();
+            if (panels.ContainsKey(key))
+                Debug.LogWarning($"[UIManager] 중복 패널 키 '{keyRaw}' 감지. 마지막 값을 사용합니다.");
+
+            panels[key] = t.gameObject; // 같은 키가 있으면 덮어씀
+        }
     }
 
-    // 모든 패널 닫기
-    public void CloseAllBasePanels()
+    private void AutoBindButtons()
     {
-        foreach (var kv in basePanels) kv.Value?.SetActive(false);
-        currentBasePanel = null;
-        if (popupStack.Count == 0)
-            popupBlocker?.SetActive(false);
+        // 1) 스코프 비었으면 씬 내 모든 Canvas 탐색(비활성 포함)
+        if (canvasScopes == null || canvasScopes.Length == 0)
+            canvasScopes = FindObjectsOfType<Canvas>(true);
 
-        // e.g., PlayerInputBus.RaiseUIClosed();
+        // 2) 각 Canvas 하위의 모든 Button 검색 후 이름 규칙에 맞는 것만 연결
+        foreach (var canvas in canvasScopes)
+        {
+            if (!canvas) continue;
+            BindButtonsUnder(canvas.transform);
+        }
     }
 
-    // 버튼에서 직접 연결하고 싶으면 이 래퍼 써도 됨
-    public void OnClick_OpenInfo() => OpenBasePanel(BasePanelType.Info);
-    public void OnClick_OpenCharacter() => OpenBasePanel(BasePanelType.Character);
-    public void OnClick_OpenQuestAchievement() => OpenBasePanel(BasePanelType.QuestAchievement);
-    public void OnClick_OpenCompetition() => OpenBasePanel(BasePanelType.Competition);
-    public void OnClick_OpenCompetitionSchedule() => OpenBasePanel(BasePanelType.CompetitionSchedule);
+    // Canvas/루트 하위 버튼 묶음 바인딩
+    private void BindButtonsUnder(Transform root)
+    {
+        foreach (var btn in root.GetComponentsInChildren<Button>(true))
+        {
+            var n = btn.gameObject.name;
+            if (!n.StartsWith(BUTTON_PREFIX, StringComparison.OrdinalIgnoreCase)) continue;
+
+            var key = NormalizeKey(n.Substring(BUTTON_PREFIX.Length));
+            if (string.IsNullOrEmpty(key))
+            {
+                Debug.LogWarning($"[UIManager] 잘못된 버튼 이름: '{n}'");
+                continue;
+            }
+
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(() => OpenPanel(key)); // Btn.X → Panel.X
+        }
+    }
 
 
+    // ===================== 패널 제어 =====================
+    // OpenPanel("Info") → "Panel.Info"를 찾음
+    public void OpenPanel(string rawKey)
+    {
+        string key = NormalizeKey(rawKey);
+        if (string.IsNullOrEmpty(key))
+        {
+            Debug.LogWarning("[UIManager] OpenPanel: key가 비었습니다.");
+            return;
+        }
 
+        // 등록된 패널 조회
+        if (!panels.TryGetValue(key, out var target) || target == null)
+        {
+            Debug.LogWarning($"[UIManager] OpenPanel: '{rawKey}' 패널을 찾을 수 없습니다. (Panel.{rawKey})");
+            return;
+        }
+
+        // 같은 패널이 이미 열려 있으면 토글처럼 전체 닫기
+        if (!string.IsNullOrEmpty(currentPanelKey) && currentPanelKey == key)
+        {
+            CloseAllPanels();
+            return;
+        }
+
+        // 해당 패널만 활성화, 나머지는 비활성화
+        foreach (var kv in panels)
+            kv.Value?.SetActive(kv.Key == key);
+
+        currentPanelKey = key;
+
+        // 베이스 패널은 블로커 불필요 (모달 아님)
+        if (popupStack.Count == 0) popupBlocker?.SetActive(false);
+    }
+
+    public void CloseAllPanels()
+    {
+        // 모두 끄기
+        foreach (var go in panels.Values) go?.SetActive(false);
+        currentPanelKey = null;
+
+        // 팝업 없으면 블로커도 끔
+        if (popupStack.Count == 0) popupBlocker?.SetActive(false);
+    }
+
+    // ===================== 팝업 =====================
     public void ShowPopup(GameObject popup)
     {
-        // 전달된 팝업 없으면 그냥 종료
-        if (popup == null) return;
+        if (!popup) return;
+        if (popupStack.Contains(popup)) return; // 같은 GO 중복 방지
 
-        // 전달받은 팝업 게임 오브젝트 활성화
         popup.SetActive(true);
-
-        // 스택에 쌓기 -> 마지막으로 연 팝업부터 닫기 위해
         popupStack.Push(popup);
-        
-        // 블로커 활성화 -> 팝업 외 다른 UI 영역 선택 방지
+
+        UpdatePopupSorting();
         popupBlocker?.SetActive(true);
     }
 
     public void CloseTopPopup()
     {
-        // 팝업 없으면 종료
+        // 파괴된 참조 정리
+        PruneDeadPopups();
         if (popupStack.Count == 0) return;
 
-        // 스택에서 꺼내기
+        // 최상단 팝업 꺼내기
         var top = popupStack.Pop();
-
-        // 팝업 비활성화
+        
+        // 비활성화
         if (top) top.SetActive(false);
 
-        // 팝업이 남아있으면 블로커 유지 / 없으면 블로커 비활성화
+        UpdatePopupSorting();
         popupBlocker?.SetActive(popupStack.Count > 0);
     }
 
-
-    // 특정 팝업을 지정해서 삭제 할 수 있는 함수
     public void CloseSpecificPopup(GameObject popup)
     {
-        // 팝업이 없거나 스택이 비어있으면 그냥 종료
-        if (popup == null || popupStack.Count == 0) return;
-        
+        PruneDeadPopups();
+        if (!popup || popupStack.Count == 0) return;
+
+        // 임시 스택으로 옮기며 특정 팝업만 골라서 닫기
         var temp = new Stack<GameObject>();
         bool closed = false;
 
-
-        // popupStack을 하나씩 꺼내면서 원하는 팝업을 찾음
         while (popupStack.Count > 0)
         {
             var p = popupStack.Pop();
-            if (!closed && p == popup)          // 찾은 경우
+            if (!closed && p == popup)
             {
-                if (p) p.SetActive(false);      // 화면에서 비활성화
-                closed = true;                  // 닫았다는 표시
-                continue;                       // 스택에 추가 X
+                if (p) p.SetActive(false);
+                closed = true;
+                continue;
             }
-            temp.Push(p);                       // 찾는 게 아니면 임시 스택에 보관
+            temp.Push(p);
         }
-
-        // temp에 있던 나머지를 다시 원래 popupStack에 되돌림
         while (temp.Count > 0) popupStack.Push(temp.Pop());
 
-        // 스택에 팝업이 남아있으면 블로커 유지, 아니면 끔
+        UpdatePopupSorting();
         popupBlocker?.SetActive(popupStack.Count > 0);
     }
 
+    // 스택 안에 파괴된(GameObject == null) 항목들을 제거
+    private void PruneDeadPopups()
+    {
+        if (popupStack.Count == 0) return;
+        var temp = new Stack<GameObject>();
+        while (popupStack.Count > 0)
+        {
+            var p = popupStack.Pop();
+            if (p) temp.Push(p);
+        }
+        while (temp.Count > 0) popupStack.Push(temp.Pop());
+    }
 
+    private void UpdatePopupSorting()
+    {
+        int i = 0;
+        foreach (var p in popupStack)
+        {
+            if (!p) continue;
+
+            // 1) Canvas 확보
+            var c = p.GetComponent<Canvas>();
+            if (!c) c = p.AddComponent<Canvas>();
+            c.overrideSorting = true;
+            c.sortingOrder = popupBaseOrder + i * popupOrderStep;
+
+            // 2) GraphicRaycaster 확보 (이게 없으면 버튼 상호작용 X)
+            var gr = p.GetComponent<GraphicRaycaster>();
+            if (!gr) gr = p.AddComponent<GraphicRaycaster>();
+
+            // (선택) World Space 쓰면 이벤트 카메라도 지정
+            // if (c.renderMode == RenderMode.ScreenSpaceCamera && c.worldCamera == null)
+            //     c.worldCamera = Camera.main;
+
+            i++;
+        }
+    }
+
+    // ===================== 토스트 =====================
     public void ShowToast(string msg)
     {
+        // 프리팹/루트가 없으면 경고
         if (!toastPrefab || !toastRoot)
         {
             Debug.LogWarning("[UIManager] Toast 설정 누락 (toastPrefab/toastRoot)");
             return;
         }
 
-        // 넘치면 가장 오래된 것부터 제거
+        // 최대 개수 초과 시 가장 오래된 토스트 제거
         while (activeToasts.Count >= maxToasts)
         {
             var old = activeToasts.Dequeue();
             if (old) Destroy(old);
         }
 
+        // 토스트 생성 및 큐에 등록
         var go = Instantiate(toastPrefab, toastRoot);
         activeToasts.Enqueue(go);
 
-        // 문구 세팅
+        // 표시 텍스트 설정(Toast 스크립트 가정: SetText/PlayIn/PlayOut 제공)
         var toast = go.GetComponent<Toast>();
         if (toast) toast.SetText(msg);
 
-        // 등장 애니메이션 → 대기 → 퇴장 → Destroy
+        // 수명 코루틴
         StartCoroutine(_ToastLifetime(go, toast));
     }
 
     private System.Collections.IEnumerator _ToastLifetime(GameObject go, Toast toast)
     {
-        // 등장
         if (toast != null) yield return toast.PlayIn();
 
-        // 머무름
+        // 표시 유지 시간
         yield return new WaitForSecondsRealtime(toastLife);
-
-        // 퇴장
         if (toast != null) yield return toast.PlayOut();
 
-        // 큐에서 제거 & 파괴
+        // 큐에서 자기 자신 제거(맨 앞이면 바로 제거, 아니면 스캔해서 제거)
         if (activeToasts.Count > 0 && activeToasts.Peek() == go)
             activeToasts.Dequeue();
         else
         {
-            // 중간에서 사라졌을 수도 있으니 정리
             var temp = new Queue<GameObject>();
             while (activeToasts.Count > 0)
             {
@@ -243,14 +338,36 @@ public class UIManager : MonoBehaviour
         if (go) Destroy(go);
     }
 
-
-    
+    // ===================== Back 처리 =====================
     private void HandleBack()
     {
+        // 우선 팝업이 있으면 최상단 팝업 닫기
+        PruneDeadPopups();
         if (popupStack.Count > 0) { CloseTopPopup(); return; }
-        if (currentBasePanel.HasValue) { CloseAllBasePanels(); return; }
-        // 더 이상 닫을 UI가 없다면: 게임 일시정지/종료 확인 팝업 등을 띄울지 결정
-        // ShowPopup(pausePopup);
+
+        // 그 다음 현재 패널이 있으면 모두 닫기
+        if (!string.IsNullOrEmpty(currentPanelKey)) { CloseAllPanels(); return; }
+
+
+        // TODO 아무 것도 없으면 기본 동작: 타이틀/종료 팝업 등
     }
 
+    // ===================== 외부에서 등록/해제 (동적 확장용, 선택) =====================
+    public bool RegisterPanel(string rawKey, GameObject panel)
+    {
+        if (!panel) return false;
+        string key = NormalizeKey(rawKey);
+        if (string.IsNullOrEmpty(key)) return false;
+
+        panels[key] = panel;
+        panel.SetActive(false);
+        return true;
+    }
+
+    public void UnregisterPanel(string rawKey)
+    {
+        string key = NormalizeKey(rawKey);
+        if (string.IsNullOrEmpty(key)) return;
+        panels.Remove(key);
+    }
 }
