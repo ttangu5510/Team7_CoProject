@@ -21,7 +21,7 @@ namespace JYL
         F,E,D,C,B,A
     }
 
-    public enum AthleteStatus
+    public enum Ability
     {
         Health,
         Quickness,
