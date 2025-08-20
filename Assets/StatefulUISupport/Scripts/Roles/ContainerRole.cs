@@ -4,5 +4,6 @@
 public enum ContainerRole
 {
     Unknown = 0,
+    GradeSectionContainer = -1503089273,
 
 }
