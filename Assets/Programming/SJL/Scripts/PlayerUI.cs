@@ -9,15 +9,19 @@ namespace SJL
 {
     public class PlayerUI : MonoBehaviour
     {
+        [Header("UI Components")]
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI gradeText;
         [SerializeField] private TextMeshProUGUI ageText;
         [SerializeField] private TextMeshProUGUI typeText;
-
+        [Header("Buttons")]
         [SerializeField] private Button informationButton;
         [SerializeField] private Button recruitmentButton;
-
+        [Header("Panels")]
         [SerializeField] public GameObject playerInormationPanel;
+        [SerializeField] public GameObject NotificationWindow;  // 알림창 패널
+        [SerializeField] public GameObject ConfirmPlayerRecruitment;    // 선수 영입 확인 패널
+
         public Player playerData; // 현재 연동된 선수 정보
 
         public void SetPlayer(Player player)
@@ -57,6 +61,7 @@ namespace SJL
         {
             // 선수 영입 버튼 클릭 시 동작
             Debug.Log("선수 영입 버튼 클릭됨: " + nameText.text);
+            
         }
 
 
