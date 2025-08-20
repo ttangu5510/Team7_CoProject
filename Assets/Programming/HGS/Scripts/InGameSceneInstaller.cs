@@ -6,20 +6,38 @@ namespace SHG
   {
     public override void InstallBindings()
     {
+
+      /***************************************************/
+      //   FIXME: Remove Dummy data
+      /***************************************************/
+      this.Container.Bind<IAthleteController>()
+        .To<DummyAthleteController>()
+        .AsSingle()
+        .NonLazy();
+
       this.Container.Bind<ITimeFlowController>()
         .To<TimeFlowController>()
         .AsSingle()
         .NonLazy();
 
       /***************************************************/
-      // FIXME: Load facilities data
-      FacilitiesController facilitiesController = new ();
-      facilitiesController.Init(FacilityDummyData.AllData);
+      //    TODO: Load facilities data
       /***************************************************/
 
       this.Container.Bind<IFacilitiesController>()
-        .FromInstance(facilitiesController)
-        .AsSingle();
+        .To<FacilitiesController>()
+        .AsSingle()
+        .WithArguments(FacilityDummyData.AllData)
+        .NonLazy();
+
+      /***************************************************/
+      //    TODO: Load resources data
+      /***************************************************/
+
+      this.Container.Bind<IResourceController>()
+        .To<ResourceController>()
+        .AsSingle()
+        .WithArguments(ResourceDummyData.Data);
     }
   }
 }

@@ -19,7 +19,7 @@ namespace SHG
     public IObservable<IFacility> SelectedFacilityStream { get; private set; }
     IObserver<IFacility> selectedFacilityObserver;
 
-    public FacilitiesController()
+    public FacilitiesController(IEnumerable<IFacilityData> data, Dictionary<string, int> startStages = null)
     {
       this.Selected = new (null);
       this.SelectedFacilityStream = Observable.Create<IFacility>(
@@ -27,10 +27,6 @@ namespace SHG
           this.selectedFacilityObserver = observer;
           return (Disposable.Empty);
         });
-    }
-
-    public void Init(IEnumerable<IFacilityData> data, Dictionary<string, int> startStages = null)
-    {
       this.data = new ();
       this.data.AddRange(data);
       this.InitFacilites(startStages);
