@@ -35,6 +35,19 @@ public class UIManager : MonoBehaviour
     // 팝업 관리용 (겹칠 수 있으므로 스택으로 관리)
     private Stack<GameObject> popupStack = new Stack<GameObject>();
 
+    [Header("Toast")]
+    [SerializeField] private Transform toastRoot;      // Popups 아래에 빈 오브젝트 "ToastRoot" 하나 만들어 할당
+    [SerializeField] private GameObject toastPrefab;   // Popup.Toast 프리팹
+    [SerializeField] private int maxToasts = 3;        // 동시에 띄울 최대 개수
+    [SerializeField] private float toastLife = 1.8f;   // 화면에 머무는 시간(페이드 제외)
+
+    private readonly Queue<GameObject> activeToasts = new Queue<GameObject>();
+
+
+
+
+
+
 
 
 
@@ -42,7 +55,7 @@ public class UIManager : MonoBehaviour
     {
         // 싱글 톤
         if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
-        else Destroy(gameObject);
+        else { Destroy(gameObject); return; }
 
         // 베이스 패널 맵 구성
         basePanels = new Dictionary<BasePanelType, GameObject>
@@ -175,11 +188,61 @@ public class UIManager : MonoBehaviour
     }
 
 
-    public void ShowMessage(string text)
+    public void ShowToast(string msg)
     {
-        // 토스트/알림 팝업 열기 → ShowPopup(알림팝업 프리팹) 사용
-        Debug.Log($"[Toast] {text}");
+        if (!toastPrefab || !toastRoot)
+        {
+            Debug.LogWarning("[UIManager] Toast 설정 누락 (toastPrefab/toastRoot)");
+            return;
+        }
+
+        // 넘치면 가장 오래된 것부터 제거
+        while (activeToasts.Count >= maxToasts)
+        {
+            var old = activeToasts.Dequeue();
+            if (old) Destroy(old);
+        }
+
+        var go = Instantiate(toastPrefab, toastRoot);
+        activeToasts.Enqueue(go);
+
+        // 문구 세팅
+        var toast = go.GetComponent<Toast>();
+        if (toast) toast.SetText(msg);
+
+        // 등장 애니메이션 → 대기 → 퇴장 → Destroy
+        StartCoroutine(_ToastLifetime(go, toast));
     }
+
+    private System.Collections.IEnumerator _ToastLifetime(GameObject go, Toast toast)
+    {
+        // 등장
+        if (toast != null) yield return toast.PlayIn();
+
+        // 머무름
+        yield return new WaitForSecondsRealtime(toastLife);
+
+        // 퇴장
+        if (toast != null) yield return toast.PlayOut();
+
+        // 큐에서 제거 & 파괴
+        if (activeToasts.Count > 0 && activeToasts.Peek() == go)
+            activeToasts.Dequeue();
+        else
+        {
+            // 중간에서 사라졌을 수도 있으니 정리
+            var temp = new Queue<GameObject>();
+            while (activeToasts.Count > 0)
+            {
+                var x = activeToasts.Dequeue();
+                if (x != go) temp.Enqueue(x);
+            }
+            while (temp.Count > 0) activeToasts.Enqueue(temp.Dequeue());
+        }
+
+        if (go) Destroy(go);
+    }
+
 
     
     private void HandleBack()
