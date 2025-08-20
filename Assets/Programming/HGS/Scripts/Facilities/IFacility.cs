@@ -20,5 +20,6 @@ namespace SHG
     public FacilityType Type { get; }
     public void Upgrade();
     public int MaxUpgradeStage { get; }
+    public virtual int WeeksForUpgrade => 1;
   }
 }

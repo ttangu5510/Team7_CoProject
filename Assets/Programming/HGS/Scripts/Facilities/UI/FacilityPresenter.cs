@@ -41,9 +41,9 @@ namespace SHG
             this.view.SetRawTextByRole(
               (int)TextRole.FacilityNameLabel, selected.Value.facility.Name);
             this.view.SetState((int)StateRole.Shown);
-            this.transform.DOMoveY(
-              endValue: 300f,
-              duration: 0.8f)
+            this.transform.DOLocalMoveY(
+              endValue: -300f,
+              duration: 0.5f)
             .SetEase(Ease.InOutSine);
             StateRole state = selected.Value.facility.Type switch {
               FacilityType.Accomodation => StateRole.Accomodation,
@@ -55,12 +55,12 @@ namespace SHG
             };
             this.view.SetState((int)state);
           }
-          else {
-            this.view.SetState((int)StateRole.Hidden);
+          else { 
             this.transform.DOMoveY(
               endValue: -500f,
-              duration: 0.8f)
-            .SetEase(Ease.InOutSine);
+              duration: 0.5f)
+            .SetEase(Ease.InOutSine)
+            .OnComplete(() => this.view.SetState((int)StateRole.Hidden));
           }
           });
     }
