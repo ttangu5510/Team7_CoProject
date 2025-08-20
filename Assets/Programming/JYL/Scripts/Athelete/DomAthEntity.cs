@@ -25,12 +25,13 @@ public class DomAthEntity : BaseAthEntity
     public int fatigue { get; private set; } // 피로도
     
     // 현재 상태
+    public int leftInjury { get; private set; } // 남은 부상 턴
     public bool isRecruited { get; private set; } // 영입됨?
     public bool isInjured { get; private set; } // 부상당함?
     public bool isRetired { get; private set; } // 은퇴했음?
     
-    // 게임을 시작하면, 전체 리스트를 초기화 할 예정. 각 선수들의 초기화에만 쓰임. Service에서 수행함.
-    public DomAthEntity Init(int id, string name, AthleteAffiliation affiliation, AthleteGrade maxGrade, int recruitAge,
+    // 게임을 시작하면, 전체 리스트를 초기화 할 예정. 각 선수들의 초기화에만 쓰임. RP에서 수행함.
+    public void Init(int id, string name, AthleteAffiliation affiliation, AthleteGrade maxGrade, int recruitAge,
         int health, int quickness, int flexibility, int technic, int speed, int balance,
         int retireAge = 28, int fatigue = 0, bool isRecruited = false, bool isInjured = false, bool isRetired = false)
 
@@ -50,14 +51,27 @@ public class DomAthEntity : BaseAthEntity
         this.speed = speed;
         this.balance = balance;
         this.fatigue = fatigue;
+        leftInjury = 0;
         this.isRecruited = isRecruited;
         this.isInjured = isInjured;
         this.isRetired = isRetired;
-
-        return this;
     }
 
-    
+    public void UpdateFromSave(AthleteSave save) //세이브 파일로부터 업데이트
+    {
+        health= save.health;
+        quickness = save.quickness;
+        flexibility = save.flexibility;
+        technic =  save.technic;
+        speed =  save.speed;
+        balance =   save.balance;
+        fatigue =  save.fatigue;
+        leftInjury =  save.leftInjury;
+        isRecruited =   save.isRecruited;
+        isInjured = save.isInjured;
+        isRetired = save.isRetired;
+        
+    }
     
     public void Recruit() // 선수 영입할 때 쓰는 함수. 재화 나가는건 다른데서 처리해야 함
     {
