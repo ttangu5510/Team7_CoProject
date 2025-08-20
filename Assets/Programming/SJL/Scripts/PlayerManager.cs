@@ -14,7 +14,7 @@ namespace SJL
 
         [SerializeField] public GameObject playerUIPrefab;
         [SerializeField] public Transform playerListPanel; // 선수들을 담을 부모 오브젝트
-
+        [SerializeField] public GameObject playerInformationPanel; // ← 패널 오브젝트 직접 참조
 
         private void Start()
         {
@@ -42,6 +42,10 @@ namespace SJL
                 GameObject go = Instantiate(playerUIPrefab, playerListPanel);
                 PlayerUI ui = go.GetComponent<PlayerUI>();
                 ui.SetPlayer(playerList[i]);
+
+                ui.playerInormationPanel = playerInformationPanel; // << 여기가 핵심!
+                // (필요하면) Player 정보도 패널에 전달
+                ui.playerData = playerList[i];
             }
         }
     }

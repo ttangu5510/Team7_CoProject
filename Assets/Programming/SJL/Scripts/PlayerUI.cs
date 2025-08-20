@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace SJL
-{ 
+{
     public class PlayerUI : MonoBehaviour
     {
         [SerializeField] private TextMeshProUGUI nameText;
@@ -17,7 +17,8 @@ namespace SJL
         [SerializeField] private Button informationButton;
         [SerializeField] private Button recruitmentButton;
 
-        [SerializeField] public GameObject PlayerInformationPrefab;
+        [SerializeField] public GameObject playerInormationPanel;
+        public Player playerData; // 현재 연동된 선수 정보
 
         public void SetPlayer(Player player)
         {
@@ -25,6 +26,7 @@ namespace SJL
             gradeText.text = player.grade;
             ageText.text = player.age.ToString();
             typeText.text = player.type;
+            playerData = player;
         }
 
         private void Start()
@@ -35,24 +37,20 @@ namespace SJL
 
         public void OnInformationButtonClicked()
         {
-            // 선수 정보 버튼 클릭 시 동작
             Debug.Log("선수 정보 버튼 클릭됨: " + nameText.text);
-
-            // 이미 열려있는 창이 있으면 중복 생성 방지 (원하면 삭제 가능)
-            if (GameObject.Find(PlayerInformationPrefab.name + "(Clone)") != null)
-                return;
-
-            // 부모 캔버스 찾기 (가장 보편적으로는 "Canvas" 이름)
-            GameObject canvas = GameObject.Find("Canvas");
-            if (canvas == null)
+            if (playerInormationPanel != null && playerData != null)
             {
-                Debug.LogError("Canvas를 찾을 수 없습니다!");
-                return;
+                playerInormationPanel.SetActive(true);
+
+                // 여기에서 PlayerInformationPanel로 캐스팅!
+                PlayerInformationPanel info = playerInormationPanel.GetComponent<PlayerInformationPanel>();
+                if (info != null)
+                    info.SetPlayer(playerData); // 선수 데이터 넘기기
             }
-
-            // 선수 정보 팝업 생성
-            GameObject infoWindow = Instantiate(PlayerInformationPrefab, canvas.transform);
-
+            else
+            {
+                Debug.LogError("패널 또는 선수 정보가 할당되지 않았습니다.");
+            }
         }
 
         public void OnRecruitmentButtonClicked()
