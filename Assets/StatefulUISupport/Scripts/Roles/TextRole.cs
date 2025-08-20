@@ -12,5 +12,18 @@ public enum TextRole
     GradeSectionLabel1 = -1296941233,
     UpgradeButtonLabel = -1625692112,
     CloseButtonLabel = -2116674996,
+    FameLabel = 1265843237,
+    CoinLabel = -253762963,
+    MoneyLabel = -1199670852,
+    Title = -1859700480,
+    TotalIncome = -259020631,
+    TrainingGrant = -1412914786,
+    CompetitionGrant = -599004257,
+    PrizeIncome = 183807471,
+    TotalExpenses = -616745283,
+    PersonelCost = -186839729,
+    ScoutCost = -1185194747,
+    FacilityCost = -1838525786,
+    TotalAmount = -1451966148,
 
 }
