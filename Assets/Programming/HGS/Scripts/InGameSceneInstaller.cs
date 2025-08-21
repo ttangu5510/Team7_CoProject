@@ -1,3 +1,4 @@
+using UnityEngine;
 using Zenject;
 
 namespace SHG
@@ -38,6 +39,14 @@ namespace SHG
         .To<ResourceController>()
         .AsSingle()
         .WithArguments(ResourceDummyData.Data);
+
+      var touchControllerObject = new GameObject(nameof(TouchController));
+      DontDestroyOnLoad(touchControllerObject);
+      TouchController touchController = touchControllerObject.AddComponent<TouchController>();
+
+      this.Container.Bind<TouchController>()
+        .FromInstance(touchController)
+        .AsSingle();
     }
   }
 }
