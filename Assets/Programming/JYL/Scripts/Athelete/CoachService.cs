@@ -2,14 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DomAthController : MonoBehaviour
+namespace JYL
 {
-    void Start()
-    {
-        
-    }
-
-    void Update()
+    public class CoachService : MonoBehaviour
     {
         
     }
