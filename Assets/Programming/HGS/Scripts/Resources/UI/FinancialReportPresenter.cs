@@ -38,7 +38,7 @@ namespace SHG
           this.GetReport(report.Value);
           this.view.SetState((int)StateRole.Shown);
           this.container.DOMoveY(
-            endValue: 400f,
+            endValue: 1500f,
             duration:0.5f)
           .SetEase(Ease.InOutSine);
           }});
