@@ -22,7 +22,7 @@ namespace JYL
             curAge = age;
         }
 
-        public void UpdateFromSave(CoachSave save)
+        public void UpdateFromSave(CoachSave save) // 코치 업데이트. 세이브 객체로 업데이트함. Repository에서 수행.
         {
             curState = save.state;
             if (curState == CoachState.Recruited)
@@ -30,7 +30,7 @@ namespace JYL
                 curAge = save.age;
             }
         }
-        public void Recruit() // 코치 영입
+        public void Recruit() // 코치 영입 . Repository에서 수행
         {
             curState = CoachState.Recruited;
         }
@@ -40,7 +40,7 @@ namespace JYL
             curState = CoachState.Retired;
         }
 
-        public void OutCoach() // 코치 방출
+        public void OutCoach() // 코치 방출. Repository에서 수행.
         {
             curState = CoachState.Unrecruited;
         }

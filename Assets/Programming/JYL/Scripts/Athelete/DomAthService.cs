@@ -9,7 +9,7 @@ namespace JYL
     {
         private readonly IDomAthRepository repository;
          
-        // 생성자를 통해 Repository를 주입받는다 (DI)
+        // 생성자를 통해 Repository를 주입받는다 (Dependency Injection)
         public DomAthService(IDomAthRepository repository)
         {
             this.repository = repository;
@@ -43,7 +43,7 @@ namespace JYL
         {
             // UI에서 이벤트 연결할 때, string값을 받을 경우 CoachService에서 string을 받아서 관련 함수 수행
             bool canCoach = entity.Retire(); // 코치 되는 애인지 확인
-            repository.Update(entity); // 은퇴 상태 저장
+            repository.Update(entity); // 은퇴 상태를 세이브 객체에 저장.
             
             
             if (canCoach) return entity.entityName; // 코치 이름을 넘겨줌

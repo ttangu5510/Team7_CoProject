@@ -11,11 +11,17 @@ namespace JYL
         public int age;
         public CoachState state;
 
-        public CoachSave(int id, int age, CoachState state, CoachGrade grade)
+        public CoachSave(CoachEntity entity)
         {
-            this.id = id;
-            this.age = age;
-            this.state = state;
+            id = entity.id;
+            age = entity.curAge;
+            state = entity.curState;
+        }
+
+        public void UpdateStatus(CoachEntity entity)
+        {
+            age =  entity.curAge;
+            state = entity.curState;
         }
     }
 }

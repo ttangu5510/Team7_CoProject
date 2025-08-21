@@ -63,15 +63,15 @@ namespace JYL
             return  athleteDict.Values.Where(x => x.curState != AthleteState.Unrecruited).ToList();
         }
 
-        public void Save(DomAthEntity entity) // 선수 영입
+        public void Save(DomAthEntity entity) // 선수 영입에서 호출.
         {
             saveM.RecruitAthlete(entity); // 선수 세이브 객체 생성
             // 딕셔너리와 리스트는 알아서 최신화 된다.
         }
 
-        public void Update(DomAthEntity entity) // 선수의 변동사항을 저장
+        public void Update(DomAthEntity entity) // 선수의 변동사항을 세이브객체에 저장.
         {
-            saveM.UpdateAthleteEntity(entity); // 선수 세이브 객체 최신화
+            saveM.curSave.FindAthlete(entity).UpdateStatus(entity); // 선수 세이브 객체 최신화
         }
 
         public void Delete(DomAthEntity entity) // 선수 방출
