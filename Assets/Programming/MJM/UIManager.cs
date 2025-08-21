@@ -11,6 +11,8 @@ public class UIPopupOptions : MonoBehaviour { public bool IsModal = true; }
 
 public class UIManager : MonoBehaviour
 {
+    public static bool IsUIOpen { get; set; }   // 유아이 켜짐 꺼짐 상태변수 
+
     private static UIManager instance;
     public static UIManager Instance => instance;
 
@@ -216,6 +218,10 @@ public class UIManager : MonoBehaviour
 
         // 베이스 패널은 블로커 불필요 (모달 아님)
         if (popupStack.Count == 0) popupBlocker?.SetActive(false);
+
+        // isuiopen 상태변수 제어용
+        currentPanelKey = key;
+        UpdateUIOpenFlag();
     }
 
     public void CloseAllPanels()
@@ -226,6 +232,10 @@ public class UIManager : MonoBehaviour
 
         // 팝업 없으면 블로커도 끔
         if (popupStack.Count == 0) popupBlocker?.SetActive(false);
+
+        // isuiopen 상태변수 제어용
+        currentPanelKey = null;
+        UpdateUIOpenFlag();
     }
 
     // ===================== 팝업 =====================
@@ -238,6 +248,10 @@ public class UIManager : MonoBehaviour
         popupStack.Push(popup);
         UpdatePopupSorting();
         UpdateBlockerByStack();
+
+        // isuiopen 상태변수 제어용
+        popupStack.Push(popup);
+        UpdateUIOpenFlag();
     }
 
     public void CloseTopPopup()
@@ -254,6 +268,9 @@ public class UIManager : MonoBehaviour
         }
         UpdatePopupSorting();
         UpdateBlockerByStack();
+
+        // isuiopen 상태변수 제어용
+        UpdateUIOpenFlag();
     }
 
     public void CloseSpecificPopup(GameObject popup)
@@ -424,6 +441,9 @@ public class UIManager : MonoBehaviour
 
         // 수명 코루틴
         StartCoroutine(_ToastLifetime(go, toast));
+
+        // isuiopen 상태변수 제어 현재 주석처리로 토스트는 처리 안함
+        // UpdateUIOpenFlag();
     }
 
     private System.Collections.IEnumerator _ToastLifetime(GameObject go, Toast toast)
@@ -449,6 +469,9 @@ public class UIManager : MonoBehaviour
         }
 
         if (go) Destroy(go);
+
+        // isuiopen 상태변수 제어 현재 주석처리로 토스트는 처리 안함
+        // UpdateUIOpenFlag();
     }
 
     // ===================== Back 처리 =====================
@@ -511,4 +534,13 @@ public class UIManager : MonoBehaviour
 
         StartCoroutine(_DestroyNextFrame(go));   // 즉시 Destroy 대신 다음 프레임에 파괴
     }
+
+    // isuiopen 상태변수 제어
+    private void UpdateUIOpenFlag()
+    {
+        IsUIOpen = !string.IsNullOrEmpty(currentPanelKey)
+                   || popupStack.Count > 0
+                   || activeToasts.Count > 0;
+    }
+
 }
