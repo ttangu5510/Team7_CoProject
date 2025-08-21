@@ -38,9 +38,9 @@ namespace JYL
             {
                 DomAthEntity entity = DomAthFactory.CreateFromCsv(i); // CSV에서 읽어와서 초기화
 
-                if (!athleteDict.TryAdd(entity.name, entity))
+                if (!athleteDict.TryAdd(entity.entityName, entity))
                 {
-                    Debug.LogWarning($"이미 추가된 선수임{entity.name}");
+                    Debug.LogWarning($"이미 추가된 선수임{entity.entityName}");
                 }
 
                 saveM.UpdateAthleteEntity(entity); // 선수 세이브 객체를 통해 최신화

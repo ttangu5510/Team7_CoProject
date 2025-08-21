@@ -134,7 +134,7 @@ namespace JYL
             }
             else
             {
-                Debug.LogWarning($"선수 세이브 객체를 찾지 못함_{entity.name}");
+                Debug.LogWarning($"선수 세이브 객체를 찾지 못함_{entity.entityName}");
             }
         }
 #region 선수 영입, 은퇴, 방출
@@ -154,7 +154,7 @@ namespace JYL
         {
             int index= curSave.athleteSaves.FindIndex(x=>x.id == entity.id);
             if(index >=0) curSave.athleteSaves.RemoveAt(index);
-            else Debug.LogWarning($"해당 선수의 세이브데이터가 존재하지 않음{entity.name}");
+            else Debug.LogWarning($"해당 선수의 세이브데이터가 존재하지 않음{entity.entityName}");
         }
 #endregion
 

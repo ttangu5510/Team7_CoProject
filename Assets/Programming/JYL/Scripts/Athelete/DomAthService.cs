@@ -46,7 +46,7 @@ namespace JYL
             repository.Update(entity); // 은퇴 상태 저장
             
             
-            if (canCoach) return entity.name; // 코치 이름을 넘겨줌
+            if (canCoach) return entity.entityName; // 코치 이름을 넘겨줌
             return null; // 안되면 null 
         }
 
@@ -95,11 +95,11 @@ namespace JYL
             {
                 athlete.RecoverAthlete(amount); // 리커버리. 부상을 한 턴 감소.
                 repository.Update(athlete); // 진행상황을 선수의 세이브 객체에 반영
-                Debug.Log($"{athlete.name} 부상 회복");
+                Debug.Log($"{athlete.entityName} 부상 회복");
             }
             else
             {
-                Debug.LogWarning($"해당 선수는 부상당한 상태가 아님!{athlete.name}_isInjured={athlete.curState == AthleteState.Injured}");
+                Debug.LogWarning($"해당 선수는 부상당한 상태가 아님!{athlete.entityName}_isInjured={athlete.curState == AthleteState.Injured}");
             }
         }
         #endregion

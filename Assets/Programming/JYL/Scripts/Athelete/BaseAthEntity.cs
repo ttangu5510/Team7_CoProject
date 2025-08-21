@@ -7,7 +7,7 @@ namespace JYL
     public abstract class BaseAthEntity : MonoBehaviour
     {
         public int id { get; protected set; } // 고유식별번호
-        public string name { get; protected set; } // 이름
+        public string entityName { get; protected set; } // 이름
     
     }
 
