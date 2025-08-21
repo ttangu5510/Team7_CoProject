@@ -8,6 +8,9 @@ using EditorAttributes;
 
 namespace SHG
 {
+  /// <summary>
+  /// 게임 Scene내에서의 시설에 대한 상호작용을 담당하는 역할
+  /// </summary>
   public class FacilityComponentsController : MonoBehaviour
   {
     const float RAYCAST_MAX_DIST = 100f;

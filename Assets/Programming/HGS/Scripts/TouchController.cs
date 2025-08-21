@@ -5,9 +5,18 @@ using UniRx.Triggers;
 
 namespace SHG
 {
+  /// <summary>
+  /// 사용자의 터치에 따른 이벤트를 관리하는 역할
+  /// </summary>
   public class TouchController : ObservableTriggerBase
   {
+    /// <summary>
+    /// 터치가 시작되었을 때 해당하는 fingerId와 position을 알려주는 기능
+    /// </summary>
     public Subject<(int fingerId, Vector2 position)> OnTouchDown;
+    /// <summary>
+    /// 터치가 끝났을 때 해당하는 fingerId와 position을 알려주는 기능
+    /// </summary>
     public Subject<(int fingerId, Vector2 position)> OnTouchUp;
 
     void Awake()

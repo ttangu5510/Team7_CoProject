@@ -65,7 +65,8 @@ namespace SHG
       this.resourceController.SpendMoney(
         cost, ExpensesType.FacilityUpgrade);
       facility.Upgrade();
-      this.timeFlowController.ProgressWeek();
+      this.timeFlowController.ProgressWeeks(
+        facility.WeeksForUpgrade);
     }
 
     void Hide()
