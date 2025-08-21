@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UniRx;
 
 namespace SHG
@@ -15,7 +14,6 @@ namespace SHG
     public ReactiveProperty<(IFacility.FacilityType type, IFacility facility)?> Selected { get; }
     public IObservable<IFacility> SelectedFacilityStream { get; }
 
-    public void Init(IEnumerable<IFacilityData> data, Dictionary<string, int> startStages = null);
     T GetFacilityBy<T>(IFacility.FacilityType type) where T: IFacility;
     public void SelectFacilityType(IFacility.FacilityType type);
     public void UnSelectFacility();

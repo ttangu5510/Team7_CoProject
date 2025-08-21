@@ -6,5 +6,6 @@ public enum ButtonRole
     Unknown = 0,
     CloseButton = 347293458,
     UpgradeButton = 674808542,
+    ConfirmButton = 1774490630,
 
 }
