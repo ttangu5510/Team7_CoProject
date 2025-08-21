@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseAthController : MonoBehaviour
+public class ForAthFactory : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
