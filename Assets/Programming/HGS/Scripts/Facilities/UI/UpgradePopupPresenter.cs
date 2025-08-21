@@ -17,6 +17,8 @@ namespace SHG
     IFacilitiesController facilitiesController;
     [Inject]
     IResourceController resourceController;
+    [Inject]
+    ITimeFlowController timeFlowController;
 
     StatefulComponent view;
     Transform container;
@@ -63,6 +65,7 @@ namespace SHG
       this.resourceController.SpendMoney(
         cost, ExpensesType.FacilityUpgrade);
       facility.Upgrade();
+      this.timeFlowController.ProgressWeek();
     }
 
     void Hide()
