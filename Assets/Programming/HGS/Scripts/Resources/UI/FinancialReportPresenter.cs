@@ -37,8 +37,8 @@ namespace SHG
           }
           this.GetReport(report.Value);
           this.view.SetState((int)StateRole.Shown);
-          this.container.transform.DOMoveY(
-            endValue: 400f,
+          this.container.DOMoveY(
+            endValue: 1500f,
             duration:0.5f)
           .SetEase(Ease.InOutSine);
           }});
@@ -46,7 +46,7 @@ namespace SHG
         (int)ButtonRole.ConfirmButton).Button
         .OnClickAsObservable()
         .Subscribe(_ => {
-          this.container.transform.DOMoveY(
+          this.container.DOMoveY(
             endValue: -500f,
             duration: 0.5f)
           .SetEase(Ease.InOutSine)
