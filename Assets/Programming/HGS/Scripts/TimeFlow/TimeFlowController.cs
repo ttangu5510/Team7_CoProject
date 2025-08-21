@@ -18,7 +18,7 @@ namespace SHG
     public ReactiveProperty<Season> CurrentSeason { get; private set; }
     public ReactiveProperty<int> WeekInYear { get; private set; }
     public ReactiveProperty<int> Year { get; private set; }
-    (int year, int week) start;
+    public (int year, int week) Start { get; private set; }
     int week;
 
     public void SetDate(int year, int weekInYear) {
@@ -35,7 +35,7 @@ namespace SHG
     public TimeFlowController(int year, int week)
     {
       this.week = week - 1;
-      this.start = (year, week);
+      this.Start = (year, week);
       this.WeekInYear =  new (week);
       this.CurrentSeason = new (this.GetSeason(this.week));
       this.Year = new (year);
