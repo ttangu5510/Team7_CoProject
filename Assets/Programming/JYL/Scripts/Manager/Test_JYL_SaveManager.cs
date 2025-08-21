@@ -137,19 +137,30 @@ namespace JYL
                 Debug.LogWarning($"선수 세이브 객체를 찾지 못함_{entity.name}");
             }
         }
-
+#region 선수 영입, 은퇴, 방출
         public void RecruitAthlete(DomAthEntity entity) // 선수 영입 시 현재 세이브 객체에 선수세이브 추가
         {
             AthleteSave athlete = new(entity);
             curSave.athleteSaves.Add(athlete);
         }
 
+        // 은퇴는 파라매터만 바뀌고, 저장됨
+        public void RetireAthlete(DomAthEntity entity)
+        {
+            AthleteSave athlete = curSave.FindAthlete(entity);
+            athlete.state = AthleteState.Retired;
+        }
         public void OutAthlete(DomAthEntity entity) //선수 방출. 세이브 객체에서 삭제
         {
             int index= curSave.athleteSaves.FindIndex(x=>x.id == entity.id);
             if(index >=0) curSave.athleteSaves.RemoveAt(index);
             else Debug.LogWarning($"해당 선수의 세이브데이터가 존재하지 않음{entity.name}");
         }
+#endregion
+
+#region 코치 영입, 방출
+
+#endregion 
     }
 
     [Serializable]

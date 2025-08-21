@@ -12,6 +12,7 @@ namespace JYL
         List<DomAthEntity> FindAll();
         List<DomAthEntity> FindAllRecruited();
         void Save(DomAthEntity entity);
+        void Update(DomAthEntity entity);
         void Delete(DomAthEntity entity);
     }
     public class DomAthRepository : IDomAthRepository // 선수들의 정보를 보관하는 레포지토리 
@@ -64,12 +65,19 @@ namespace JYL
 
         public void Save(DomAthEntity entity) // 선수 영입
         {
-            // TODO: 작성완료해야함
+            saveM.RecruitAthlete(entity); // 선수 세이브 객체 생성
+            // 딕셔너리와 리스트는 알아서 최신화 된다.
+        }
+
+        public void Update(DomAthEntity entity) // 선수의 변동사항을 저장
+        {
+            saveM.UpdateAthleteEntity(entity); // 선수 세이브 객체 최신화
         }
 
         public void Delete(DomAthEntity entity) // 선수 방출
         {
-            // TODO: 작성완료해야함
+            saveM.OutAthlete(entity); // 선수 세이브 객체 삭제
+            // 딕셔너리, 제공하는 리스트는 알아서 최신화 됨.
         }
     }
 }

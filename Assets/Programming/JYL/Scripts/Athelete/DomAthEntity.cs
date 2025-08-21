@@ -91,7 +91,7 @@ public class DomAthEntity : BaseAthEntity
     public AthleteState curState { get; private set; }
     public int leftInjury { get; private set; } // 회복에 필요한 남은 부상 턴
     
-    // 게임을 시작하면, 전체 리스트를 초기화 할 예정. 각 선수들의 초기화에만 쓰임. RP에서 수행함.
+    // 게임을 시작하면, 전체 리스트를 초기화 할 예정. 각 선수들의 초기화에만 쓰임. Factory에서 수행함.
     public void Init(int id, string name, AthleteAffiliation affiliation, AthleteGrade maxGrade, int recruitAge,
         int health, int quickness, int flexibility, int technic, int speed, int balance,
         int retireAge = 28)
