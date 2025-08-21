@@ -7,13 +7,16 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 #endif
 
+public class UIPopupOptions : MonoBehaviour { public bool IsModal = true; }
+
 public class UIManager : MonoBehaviour
 {
     private static UIManager instance;
     public static UIManager Instance => instance;
 
     [Header("Auto-Bind Roots")]
-    [SerializeField] private Transform panelsRoot;      // 비워두면 Panels 안에 들어있는 이름이 Panel.~~ 인 모든 판넬 자동 탐색
+    [SerializeField] private Transform panelsRoot;      // 판넬 루트 - 판넬은 여기에서 생성됨
+    [SerializeField] private Transform popupsRoot;      // 팝업 루트 - 팝업은 여기에서 생성됨
     [SerializeField] private Canvas[] canvasScopes;     // 비워두면 씬의 모든 Canvas에서 이름이 Btn.~~ 인 모든 버튼을 자동 탐색
 
     [Header("Popup")]
@@ -25,6 +28,9 @@ public class UIManager : MonoBehaviour
 
     // ===== 팝업 스택 =====
     private readonly Stack<GameObject> popupStack = new();
+
+    // ===== 팝업 캐시 딕셔너리 =====
+    private readonly Dictionary<string, GameObject> popupPrefabCache = new();
 
     [Header("Toast")]
     [SerializeField] private Transform toastRoot;
@@ -41,13 +47,22 @@ public class UIManager : MonoBehaviour
     private const string PANEL_PREFIX = "Panel.";
     private const string BUTTON_PREFIX = "Btn.";
 
+    // ===== 팝업프리펩 리소스 폴더에서 찾아주는 역할 =====
+    const string POPUP_PREFIX = "Popup.";
+    const string POPUP_FOLDER = "Popups/"; // Resources/Popups/Popup.<Key>.prefab
+
+
+
+
     // 공백제거, 소문자로 변경해주는 함수
     private static string NormalizeKey(string raw)
     {
-        if (string.IsNullOrEmpty(raw)) return string.Empty;
-        
-        return new string(raw.Where(ch => !char.IsWhiteSpace(ch)).ToArray()).ToLowerInvariant();
+        if (string.IsNullOrWhiteSpace(raw)) return string.Empty;
+        return raw.Trim().ToLowerInvariant().Replace(" ", ""); // 내부 공백까지 제거 원치 않으면 Replace 제거
     }
+
+
+
 
     private void Awake()
     {
@@ -63,6 +78,28 @@ public class UIManager : MonoBehaviour
         foreach (var go in panels.Values) go?.SetActive(false);
         popupBlocker?.SetActive(false);
         currentPanelKey = null;
+
+        // popupsRoot 자동 확보
+        if (!popupsRoot)
+        {
+            var found = GameObject.Find("Popups");
+            if (found) popupsRoot = found.transform;
+            else
+            {
+                var go = new GameObject("Popups");
+                var canvas = go.AddComponent<Canvas>();
+                canvas.overrideSorting = true; canvas.sortingOrder = popupBaseOrder;
+                popupsRoot = go.transform;
+            }
+        }
+        // Popups 루트에 CanvasGroup 달아서 레이캐스트 제어 추천
+        if (!popupsRoot.GetComponent<CanvasGroup>()) popupsRoot.gameObject.AddComponent<CanvasGroup>();
+        if (!popupsRoot.GetComponent<GraphicRaycaster>()) popupsRoot.gameObject.AddComponent<GraphicRaycaster>();
+
+
+
+        UpdateBlockerByStack();
+
     }
 
     private void Update()
@@ -140,7 +177,7 @@ public class UIManager : MonoBehaviour
                 continue;
             }
 
-            btn.onClick.RemoveAllListeners();
+            //btn.onClick.RemoveAllListeners(); // <- 인스펙터의 연결을 끊지 않게 변경했음
             btn.onClick.AddListener(() => OpenPanel(key)); // Btn.X → Panel.X
         }
     }
@@ -195,29 +232,28 @@ public class UIManager : MonoBehaviour
     public void ShowPopup(GameObject popup)
     {
         if (!popup) return;
-        if (popupStack.Contains(popup)) return; // 같은 GO 중복 방지
+        if (popupStack.Contains(popup)) return;
 
         popup.SetActive(true);
         popupStack.Push(popup);
-
         UpdatePopupSorting();
-        popupBlocker?.SetActive(true);
+        UpdateBlockerByStack();
     }
 
     public void CloseTopPopup()
     {
-        // 파괴된 참조 정리
         PruneDeadPopups();
         if (popupStack.Count == 0) return;
 
-        // 최상단 팝업 꺼내기
         var top = popupStack.Pop();
-        
-        // 비활성화
-        if (top) top.SetActive(false);
-
+        if (top)
+        {
+            // var p = top.GetComponent<IPopup>(); p?.OnClose(); // 선택
+            top.SetActive(false);
+            SafeDestroy(top); // 인스턴스는 파괴(토스트처럼 누수 방지)
+        }
         UpdatePopupSorting();
-        popupBlocker?.SetActive(popupStack.Count > 0);
+        UpdateBlockerByStack();
     }
 
     public void CloseSpecificPopup(GameObject popup)
@@ -225,7 +261,6 @@ public class UIManager : MonoBehaviour
         PruneDeadPopups();
         if (!popup || popupStack.Count == 0) return;
 
-        // 임시 스택으로 옮기며 특정 팝업만 골라서 닫기
         var temp = new Stack<GameObject>();
         bool closed = false;
 
@@ -234,7 +269,12 @@ public class UIManager : MonoBehaviour
             var p = popupStack.Pop();
             if (!closed && p == popup)
             {
-                if (p) p.SetActive(false);
+                if (p)
+                {
+                    // var ip = p.GetComponent<IPopup>(); ip?.OnClose(); // 선택
+                    p.SetActive(false);
+                    SafeDestroy(p);
+                }
                 closed = true;
                 continue;
             }
@@ -243,7 +283,7 @@ public class UIManager : MonoBehaviour
         while (temp.Count > 0) popupStack.Push(temp.Pop());
 
         UpdatePopupSorting();
-        popupBlocker?.SetActive(popupStack.Count > 0);
+        UpdateBlockerByStack();
     }
 
     // 스택 안에 파괴된(GameObject == null) 항목들을 제거
@@ -266,23 +306,96 @@ public class UIManager : MonoBehaviour
         {
             if (!p) continue;
 
-            // 1) Canvas 확보
             var c = p.GetComponent<Canvas>();
-            if (!c) c = p.AddComponent<Canvas>();
-            c.overrideSorting = true;
+            if (!c)
+            {
+                c = p.AddComponent<Canvas>();
+                c.overrideSorting = true;
+
+                if (!p.GetComponent<UnityEngine.UI.GraphicRaycaster>())
+                    p.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+            }
+            else
+            {
+                c.overrideSorting = true;
+                if (!p.GetComponent<UnityEngine.UI.GraphicRaycaster>())
+                    p.AddComponent<UnityEngine.UI.GraphicRaycaster>();
+            }
+
             c.sortingOrder = popupBaseOrder + i * popupOrderStep;
-
-            // 2) GraphicRaycaster 확보 (이게 없으면 버튼 상호작용 X)
-            var gr = p.GetComponent<GraphicRaycaster>();
-            if (!gr) gr = p.AddComponent<GraphicRaycaster>();
-
-            // (선택) World Space 쓰면 이벤트 카메라도 지정
-            // if (c.renderMode == RenderMode.ScreenSpaceCamera && c.worldCamera == null)
-            //     c.worldCamera = Camera.main;
-
             i++;
         }
     }
+
+    public class UIPopupOptions : MonoBehaviour { public bool IsModal = true; }
+
+    private bool HasModalPopup()
+    {
+        foreach (var p in popupStack)
+        {
+            if (!p) continue;
+            var opt = p.GetComponent<UIPopupOptions>();
+            if (opt == null || opt.IsModal) return true;
+        }
+        return false;
+    }
+
+
+    private void UpdateBlockerByStack()
+    {
+        bool anyModal = HasModalPopup();
+        var cg = popupsRoot.GetComponent<CanvasGroup>();
+        if (cg)
+        {
+            cg.blocksRaycasts = anyModal; // 팝업 있을 때만 뒤 입력 차단
+            cg.interactable = anyModal;
+        }
+        if (popupBlocker) popupBlocker.SetActive(anyModal);
+    }
+
+
+    // ============ 프리팹 로딩 ============
+    // 1) 캐시 → 2) Resources.Load("Popups/Popup.<Key>")
+    private GameObject LoadPopupPrefab(string rawKey)
+    {
+        var key = NormalizeKey(rawKey);
+        if (string.IsNullOrEmpty(key)) return null;
+
+        if (popupPrefabCache.TryGetValue(key, out var cached) && cached) return cached;
+
+        var path = POPUP_FOLDER + POPUP_PREFIX + rawKey; // 대소문자 구분 없음 처리 원하면 NormalizeKey로 일치화
+        var prefab = Resources.Load<GameObject>(path);
+
+        // Addressables 사용 시(선택):
+        // var handle = Addressables.LoadAssetAsync<GameObject>($"Popup.{rawKey}");
+        // var prefab = handle.WaitForCompletion();
+
+        if (!prefab)
+        {
+            Debug.LogWarning($"[UIManager] Popup prefab not found at Resources/{path}");
+            return null;
+        }
+        popupPrefabCache[key] = prefab;
+        return prefab;
+    }
+
+    // ============ 팝업 열기(키 기반) ============
+    public GameObject ShowPopup(string rawKey, bool modal = true, object initData = null)
+    {
+        var prefab = LoadPopupPrefab(rawKey);
+        if (!prefab) return null;
+
+        var go = Instantiate(prefab, popupsRoot);
+        // NonModal 처리(태그나 플래그로 구분하고 싶으면 여기서 적용)
+        if (!modal) go.tag = "NonModal";
+
+        // 팝업 스크립트가 있으면 초기화 데이터 넘기기(선택)
+        // var p = go.GetComponent<IPopup>(); p?.OnOpen(initData);
+
+        ShowPopup(go); // 아래 GO 기반 오버로드 재사용
+        return go;
+    }
+
 
     // ===================== 토스트 =====================
     public void ShowToast(string msg)
@@ -369,5 +482,33 @@ public class UIManager : MonoBehaviour
         string key = NormalizeKey(rawKey);
         if (string.IsNullOrEmpty(key)) return;
         panels.Remove(key);
+    }
+
+    public void TestCode()
+    {
+        ShowPopup("Test");
+    }
+
+   
+
+    // ===== 버그 해결을 위한 임시 안전제거 코드 =====
+    private System.Collections.IEnumerator _DestroyNextFrame(GameObject go)
+    {
+        yield return null;              // 인스펙터가 selection 변경할 틈 주기
+        if (go) Destroy(go);
+    }
+
+    private void SafeDestroy(GameObject go)
+    {
+        if (!go) return;
+
+        // 에디터에서 현재 선택이 이 팝업(혹은 자식)이라면 선택 해제
+#if UNITY_EDITOR
+        var sel = UnityEditor.Selection.activeGameObject;
+        if (sel && (sel == go || sel.transform.IsChildOf(go.transform)))
+            UnityEditor.Selection.activeGameObject = null;
+#endif
+
+        StartCoroutine(_DestroyNextFrame(go));   // 즉시 Destroy 대신 다음 프레임에 파괴
     }
 }
