@@ -40,9 +40,10 @@ namespace SHG
         .AsSingle()
         .WithArguments(ResourceDummyData.Data);
 
-      var touchControllerObject = new GameObject(nameof(TouchController));
+      var touchControllerObject = this.Container.InstantiatePrefab(
+        Resources.Load("TouchController"));
       DontDestroyOnLoad(touchControllerObject);
-      TouchController touchController = touchControllerObject.AddComponent<TouchController>();
+      TouchController touchController = touchControllerObject.GetComponent<TouchController>();
 
       this.Container.Bind<TouchController>()
         .FromInstance(touchController)

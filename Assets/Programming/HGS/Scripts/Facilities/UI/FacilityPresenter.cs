@@ -28,8 +28,16 @@ namespace SHG
       var closeButton = this.view.GetItem<ButtonReference>(
         (int)ButtonRole.CloseButton).Button;
       closeButton.OnClickAsObservable()
-        .Subscribe(_ => this.facilitiesController.UnSelectFacility());
-      this.view.SetRawTextByRole((int)TextRole.CloseButtonLabel, "닫기");
+        .Subscribe(_ => {
+            this.transform.DOMoveY(
+              endValue: -500f,
+              duration: 0.5f)
+            .SetEase(Ease.InOutSine)
+            .OnComplete(() => {
+              this.view.SetState((int)StateRole.Hidden);
+              this.facilitiesController.UnSelectFacility();
+              });
+          });
     }
 
     void SubscribeFacility()
@@ -54,15 +62,7 @@ namespace SHG
 
             };
             this.view.SetState((int)state);
-          }
-          else { 
-            this.transform.DOMoveY(
-              endValue: -500f,
-              duration: 0.5f)
-            .SetEase(Ease.InOutSine)
-            .OnComplete(() => this.view.SetState((int)StateRole.Hidden));
-          }
-          });
+          }});
     }
 
     // Start is called before the first frame update
