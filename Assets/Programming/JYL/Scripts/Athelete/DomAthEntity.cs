@@ -99,7 +99,7 @@ public class DomAthEntity : BaseAthEntity
     {
         // 여기서 CSV에서 데이터를 읽어와 Init으로 전체 파라매터를 채움
         this.id = id;
-        this.entityName = name;
+        entityName = name;
         this.affiliation = affiliation;
         this.maxGrade = maxGrade;
         this.recruitAge = recruitAge;

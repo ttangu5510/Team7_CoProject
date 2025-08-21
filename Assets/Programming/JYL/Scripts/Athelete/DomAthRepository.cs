@@ -26,7 +26,7 @@ namespace JYL
         public DomAthRepository(Test_JYL_SaveManager saveManager)
         {
             saveM = saveManager;
-            // CSV 로드
+            // TODO : CSV 로드
             // var csvData = ;
             // foreach(var row in csvData)
             // {

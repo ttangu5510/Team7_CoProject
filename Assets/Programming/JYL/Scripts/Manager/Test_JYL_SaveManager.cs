@@ -172,6 +172,7 @@ namespace JYL
         public int progressWeek;
         public string saveTime;
         public List<AthleteSave> athleteSaves;
+        public List<CoachSave> coachSaves;
 
         public void Init(string name) // 세이브 파일 최초 생성시에 사용
         {

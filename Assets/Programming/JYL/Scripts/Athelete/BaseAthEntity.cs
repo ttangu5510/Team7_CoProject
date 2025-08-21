@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace JYL
 {
-    public abstract class BaseAthEntity : MonoBehaviour
+    public abstract class BaseAthEntity
     {
         public int id { get; protected set; } // 고유식별번호
         public string entityName { get; protected set; } // 이름
@@ -18,7 +18,7 @@ namespace JYL
 
     public enum AthleteGrade // 선수 성장 등급
     {
-        F,E,D,C,B,A
+        F,E,D,C,B,A,S,SS,SSS
     }
 
     public enum Ability
