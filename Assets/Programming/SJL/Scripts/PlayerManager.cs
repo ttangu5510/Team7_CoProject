@@ -43,8 +43,8 @@ namespace SJL
                 PlayerUI ui = go.GetComponent<PlayerUI>();
                 ui.SetPlayer(playerList[i]);
 
-                ui.playerInormationPanel = playerInformationPanel; // << 여기가 핵심!
-                // (필요하면) Player 정보도 패널에 전달
+                ui.playerInormationPanel = playerInformationPanel;
+                // Player 정보도 패널에 전달
                 ui.playerData = playerList[i];
             }
         }
