@@ -15,5 +15,6 @@ public enum StateRole
     MedicalCenter = -491984256,
     Lounge = 1744177024,
     ScoutCenter = 1526462901,
+    ResourceShown = -252941437,
 
 }
