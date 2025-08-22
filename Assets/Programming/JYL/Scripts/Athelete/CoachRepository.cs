@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,10 +30,10 @@ namespace JYL
             //      coachDict.Add(entity.name,entity);
             // }
             
-            for (int i = 0; i < 25; i++)
-            {
-                CoachEntity entity = Coach
-            }
+            //for (int i = 0; i < 25; i++)
+            //{
+            //    CoachEntity entity = Coach
+            //}
         }
         public CoachEntity FindByName(string entityName)
         {
