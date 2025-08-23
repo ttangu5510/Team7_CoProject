@@ -7,6 +7,9 @@ namespace SHG
 {
   using Season = ITimeFlowController.Season;
 
+  /// <summary>
+  /// 사용자의 재화를 관리하는 역할, IResourceController를 참고
+  /// </summary>
   public class ResourceController: IResourceController
   {
     ITimeFlowController timeFlowController;

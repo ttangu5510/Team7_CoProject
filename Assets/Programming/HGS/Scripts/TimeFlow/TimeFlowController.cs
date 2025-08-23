@@ -19,6 +19,7 @@ namespace SHG
     public ReactiveProperty<int> WeekInYear { get; private set; }
     public ReactiveProperty<int> Year { get; private set; }
     public (int year, int week) Start { get; private set; }
+    public int YearPassedAfterStart => (this.Start.year - this.Year.Value + 1);
     int week;
 
     public void SetDate(int year, int weekInYear) {
