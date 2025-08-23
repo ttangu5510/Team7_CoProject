@@ -32,7 +32,7 @@ namespace JYL
             
             for (int i = 0; i < 25; i++)
             {
-                CoachEntity entity = Coach
+                //CoachEntity entity = Coach;
             }
         }
         public CoachEntity FindByName(string entityName)

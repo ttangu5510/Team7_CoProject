@@ -1,15 +1,23 @@
 using UnityEngine;
 using Zenject;
+using JYL;
 
 namespace SHG
 {
   public class InGameSceneInstaller : MonoInstaller
   {
-    public override void InstallBindings()
-    {
+    public override void InstallBindings() {
 
       /***************************************************/
-      //   FIXME: Remove Dummy data
+      //   FIXME: Remove dummy data
+      /*
+        this.Container.Bind<DomAthService>()
+        .AsSingle()
+        .WithArguments(
+          this.CreateDomesticAthleteService())
+        .NonLazy();
+      */
+
       /***************************************************/
       this.Container.Bind<IAthleteController>()
         .To<DummyAthleteController>()
@@ -48,6 +56,25 @@ namespace SHG
       this.Container.Bind<TouchController>()
         .FromInstance(touchController)
         .AsSingle();
+
+      /***************************************************/
+      //    TODO: Load match data
+      /***************************************************/
+
+      this.Container.Bind<IMatchController>()
+        .To<MatchController>()
+        .AsSingle()
+        .WithArguments(MatchDummyData.DummyData);
+    }
+
+    DomAthService CreateDomesticAthleteService()
+    {
+      var saveObject = new GameObject(nameof(Test_JYL_SaveManager));
+      DontDestroyOnLoad(saveObject);
+      var saveManager = saveObject.AddComponent<Test_JYL_SaveManager>();
+      saveManager.Init();
+      var repository = new DomAthRepository(saveManager);
+      return (new DomAthService(repository));
     }
   }
 }
