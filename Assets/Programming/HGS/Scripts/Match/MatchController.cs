@@ -85,11 +85,11 @@ namespace SHG
       return (this.scheduler.IsRegistered(match));
     }
 
-    public void StartNextMatch()
+    public void EnterNextMatch()
     {
       if (this.NextMatch.Value == null) {
       #if UNITY_EDITOR
-        throw (new ApplicationException($"{nameof(StartNextMatch)}: {nameof(NextMatch)} is null"));
+        throw (new ApplicationException($"{nameof(EnterNextMatch)}: {nameof(NextMatch)} is null"));
       #else
         return ;
       #endif

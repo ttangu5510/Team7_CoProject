@@ -36,9 +36,11 @@ namespace SHG
     public ReactiveProperty<int> NumberOfNationalAthlete { get; private set; }
     public ReactiveProperty<int> NumberOfCoach { get; private set; }
     public ReactiveCollection<DomAthEntity> Athletes { get; private set; }
+    Dictionary<int, DomAthEntity> athleteTable;
 
     public DummyAthleteController()
     {
+      this.athleteTable = new ();
       this.LoadData();
       this.CountAthletes();
       this.NumberOfCoach = new (1);
@@ -89,8 +91,14 @@ namespace SHG
           balance: athleteData["균형감각"].intValue
           );
         athletes.Add(athlete);
+        this.athleteTable.Add(athlete.id, athlete);
       }
       this.Athletes = new (athletes);
+    }
+
+    public bool TryGetAthleteBy(int id, out DomAthEntity athlete)
+    {
+      return (this.athleteTable.TryGetValue(id, out athlete));
     }
 
     AthleteAffiliation GetAffliation(string grade)

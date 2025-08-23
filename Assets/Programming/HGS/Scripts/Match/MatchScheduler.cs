@@ -70,7 +70,7 @@ namespace SHG
       }
       var date = new MatchData.Date { Year = year, Week = week };
       var nextMatchDate = this.matchesOrderedByDate[this.NextMatchIndex].DateOfEvent; 
-      if (date < nextMatchDate) {
+      if (date < nextMatchDate || date == nextMatchDate) {
         return (this.matchesOrderedByDate[this.NextMatchIndex]); 
       }
       for (int i = this.NextMatchIndex + 1; i < this.matchesOrderedByDate.Count; ++i) {

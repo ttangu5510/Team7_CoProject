@@ -26,9 +26,9 @@ namespace SHG
     public ReactiveCollection<MatchData> RegisteredMatches { get; }
 
     /// <summary>
-    /// 예정된 경기를 실행하는 기능 (현재 해당 경기를 실행할 수 있는지는 확인하지 않음)
+    /// 예정된 경기를 시작하는 기능 (현재 해당 경기를 실행할 수 있는지는 확인하지 않음)
     /// </summary>
-    public void StartNextMatch();
+    public void EnterNextMatch();
 
     /// <summary> 경기 참가 등록 </summary>
     public void Register(in MatchData match);

@@ -107,7 +107,6 @@ namespace SHG
       matches[matches.Length - 1] = new MatchData {
         Name = DOMESTIC_WINTER_CUP,
         MatchType = MatchType.Domestic,
-        SportType = null,
         MemberContries = DOMESTIC,
         Rewards = EMPTY_REWARDS,
         DateOfEvent = new MatchData.Date{ Year = 1, Week = 39 }
@@ -152,7 +151,6 @@ namespace SHG
     {
       matches[matches.Length - 2] = new MatchData {
         Name = PRESIDENT_CUP,
-        SportType = null,
         MemberContries = DOMESTIC,
         MatchType = MatchType.Domestic,
         Rewards = EMPTY_REWARDS,
@@ -160,7 +158,6 @@ namespace SHG
       };
       matches[matches.Length - 1] = new MatchData {
         Name = lastMatch,
-        SportType = null,
         MatchType = MatchType.International,
         MemberContries = DEFAULT_COUNTRIES,
         Rewards = EMPTY_REWARDS,
@@ -178,7 +175,6 @@ namespace SHG
         }
         matches[i] = new MatchData {
           Name = name,
-          SportType = null,
           MatchType = MatchType.Friendly,
           MemberContries = DOMESTIC,
           Rewards = EMPTY_REWARDS,

@@ -1,9 +1,12 @@
+using System;
+using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 using UniRx;
 using EditorAttributes;
+using JYL;
 
 namespace SHG 
 {
@@ -14,20 +17,43 @@ namespace SHG
     IAthleteController athleteController;
     [Inject]
     ITimeFlowController timeFlowController;
+    CompositeDisposable subscribeMatch;
 
     AthleteDummyData athleteDummyData;
-    [SerializeField]
-    string nextMatchName;
-    [SerializeField]
+    Match CurrentMatch 
+    {
+      get => this.currentMatch;
+      set {
+        this.currentMatch = value;
+        if (value != null) {
+          this.currentMatchText = JsonUtility.ToJson(value);
+        }
+        else {
+          this.currentMatchText = string.Empty;
+        }
+      }
+    }
+    [SerializeField] [ReadOnly] [MessageBox(nameof(currentMatchText), conditionName: nameof(isShowingCurrentMatch), stringInputMode: StringInputMode.Dynamic)]
     Match currentMatch;
-    [SerializeField] [ReadOnly]
-    bool isMatchWeek;
+    [SerializeField] [HideInInspector]
+    string currentMatchText;
     [SerializeField]
     List<MatchData> scheduledMatches;
     [SerializeField]
     List<MatchData> registeredMatch;
-    [SerializeField]
     List<IContenderAthlete> koreaContenders;
+    [SerializeField] [ReadOnly]
+    string[] sports = Enum.GetNames(typeof(SportType));
+
+    [SerializeField] [ReadOnly]
+    List<string> athletesIds;
+    [SerializeField] [ReadOnly]
+    string currentMatchAthleteText;
+    [SerializeField] [ReadOnly]
+    bool isMatchStartable;
+    [SerializeField] [ReadOnly]
+    string nextMatchName;
+    bool isShowingCurrentMatch => this.currentMatch != null;
 
     // Start is called before the first frame update
     void Start() {
@@ -35,6 +61,8 @@ namespace SHG
       this.athleteDummyData = new ();
       this.koreaContenders = new ();
       this.registeredMatch = new ();
+      this.athletesIds = this.athleteController.Athletes.ToList().ConvertAll(
+        athlete => athlete.id.ToString());
 
       foreach (var athlete in this.athleteController.Athletes) {
         this.koreaContenders.Add(new ConvertedDomesticAthlete(athlete));
@@ -45,12 +73,13 @@ namespace SHG
         week => {
         if (this.matchController.NextMatch.Value != null) {
           var nextMatch = this.matchController.NextMatch.Value.Value;
-          this.isMatchWeek = (
+          this.isMatchStartable = (
             this.timeFlowController.YearPassedAfterStart == nextMatch.DateOfEvent.Year &&
-            week == nextMatch.DateOfEvent.Week);
+            week == nextMatch.DateOfEvent.Week &&
+            this.registeredMatch.Contains(nextMatch));
         }
         else {
-          this.isMatchWeek = false;
+          this.isMatchStartable = false;
         }}
         );
       this.matchController.NextMatch.Subscribe(
@@ -58,13 +87,13 @@ namespace SHG
           if (arg != null) {
             var nextMatch = arg.Value;
             this.nextMatchName = nextMatch.Name;
-            this.isMatchWeek = (
+            this.isMatchStartable = (
               this.timeFlowController.YearPassedAfterStart == nextMatch.DateOfEvent.Year &&
               this.timeFlowController.WeekInYear.Value == nextMatch.DateOfEvent.Week);
           }
           else {
             this.nextMatchName = string.Empty;
-            this.isMatchWeek = false;
+            this.isMatchStartable = false;
           }
         });
       this.scheduledMatches = new (this.matchController.ScheduledMatches);
@@ -75,7 +104,31 @@ namespace SHG
           });
 
       this.matchController.CurrentMatch.Subscribe(
-        match => this.currentMatch = match);
+        match => {
+          this.CurrentMatch = match;
+          if (match != null) {
+            this.subscribeMatch?.Dispose();
+            this.subscribeMatch = new ();
+            match.ObserveEveryValueChanged(
+              match => UniRx.Unit.Default)
+            .Subscribe(_ => 
+              this.currentMatchText = JsonUtility.ToJson(this.currentMatch))
+            .AddTo(this.subscribeMatch);
+            
+            match.UserAthletes.ObserveAdd()
+            .Select(_ => UniRx.Unit.Default)
+            .Merge(match.UserAthletes.ObserveRemove()
+              .Select(_ => UniRx.Unit.Default))
+            .Subscribe(_ => {
+              this.currentMatchAthleteText = this.GetMatchAthleteText(match.UserAthletes);
+              })
+            .AddTo(this.subscribeMatch);
+          }
+          else {
+            this.currentMatchText = string.Empty;
+            this.currentMatchAthleteText = string.Empty;
+          }
+        });
 
       var onAdded = this.matchController.RegisteredMatches
         .ObserveAdd()
@@ -85,6 +138,15 @@ namespace SHG
         .Select(_ => UniRx.Unit.Default);
       onAdded.Merge(onRemoved)
         .Subscribe(_ => this.registeredMatch = this.matchController.RegisteredMatches.ToList());
+    }
+
+    string GetMatchAthleteText(ReactiveDictionary<SportType, DomAthEntity> matchAthletes)
+    {
+      var builder = new StringBuilder();
+      foreach (var (sport, athlete) in matchAthletes) {
+        builder.Append($"[{sport}: {athlete.id}] "); 
+      }
+      return (builder.ToString());
     }
 
     List<IContenderAthlete> GetContenderAthletes(Country country)
@@ -98,10 +160,10 @@ namespace SHG
     }
 
 
-    [Button(nameof(isMatchWeek), ConditionResult.EnableDisable)]
-    void StartMatch()
+    [Button(nameof(isMatchStartable), ConditionResult.EnableDisable)]
+    void EnterMatch()
     {
-      this.matchController.StartNextMatch(); 
+      this.matchController.EnterNextMatch(); 
     }
 
     [Button]
@@ -116,6 +178,34 @@ namespace SHG
     {
       var match = this.scheduledMatches[index];
       this.matchController.UnRegister(match);
+    }
+
+    [Button]
+    void RegisterAthlete(int id, int sportIndex)
+    {
+      if (sportIndex < 0 || sportIndex >= Enum.GetValues(typeof(SportType)).Length) {
+        throw (new ArgumentException($"{nameof(RegisterAthlete)}: {sportIndex} is in range of {nameof(SportType)}"));
+      }
+      var sportType = (SportType)sportIndex;
+      if (!this.athleteController.TryGetAthleteBy(
+          id, out DomAthEntity athlete)) {
+        throw (new ApplicationException(nameof(RegisterAthlete)));
+      }
+      this.currentMatch.SelectAthlete(
+        athlete, sportType);
+    }
+
+    [Button]
+    void UnRegisterAthlete(int sportIndex)
+    {
+      if (sportIndex < 0 || sportIndex >= Enum.GetValues(typeof(SportType)).Length) {
+        throw (new ArgumentException($"{nameof(UnRegisterAthlete)}: {sportIndex} is in range of {nameof(SportType)}"));
+      }
+      var sportType = (SportType)sportIndex;
+      if (!this.currentMatch.UserAthletes.ContainsKey(sportType)) {
+        throw (new ArgumentException($"{nameof(UnRegisterMatchAt)}: {sportType} is not regiested athlete")); 
+        }
+      this.currentMatch.UnSelectAthlete(sportType);
     }
   }
 }

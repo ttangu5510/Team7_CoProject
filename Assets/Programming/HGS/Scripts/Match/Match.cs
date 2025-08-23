@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
@@ -9,17 +10,24 @@ namespace SHG
   [Serializable]
   public class Match 
   {
-    [SerializeField]
-    public MatchData Data { get; private set; }
-    [SerializeField]
+    public MatchData Data 
+    { 
+      get => this.data;
+      private set {
+        this.data = value;
+      } 
+    }
+
     public ReactiveProperty<Nullable<SportType>> CurrentSport { get; private set; } 
     [SerializeField]
     public ReactiveCollection<SportType> EndedSports;
     [SerializeField]
     public ReactiveDictionary<SportType, DomAthEntity> UserAthletes { get; set; }
     public ReactiveProperty<bool> IsMatchStartable { get; private set; }
-    Dictionary<SportType, ReactiveCollection<IContenderAthlete>> contenderAthletesBySport;
+    public Dictionary<SportType, ReactiveCollection<IContenderAthlete>> ContenderAthletesBySport { get; private set; }
     Dictionary<Country, List<IContenderAthlete>> contenderAthletesByContries;
+    [SerializeField]
+    MatchData data;
     HashSet<IContenderAthlete> participatedAthletes;
 
     public Match(MatchData data, 
@@ -31,13 +39,29 @@ namespace SHG
       this.IsMatchStartable = new (false);
       this.CurrentSport = new (null);
       this.UserAthletes = new ();
-      this.UserAthletes = new ();
       this.FillCountryContenders(contenderGetter);
       this.FillSportContenders();
     }
 
     public void SelectAthlete(DomAthEntity athlete, SportType sportType)
     {
+      if (this.Data.IsSingleSport && 
+        sportType != this.Data.SportType) {
+        #if UNITY_EDITOR
+        throw (new ArgumentException($"{nameof(SelectAthlete)}: {sportType} is same with {nameof(SportType)} {this.Data.SportType}"));
+        #else 
+        return ; 
+        #endif
+      }
+      if (this.UserAthletes.Any(
+          (registed) => registed.Value == athlete && 
+          registed.Key != sportType)) {
+        #if UNITY_EDITOR
+        throw (new ArgumentException($"{nameof(SelectAthlete)}: {athlete} is already selected for other sport"));
+        #else 
+        return ; 
+        #endif
+      }
       this.UserAthletes[sportType] = athlete;
       this.IsMatchStartable.Value = this.IsStartable();
     }
@@ -52,7 +76,7 @@ namespace SHG
     {
       #if UNITY_EDITOR
       if (this.Data.IsSingleSport &&
-        sportType != this.Data.SportType.Value) {
+        sportType != this.Data.SportType) {
         throw (new ArgumentException($"{nameof(StartSport)}: {sportType} is not selectable"));
       } 
       else if (this.EndedSports.Contains(sportType)) {
@@ -79,7 +103,7 @@ namespace SHG
     bool IsStartable()
     {
       if (this.Data.IsSingleSport) {
-        return (this.UserAthletes.ContainsKey(this.Data.SportType.Value));
+        return (this.UserAthletes.ContainsKey(this.Data.SportType));
       }
       else {
         if (Array.FindIndex(MatchData.DefaultSports, 
@@ -102,9 +126,9 @@ namespace SHG
 
     void FillSportContenders()
     {
-      this.contenderAthletesBySport = new ();
+      this.ContenderAthletesBySport = new ();
       if (this.Data.IsSingleSport) {
-        this.FillSingleSportContenders(this.Data.SportType.Value);
+        this.FillSingleSportContenders(this.Data.SportType);
       }      
       else {
         foreach (var sport in MatchData.DefaultSports) {
@@ -129,7 +153,7 @@ namespace SHG
       foreach (var country in this.Data.MemberContries) {
          contenders.Add(this.SelectContender(sportType, country));
       }
-      this.contenderAthletesBySport[sportType] = new (contenders);
+      this.ContenderAthletesBySport[sportType] = new (contenders);
     }
 
     // TODO: 상대 선수 선택 알고리즘

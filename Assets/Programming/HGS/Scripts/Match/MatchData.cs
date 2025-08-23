@@ -72,8 +72,10 @@ namespace SHG
 
     [SerializeField]
     public MatchType MatchType;
+
+    /// <summary> 단일 종목인 경우의 해당 종목 </summary>
     [SerializeField]
-    public Nullable<SportType> SportType; 
+    public SportType SportType; 
     [SerializeField]
     public Country[] MemberContries;
     [SerializeField]
