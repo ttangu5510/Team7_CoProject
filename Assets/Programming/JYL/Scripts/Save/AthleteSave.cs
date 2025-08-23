@@ -8,6 +8,7 @@ namespace JYL
     public class AthleteSave // json에 저장할 선수의 정보 클래스
     {
         public int id;
+        public int age;
         
         public int health;
         public int quickness;
@@ -16,29 +17,38 @@ namespace JYL
         public int speed;
         public int balance;
         public int fatigue;
-        
-        public int leftInjury;
-        public bool isRecruited;
-        public bool isInjured;
-        public bool isRetired;
 
-        public AthleteSave(int id, int health, int quickness, int flexibility, int technic, int speed,int balance,int fatigue, 
-            int leftInjury, bool isRecruited, bool isInjured, bool isRetired)
+        public AthleteState state;
+
+        public AthleteSave(DomAthEntity entity) // 생성자. 선수 정보 초기화
         {
-            this.id = id;
+            id = entity.id;
+            age = entity.curAge;
             
-            this.health = health;
-            this.quickness = quickness;
-            this.flexibility = flexibility;
-            this.technic = technic;
-            this.speed = speed;
-            this.balance = balance;
-            this.fatigue = fatigue;
+            health = entity.stats.health;
+            quickness = entity.stats.quickness;
+            flexibility = entity.stats.flexibility;
+            technic = entity.stats.technic;
+            speed = entity.stats.speed;
+            balance = entity.stats.balance;
+            fatigue = entity.stats.fatigue;
+
+            state = entity.curState;
+        }
+
+        public void UpdateStatus(DomAthEntity entity) // 선수 정보 최신화
+        {
+            age = entity.curAge;
             
-            this.leftInjury = leftInjury;
-            this.isRecruited = isRecruited;
-            this.isInjured = isInjured;
-            this.isRetired = isRetired;
+            health = entity.stats.health;
+            quickness = entity.stats.quickness;
+            flexibility = entity.stats.flexibility;
+            technic = entity.stats.technic;
+            speed = entity.stats.speed;
+            balance = entity.stats.balance;
+            fatigue = entity.stats.fatigue;
+            
+            state =  entity.curState;
         }
     }
 }
