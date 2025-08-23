@@ -28,5 +28,7 @@ public enum TextRole
     Description = 873740972,
     BeforeStageLabel = 1378117927,
     AfterStageLabel = 355547868,
+    WeekLabel = -2051126176,
+    MatchLabel = -898335799,
 
 }

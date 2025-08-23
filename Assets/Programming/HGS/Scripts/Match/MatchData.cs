@@ -3,59 +3,13 @@ using UnityEngine;
 
 namespace SHG
 {
+
   /// <summary>
   /// 각 경기에 대한 정보
   /// </summary>
   [Serializable]
   public struct MatchData 
   {
-    /// <summary> 경기가 시작되는 일자 </summary>
-    [Serializable]
-    public struct Date
-    {
-      /// <summary> 경기가 시작되는 연차 (1년차부터 해당) </summary>
-      public int Year;
-      /// <summary> 경기가 시작되는 주차 (1주차부터 해당) </summary>
-      public int Week;
-
-      public override bool Equals(object obj) {
-        return base.Equals(obj);
-      }
-
-      public override int GetHashCode() {
-        return (this.Year * 100 + this.Week);
-      }
-
-      public override string ToString() {
-        return ($"[{nameof(MatchData)}.{nameof(Date)}; {nameof(Year)}:{this.Year}; {nameof(Week)}:{this.Week}]");
-      }
-
-      public static bool operator== (Date dateA, Date dateB)
-      {
-        return (dateA.Year == dateB.Year && dateA.Week == dateB.Week);
-      }
-
-      public static bool operator!= (Date dateA, Date dateB)
-      {
-        return (!(dateA == dateB));
-      }
-
-      public static bool operator< (Date dateA, Date dateB)
-      {
-        if (dateA.Year == dateB.Year) {
-          return (dateA.Week < dateB.Week);
-        }
-        return (dateA.Year < dateB.Year);
-      }
-
-      public static bool operator> (Date dateA, Date dateB)
-      {
-        if (dateA.Year == dateB.Year) {
-          return (dateA.Week > dateB.Week);
-        }
-        return (dateA.Year > dateB.Year);
-      }
-    }
 
     /// <summary>
     /// 기본 스포츠 종목: 스키점프, 스켈레톤, 피겨 스케이팅, 스피드 스케이팅
@@ -83,7 +37,7 @@ namespace SHG
     [SerializeField]
     public string Name;
     [SerializeField]
-    public Date DateOfEvent;
+    public GameDate DateOfEvent;
     public bool IsMandatory => (this.MatchType != MatchType.Friendly);
     public bool IsSingleSport => (this.MatchType == MatchType.SingleSport);
 

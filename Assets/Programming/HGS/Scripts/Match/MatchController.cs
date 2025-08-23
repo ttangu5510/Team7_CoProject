@@ -98,6 +98,11 @@ namespace SHG
       this.CurrentMatch.Value = this.CreateMatch(this.NextMatch.Value.Value);
     }
 
+    public bool TryGetMatchFor(in GameDate gameDate, out MatchData matchData)
+    {
+      return (this.scheduler.TryGetMatchFor(gameDate, out matchData));
+    }
+
     Match CreateMatch(MatchData data)
     {
       var match = new Match(

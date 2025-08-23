@@ -3,12 +3,14 @@ using System.Collections.Generic;
 
 namespace SHG
 {
+
   public class MatchScheduler 
   {
     List<MatchData> matchesOrderedByDate;  
     public int MatchCount => this.matchesOrderedByDate.Count;
     public int NextMatchIndex { get; private set; }
     HashSet<MatchData> registeredMatches;
+    Dictionary<GameDate, MatchData> allMatches;
 
     // TODO: Load registered matches from save data
     public MatchScheduler(
@@ -17,8 +19,9 @@ namespace SHG
       int startWeek)
     {
       this.matchesOrderedByDate = new List<MatchData>();
+      this.allMatches = new ();
       this.registeredMatches = new ();
-      var startDate = new MatchData.Date {
+      var startDate = new GameDate {
         Year = startYear,
         Week = startWeek
       };
@@ -26,6 +29,7 @@ namespace SHG
         if (match.DateOfEvent > startDate) {
           this.matchesOrderedByDate.Add(match);
         }
+        this.allMatches.Add(match.DateOfEvent, match);
       }
       this.matchesOrderedByDate.Sort((a, b) => { 
         if (a.DateOfEvent == b.DateOfEvent) {
@@ -63,12 +67,17 @@ namespace SHG
       return (this.matchesOrderedByDate[index]);
     }
 
+    public bool TryGetMatchFor(in GameDate gameDate, out MatchData matchData)
+    {
+      return (this.allMatches.TryGetValue(gameDate, out matchData));
+    }
+
     public Nullable<MatchData> GetNextMatch(int year, int week)
     {
       if (this.NextMatchIndex >= this.matchesOrderedByDate.Count) {
         return (null);
       }
-      var date = new MatchData.Date { Year = year, Week = week };
+      var date = new GameDate { Year = year, Week = week };
       var nextMatchDate = this.matchesOrderedByDate[this.NextMatchIndex].DateOfEvent; 
       if (date < nextMatchDate || date == nextMatchDate) {
         return (this.matchesOrderedByDate[this.NextMatchIndex]); 

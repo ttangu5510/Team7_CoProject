@@ -2,7 +2,6 @@ using System;
 
 namespace SHG
 {
-  using Season = ITimeFlowController.Season;
 
   /// <summary>
   /// 한 계절 동안의 수익금

@@ -16,5 +16,14 @@ public enum StateRole
     Lounge = 1744177024,
     ScoutCenter = 1526462901,
     ResourceShown = -252941437,
+    MatchShown = 106456724,
+    MatchHidden = -598016931,
+    Spring = 825890865,
+    Summer = -1474147607,
+    Fall = 405905399,
+    Winter = -1623770901,
+    SingleSportMatch = 1568043727,
+    AutonomyMatch = -2092044327,
+    MandatoryMatch = -177531802,
 
 }

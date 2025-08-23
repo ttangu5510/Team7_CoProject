@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace SHG
 {
+
   public static class MatchDummyData 
   {
     static System.Random RAND = new ();
@@ -100,7 +101,7 @@ namespace SHG
           SportType = singleMatches[i].type,
           MemberContries = DOMESTIC,
           Rewards = EMPTY_REWARDS,
-          DateOfEvent = new MatchData.Date {
+          DateOfEvent = new GameDate {
             Year = 1, Week = singleMatches[i].week }
         }; 
       }
@@ -109,7 +110,7 @@ namespace SHG
         MatchType = MatchType.Domestic,
         MemberContries = DOMESTIC,
         Rewards = EMPTY_REWARDS,
-        DateOfEvent = new MatchData.Date{ Year = 1, Week = 39 }
+        DateOfEvent = new GameDate{ Year = 1, Week = 39 }
       };
       return (matches);
     }
@@ -154,14 +155,14 @@ namespace SHG
         MemberContries = DOMESTIC,
         MatchType = MatchType.Domestic,
         Rewards = EMPTY_REWARDS,
-        DateOfEvent = new MatchData.Date { Year = year, Week = 19 }
+        DateOfEvent = new GameDate { Year = year, Week = 19 }
       };
       matches[matches.Length - 1] = new MatchData {
         Name = lastMatch,
         MatchType = MatchType.International,
         MemberContries = DEFAULT_COUNTRIES,
         Rewards = EMPTY_REWARDS,
-        DateOfEvent = new MatchData.Date { Year = year, Week = 39 }
+        DateOfEvent = new GameDate { Year = year, Week = 39 }
       };
 
     }
@@ -178,7 +179,7 @@ namespace SHG
           MatchType = MatchType.Friendly,
           MemberContries = DOMESTIC,
           Rewards = EMPTY_REWARDS,
-          DateOfEvent = new MatchData.Date { 
+          DateOfEvent = new GameDate { 
             Year = year, Week =  autonomyWeeks[i] }
         }; 
       }
