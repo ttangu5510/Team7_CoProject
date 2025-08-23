@@ -39,6 +39,22 @@ namespace SHG
       {
         return (!(dateA == dateB));
       }
+
+      public static bool operator< (Date dateA, Date dateB)
+      {
+        if (dateA.Year == dateB.Year) {
+          return (dateA.Week < dateB.Week);
+        }
+        return (dateA.Year < dateB.Year);
+      }
+
+      public static bool operator> (Date dateA, Date dateB)
+      {
+        if (dateA.Year == dateB.Year) {
+          return (dateA.Week > dateB.Week);
+        }
+        return (dateA.Year > dateB.Year);
+      }
     }
 
     /// <summary>

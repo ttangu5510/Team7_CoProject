@@ -1,11 +1,9 @@
-using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 using UniRx;
 using EditorAttributes;
-using Void = EditorAttributes.Void;
-using JYL;
 
 namespace SHG 
 {
@@ -27,6 +25,8 @@ namespace SHG
     [SerializeField]
     List<MatchData> scheduledMatches;
     [SerializeField]
+    List<MatchData> registeredMatch;
+    [SerializeField]
     List<IContenderAthlete> koreaContenders;
 
     // Start is called before the first frame update
@@ -34,6 +34,7 @@ namespace SHG
 
       this.athleteDummyData = new ();
       this.koreaContenders = new ();
+      this.registeredMatch = new ();
 
       foreach (var athlete in this.athleteController.Athletes) {
         this.koreaContenders.Add(new ConvertedDomesticAthlete(athlete));
@@ -75,6 +76,15 @@ namespace SHG
 
       this.matchController.CurrentMatch.Subscribe(
         match => this.currentMatch = match);
+
+      var onAdded = this.matchController.RegisteredMatches
+        .ObserveAdd()
+        .Select(_ => UniRx.Unit.Default);
+      var onRemoved = this.matchController.RegisteredMatches
+        .ObserveRemove()
+        .Select(_ => UniRx.Unit.Default);
+      onAdded.Merge(onRemoved)
+        .Subscribe(_ => this.registeredMatch = this.matchController.RegisteredMatches.ToList());
     }
 
     List<IContenderAthlete> GetContenderAthletes(Country country)
@@ -92,6 +102,20 @@ namespace SHG
     void StartMatch()
     {
       this.matchController.StartNextMatch(); 
+    }
+
+    [Button]
+    void RegisterMatchAt(int index)
+    {
+      var match = this.scheduledMatches[index];
+      this.matchController.Register(match);
+    }
+
+    [Button]
+    void UnRegisterMatchAt(int index)
+    {
+      var match = this.scheduledMatches[index];
+      this.matchController.UnRegister(match);
     }
   }
 }
