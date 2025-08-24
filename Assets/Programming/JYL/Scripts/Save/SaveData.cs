@@ -35,5 +35,10 @@ namespace JYL
         {
             return coachSaves.Find(x => x.id == entity.id);
         }
+
+        public CoachSave FindCoach(int id)
+        {
+            return coachSaves.Find(x => x.id == id);
+        }
     }
 }

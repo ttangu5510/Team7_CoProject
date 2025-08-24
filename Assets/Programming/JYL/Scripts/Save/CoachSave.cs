@@ -23,5 +23,11 @@ namespace JYL
             age =  entity.curAge;
             state = entity.curState;
         }
+
+        public void UpdateStatus(int age, CoachState state)
+        {
+            this.age = age;
+            this.state = state;
+        }
     }
 }

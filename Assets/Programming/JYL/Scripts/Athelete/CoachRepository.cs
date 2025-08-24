@@ -17,8 +17,8 @@ namespace JYL
     }
     public class CoachRepository : ICoachRepository
     {
-        private Dictionary<string, CoachEntity> coachDict { get; set; } = new();
-        private Test_JYL_SaveManager saveM;
+        private Dictionary<string, CoachEntity> coachDict { get; set; } = new(); // 코치 동적 객체를 이름으로 찾을 때 사용 됨
+        private Test_JYL_SaveManager saveM; // 테스트 세이브 매니저. TODO : Zenject 주입하면 변경예정
 
         // 레포지토리 생성 시 사용되는 생성자. 세이브 매니저의 종속성을 주입한다.
         public CoachRepository(Test_JYL_SaveManager saveManager)
@@ -71,7 +71,7 @@ namespace JYL
             saveM.OutCoach(entity); // 코치의 등급에 따라 로직 달라짐
         }
 
-        public void Update(CoachEntity entity) // Service 코치 업데이트. 세이브 객체를 최신화 함.
+        public void Update(CoachEntity entity) // Service 코치 업데이트. 동적 객체를 통해 세이브 객체를 최신화 함.
         {
             saveM.curSave.FindCoach(entity).UpdateStatus(entity); // 세이브 객체도 업데이트함.
         }

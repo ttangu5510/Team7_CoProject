@@ -72,6 +72,11 @@ namespace JYL
         public void Update(DomAthEntity entity) // 선수의 변동사항을 세이브객체에 저장.
         {
             saveM.curSave.FindAthlete(entity).UpdateStatus(entity); // 선수 세이브 객체 최신화
+            if (entity.affiliation != AthleteAffiliation.Regular && entity.curState == AthleteState.Retired) // 만약 후보급 이상의 선수고 은퇴한 경우 
+            {
+                // 세이브 파일에서 은퇴 나이(28세)와 코치 목록에 활성화.
+                saveM.curSave.FindCoach(entity.id + 779).UpdateStatus(entity.curAge, CoachState.Unrecruited);
+            }
         }
 
         public void Delete(DomAthEntity entity) // 선수 방출

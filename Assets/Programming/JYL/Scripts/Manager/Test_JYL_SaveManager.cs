@@ -20,8 +20,9 @@ namespace JYL
         public static Test_JYL_SaveManager Instance;
         public List<SaveData> saves = new();
         public SaveData curSave;
-        public Dictionary<string, DateTime> savedTime = new(); // 세이브 파일이 저장된 시간 딕셔너리
-        public Dictionary<string, SaveData> saveDataByName = new(); //세이브 객체를 이름으로 찾는 딕셔너리
+        
+        public readonly Dictionary<string, DateTime> savedTime = new(); // 세이브 파일이 저장된 시간 딕셔너리
+        public readonly Dictionary<string, SaveData> saveDataByName = new(); //세이브 객체를 이름으로 찾는 딕셔너리
         
         public void Init() // 세이브 데이터를 전부 불러옴. Zenject 사용 시, 알아서 처리되게 할 수 있음
         {
@@ -191,14 +192,14 @@ namespace JYL
 
         public void OutCoach(CoachEntity entity) // Repository 코치 방출에서 사용
         {
-            if (entity.curAge >= entity.retireAge) // 은퇴 나이보다 높거나 같으므로 은퇴로 변경
+            if (entity.curAge >= entity.retireAge) // 예외처리. 은퇴 나이보다 높거나 같으므로 은퇴로 변경
             {
                 RetireCoach(entity);
                 Debug.Log($"은퇴나이를 넘음{entity.entityName}_현재:{entity.curAge}_은퇴:{entity.retireAge}");
                 return;
             } 
             
-            CoachSave coach = curSave.FindCoach(entity); // 코치 객체 찾음
+            CoachSave coach = curSave.FindCoach(entity); // 코치 동적 객체 찾음
             // 후보급 이상에서 온 선수면, 나이가 무조건 28세로 돌아감.
             // 세이브 객체 삭제 안함(다시 영입하려면 Hidden 초기값을 피해야함)
             if (entity.grade == CoachGrade.Master)
@@ -215,7 +216,7 @@ namespace JYL
             }
         }
 
-        public void UpdateCoachEntity(CoachEntity entity) // 코치 객체를 최신화 함
+        public void UpdateCoachEntity(CoachEntity entity) // 세이브 객체를 통해 코치 동적 객체를 최신화 함
         {
             CoachSave save = curSave.FindCoach(entity); // 세이브 객체 찾기
             if (save != null)

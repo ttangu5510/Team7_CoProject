@@ -44,6 +44,14 @@ namespace JYL
         {
             curState = CoachState.Unrecruited;
         }
+
+        public void AthleteToCoach() // 선수가 코치로 전환
+        {
+            if (curState == CoachState.Hidden)
+            {
+                curState = CoachState.Unrecruited;
+            }
+        }
     }
 
     [System.Serializable]
