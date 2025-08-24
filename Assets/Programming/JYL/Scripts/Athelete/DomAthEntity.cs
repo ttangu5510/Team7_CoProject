@@ -129,18 +129,12 @@ public class DomAthEntity : BaseAthEntity
 
     
     
-    public bool Retire() // 선수 은퇴할 때 쓰는 함수. 코치 되는건 선수의 등급에 의해서 결정됨. true면 코치가 될 수 있는거임. TODO : 나이 값에 이벤트 걸어야 함
+    public void Retire() // 선수 은퇴 시 사용하는 함수
     {
-        bool canCoach = false;
         if (curAge >= retireAge && curState !=  AthleteState.Unrecruited) // 은퇴 나이가 되었고, 영입이 된 상태라면
         {
             curState = AthleteState.Retired; // 은퇴 상태로 변경
-            if (affiliation == AthleteAffiliation.National) // 국가 대표만
-            {
-                canCoach =  true; // 코치 될 수 있음
-            }
         }
-        return canCoach; // UI에서 canCoach값에 따라, 영입 UI 띄우게 함.
     }
 
     
