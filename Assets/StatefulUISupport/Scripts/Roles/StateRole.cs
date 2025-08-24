@@ -25,5 +25,7 @@ public enum StateRole
     SingleSportMatch = 1568043727,
     AutonomyMatch = -2092044327,
     MandatoryMatch = -177531802,
+    Registered = -1153052774,
+    UnRegistered = 541474191,
 
 }

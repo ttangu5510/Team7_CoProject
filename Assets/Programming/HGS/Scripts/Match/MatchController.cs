@@ -76,7 +76,9 @@ namespace SHG
         this.RegisteredMatches.RemoveAt(index);
       }
       #if UNITY_EDITOR
-      throw (new ApplicationException($"{nameof(UnRegister)}: Fail to find index of {match}"));
+      else {
+        throw (new ApplicationException($"{nameof(UnRegister)}: Fail to find index of {match}"));
+      }
       #endif
     }
 
@@ -121,8 +123,7 @@ namespace SHG
 
     IDisposable SubscribeTimeFlow()
     {
-      return (this.timeFlowController.Year
-        .Merge(this.timeFlowController.WeekInYear)
+      return (this.timeFlowController.WeekInYear)
         .Subscribe(_ => {
           var prevMatch = this.NextMatch.Value;
           this.NextMatch.Value = this.scheduler.GetNextMatch(
@@ -130,7 +131,7 @@ namespace SHG
             week: this.timeFlowController.WeekInYear.Value);
           if (prevMatch != this.NextMatch.Value) {
             this.UpdateScheduledMatch();
-          }}));
+          }});
     }
 
     void UpdateScheduledMatch()

@@ -14,13 +14,13 @@ namespace SHG
   [RequireComponent(typeof(StatefulComponent))]
   public class MatchNotificationPresenter : MonoBehaviour
   {
-    const float QUOTES_DELAY_IN_SECOND = 1.0f;
     public enum NotificationType
     {
       None,
       Register,
       Opening
     }
+    const float QUOTES_DELAY_IN_SECOND = 1.0f;
 
     public ReactiveProperty<NotificationType> CurrentNotification { get; private set; }
     
@@ -32,6 +32,7 @@ namespace SHG
     StatefulComponent view;
     CompositeDisposable disposables;
     Transform container;
+    StatefulComponent popup;
 
     void Awake()
     {
@@ -40,6 +41,8 @@ namespace SHG
       this.container = this.view.GetItem<ObjectReference>(
         (int)ObjectRole.Container).Object.transform;
       this.CurrentNotification = new (NotificationType.None);
+      this.popup = this.view.GetItem<InnerComponentReference>(
+        (int)InnerComponentRole.Popup).InnerComponent;
     }
 
     // Start is called before the first frame update
@@ -51,13 +54,30 @@ namespace SHG
         .Merge(this.matchController.NextMatch)
         .Subscribe(this.UpdateNotificationType)
         .AddTo(this.disposables);
+
       this.CurrentNotification
         .Subscribe(this.UpdateNotification)
         .AddTo(this.disposables);
+
       this.view.GetItem<ButtonReference>(
-        (int)ButtonRole.EnterMatchButton).Button
+        (int)ButtonRole.QuoteButton).Button
         .OnClickAsObservable()
-        .Subscribe(_ => this.OnClickEnterMatch())
+        .Subscribe(_ => this.OnClickQuote())
+        .AddTo(this.disposables);
+
+      this.popup.GetItem<ButtonReference>(
+        (int)ButtonRole.CloseButton).Button
+        .OnClickAsObservable()
+        .Subscribe(_ => {
+            this.popup.SetState((int)StateRole.Hidden);
+            this.view.SetState((int)StateRole.Hidden);
+          })
+        .AddTo(this.disposables);
+
+      this.popup.GetItem<ButtonReference>(
+        (int)ButtonRole.ConfirmButton).Button
+        .OnClickAsObservable()
+        .Subscribe(_ => this.OnClickRegister())
         .AddTo(this.disposables);
 
       this.OnDestroyAsObservable()
@@ -65,9 +85,55 @@ namespace SHG
     
     }
 
-    void OnClickEnterMatch()
+    void OnClickRegister()
     {
+      if (this.matchController.NextMatch.Value == null) {
+      #if UNITY_EDITOR
+        throw (new ApplicationException($"{nameof(OnClickRegister)}: {nameof(this.matchController.NextMatch)} is null"));
+      #else
+        return;
+      #endif
+      }
+      var match = this.matchController.NextMatch.Value.Value;
+      this.matchController.Register(match); 
+      this.popup.SetState((int)StateRole.Hidden);
+      this.view.SetState((int)StateRole.Hidden);
+    }
 
+    void OnClickQuote()
+    {
+      switch (this.CurrentNotification.Value) {
+        case NotificationType.None:
+          #if UNITY_EDITOR
+          throw (new ApplicationException(nameof(OnClickQuote)));
+          #else
+          return;
+          #endif
+        case NotificationType.Register:
+          var match = this.matchController.NextMatch.Value.Value;
+          if (!match.IsMandatory && 
+            !this.matchController.IsRegistered( match)) {
+            this.FillPopupContent(match);
+            this.popup.SetState((int)StateRole.Shown);
+          }
+          else {
+            this.view.SetState((int)StateRole.Hidden);
+          }
+          return;
+        case NotificationType.Opening:
+          return;
+      }
+    }
+
+    void FillPopupContent(in MatchData match)
+    {
+      int year = this.timeFlowController.Year.Value % 100;
+      this.popup.SetRawTextByRole(
+        (int)TextRole.Title,
+        $"{year}년 {match.Name} 대회");
+      this.popup.SetRawTextByRole(
+        (int)TextRole.Description,
+        "이 대회에 참가하시겠습니까?\n대회 참가시 2주가 소요되며 선수들의 피로도가 증가합니다.");
     }
 
     void UpdateNotificationType(Nullable<MatchData> nextMatch)
@@ -83,7 +149,8 @@ namespace SHG
       }; 
       int weeksLeft = matchDate - currentDate;
       if (weeksLeft == 0 && 
-        this.matchController.IsRegistered(nextMatch.Value)) {
+        (nextMatch.Value.IsMandatory ||
+        this.matchController.IsRegistered(nextMatch.Value))) {
         this.CurrentNotification.Value = NotificationType.Opening;
       }
       else if (weeksLeft == IMatchController.REGISTER_MATCH_DEAD_LINE_WEEKS) {
@@ -140,7 +207,7 @@ namespace SHG
              Week = this.timeFlowController.WeekInYear.Value };
       var weeksLeft = match.DateOfEvent - now;
       string content;
-      if (!this.matchController.IsRegistered(nextMatch.Value)) {
+      if (!match.IsMandatory && !this.matchController.IsRegistered(nextMatch.Value)) {
         content = $"{weeksLeft}주 뒤 {matchName} 대회가 있습니다\n아직 대회 참가 신청을 안하셨네요.\n 대회에 참가할까요?";
       }
       else {

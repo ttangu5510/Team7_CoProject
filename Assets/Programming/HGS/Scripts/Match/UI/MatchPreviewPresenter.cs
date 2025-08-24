@@ -1,16 +1,16 @@
-using System;
-using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using StatefulUI.Runtime.Core;
+using StatefulUI.Runtime.References;
 using Zenject;
 using UniRx;
 using UniRx.Triggers;
-using EditorAttributes;
+using LightScrollSnap;
 
 namespace SHG
 {
-  [RequireComponent(typeof(StatefulComponent), typeof(ContainerView))]
+  [RequireComponent(typeof(StatefulComponent), typeof(ContainerView), typeof(ScrollSnap))]
   public class MatchPreviewPresenter : MonoBehaviour
   {
     [Inject]
@@ -20,45 +20,57 @@ namespace SHG
 
     StatefulComponent view;
     ContainerView containerView;
+    ScrollSnap scroll;
     CompositeDisposable disposables;
     Queue<GameDate> dateLeftThisYear;
+    MatchListPresenter matchListPresenter;
     
     void Awake()
     {
       this.disposables = new ();
       this.view = this.GetComponent<StatefulComponent>();
+      this.matchListPresenter = this.view.GetItem<ObjectReference>(
+        (int)ObjectRole.MatchListView).Object.GetComponent<MatchListPresenter>();
       this.containerView = this.GetComponent<ContainerView>();
+      this.scroll = this.GetComponent<ScrollSnap>();
       this.dateLeftThisYear = new ();
-
-      int thisYear = this.timeFlowController.YearPassedAfterStart;
-      foreach (var date in this.timeFlowController.DateToEnd) {
-        if (date.Year > thisYear) {
-          break;
-        }
-        this.dateLeftThisYear.Enqueue(date); 
-      }
     }
 
     // Start is called before the first frame update
     void Start()
     {
+      this.timeFlowController.Year
+        .Subscribe(year => {
+            int thisYear = this.timeFlowController.YearPassedAfterStart;
+            foreach (var date in this.timeFlowController.DateToEnd) {
+              if (date.Year > thisYear) {
+                break;
+              }
+              this.dateLeftThisYear.Enqueue(date); 
+            }
+          })
+      .AddTo(this.disposables);
       this.UpdateContainer();
       this.matchController.ScheduledMatches
         .ObserveCountChanged()
         .Subscribe(_ => this.UpdateContainer())
         .AddTo(this.disposables);
 
+
       this.timeFlowController.DateToEnd
         .ObserveRemove()
         .Subscribe(removed => {
-            if (this.dateLeftThisYear.Count == 0) {
-              return; 
-            }
-            while (removed.Value >= this.dateLeftThisYear.Peek()) {
+            while (this.dateLeftThisYear.Count > 0 &&
+              removed.Value >= this.dateLeftThisYear.Peek()) {
               this.dateLeftThisYear.Dequeue(); 
             }
             this.UpdateContainer();
           })
+        .AddTo(this.disposables);
+
+      this.scroll.OnItemClicked
+        .AsObservable()
+        .Subscribe(_ => this.matchListPresenter.Show())
         .AddTo(this.disposables);
 
       this.OnDestroyAsObservable()
@@ -88,7 +100,7 @@ namespace SHG
       else {
         view.SetRawTextByRole(
           (int)TextRole.WeekLabel,
-          $"{this.GetKoreanNameOf(season)} {weekInSeason}");
+          $"{GameDate.GetKoreanNameOf(season)} {weekInSeason}");
       }
       switch (season) {
         case Season.Spring:
@@ -131,20 +143,6 @@ namespace SHG
       else {
         view.SetState((int)StateRole.MatchHidden);
       }
-    }
-
-    string GetKoreanNameOf(Season season) {
-      switch (season) {
-        case Season.Spring:
-          return ("봄");
-        case Season.Summer:
-          return ("여름");
-        case Season.Fall:
-          return ("가을");
-        case Season.Winter:
-          return ("겨울");
-      }
-      return (string.Empty);
     }
   }
 }
