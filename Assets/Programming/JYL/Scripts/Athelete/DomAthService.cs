@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,14 @@ namespace JYL
     public class DomAthService : MonoBehaviour
     {
         private readonly IDomAthRepository repository;
+        private readonly IDisposable subscription;
          
         // 생성자를 통해 Repository를 주입받는다 (Dependency Injection)
         public DomAthService(IDomAthRepository repository)
         {
             this.repository = repository;
             // 초기 작업 이후, 등록된 선수들은 능력치 및 나이에 이벤트 구독 필요
+            // subscription = TODO: 선수의 나이에 이벤트 걸기. UniRx R&D 후
         }
 
         #region 선수 목록
