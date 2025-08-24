@@ -8,6 +8,8 @@ namespace SHG
   /// </summary>
   public interface IMatchController
   {
+    public static int REGISTER_MATCH_DEAD_LINE_WEEKS = 3;
+
     /// <summary>
     /// 현재 진행중 경기
     /// </summary>

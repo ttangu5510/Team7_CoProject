@@ -8,5 +8,6 @@ public enum ButtonRole
     UpgradeButton = 674808542,
     ConfirmButton = 1774490630,
     CancelButton = 1874676936,
+    EnterMatchButton = 1930261165,
 
 }

@@ -7,6 +7,11 @@ namespace SHG
   /// </summary>
   public interface ITimeFlowController 
   {
+    public static int WEEK_FOR_SEASON = 10;
+    public static int WEEK_FOR_YEAR = 4 * WEEK_FOR_SEASON;
+    public static int START_YEAR = 2023;
+    public static int START_WEEK = 1;
+    public static int END_YEAR => START_YEAR + 3;
 
     /// <summary>  계절이 변경될 때 이벤트를 발생 (새로운 해는 겨울이 아닌 봄부터 시작한다)</summary>
     public ReactiveProperty<Season> CurrentSeason { get; }

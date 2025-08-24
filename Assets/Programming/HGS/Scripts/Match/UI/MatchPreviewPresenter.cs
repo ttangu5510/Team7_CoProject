@@ -79,7 +79,7 @@ namespace SHG
     void UpdateDateSection(StatefulComponent view, in GameDate date)
     {
       int weekInSeason = (date.Week - 1) % 10 + 1;
-      var season = (Season)((date.Week - 1) / TimeFlowController.WEEK_FOR_SEASON);
+      var season = (Season)((date.Week - 1) / ITimeFlowController.WEEK_FOR_SEASON);
       if (weekInSeason > 1) {
         view.SetRawTextByRole(
           (int)TextRole.WeekLabel,
@@ -126,6 +126,7 @@ namespace SHG
           view.SetState(
             (int)StateRole.AutonomyMatch);
         }
+        view.SetState((int)StateRole.MatchShown);
       }
       else {
         view.SetState((int)StateRole.MatchHidden);

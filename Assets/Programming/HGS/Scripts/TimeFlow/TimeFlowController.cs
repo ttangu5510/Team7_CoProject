@@ -7,11 +7,6 @@ namespace SHG
   /// 시간에 흐름을 관리하는 클래스 ,  ITimeFlowController를 참고
   /// </summary>
   public class TimeFlowController : ITimeFlowController {
-    public static int WEEK_FOR_SEASON = 10;
-    public static int WEEK_FOR_YEAR = 4 * WEEK_FOR_SEASON;
-    public static int START_YEAR = 2023;
-    public static int START_WEEK = 1;
-    public static int END_YEAR => START_YEAR + 3;
 
     public ReactiveProperty<Season> CurrentSeason { get; private set; }
     public ReactiveProperty<int> WeekInYear { get; private set; }
@@ -28,7 +23,9 @@ namespace SHG
       this.CurrentSeason.Value = this.GetSeason(this.week);
     }
 
-    public TimeFlowController(): this(START_YEAR, START_WEEK)
+    public TimeFlowController(): this(
+      year: ITimeFlowController.START_YEAR, 
+      week: ITimeFlowController.START_WEEK)
     {
     }
 
@@ -50,8 +47,8 @@ namespace SHG
     public void ProgressWeeks(int weeks)
     {
       this.week += weeks;
-      int yearToAdd = this.week / WEEK_FOR_YEAR;
-      this.week = this.week % WEEK_FOR_YEAR;
+      int yearToAdd = this.week / ITimeFlowController.WEEK_FOR_YEAR;
+      this.week = this.week % ITimeFlowController.WEEK_FOR_YEAR;
       if (yearToAdd > 0) {
         this.Year.Value += yearToAdd;
       }
@@ -65,10 +62,10 @@ namespace SHG
     GameDate[] GetDateToEnd()
     {
       int count = 0;
-      int weeksLeftThisYear = WEEK_FOR_YEAR - this.WeekInYear.Value + 1;
+      int weeksLeftThisYear = ITimeFlowController.WEEK_FOR_YEAR - this.WeekInYear.Value + 1;
       count += weeksLeftThisYear;
-      int yearsLeft = END_YEAR - this.Year.Value;
-      count += yearsLeft * WEEK_FOR_YEAR;
+      int yearsLeft = ITimeFlowController.END_YEAR - this.Year.Value;
+      count += yearsLeft * ITimeFlowController.WEEK_FOR_YEAR;
 
       var allGameDate = new GameDate[count];
       var yearAfterStart = this.YearPassedAfterStart;
@@ -78,8 +75,8 @@ namespace SHG
       }
 
       for (int year = 1; year <= yearsLeft; ++year) {
-        for (int i = 0; i < WEEK_FOR_YEAR; i++) {
-          allGameDate[year * WEEK_FOR_YEAR + i] = new GameDate {
+        for (int i = 0; i < ITimeFlowController.WEEK_FOR_YEAR; i++) {
+          allGameDate[year * ITimeFlowController.WEEK_FOR_YEAR + i] = new GameDate {
             Year = yearAfterStart + year,
             Week = i + 1
           };
@@ -91,7 +88,7 @@ namespace SHG
 
     Season GetSeason(int week)
     {
-      return (Season)(week / WEEK_FOR_SEASON);
+      return (Season)(week / ITimeFlowController.WEEK_FOR_SEASON);
     }
 
   }

@@ -25,6 +25,13 @@ namespace SHG
       return (this.Year * 100 + this.Week);
     }
 
+    public static int operator- (GameDate dateA, GameDate dateB)
+    {
+      int a = (dateA.Year * ITimeFlowController.WEEK_FOR_YEAR) + dateA.Week;
+      int b = (dateB.Year * ITimeFlowController.WEEK_FOR_YEAR) + dateB.Week;
+      return (a - b);
+    }
+
     public override string ToString() {
       return ($"[{nameof(ITimeFlowController)}.{nameof(GameDate)}; {nameof(Year)}:{this.Year}; {nameof(Week)}:{this.Week}]");
     }
