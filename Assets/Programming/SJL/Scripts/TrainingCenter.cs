@@ -53,7 +53,7 @@ namespace SJL
         private void OnSpecialTrainingClicked()
         {
             // 설명 텍스트 설정
-            explanatoryText.text = "선수틀을 배치하여 훈련시킬 수 있습니다.\n" +
+            explanatoryText.text = "선수틀을 배치하여 특별 훈련시킬 수 있습니다.\n" +
                                    "루틴에 따라 상승하는 능력치가 달라집니다..";
             // 특별 훈련 박스 활성화
             FacilityInformationBox.SetActive(false);
