@@ -27,5 +27,9 @@ public enum StateRole
     MandatoryMatch = -177531802,
     Registered = -1153052774,
     UnRegistered = 541474191,
+    Register = 24124625,
+    Opening = -995601238,
+    PopupShown = -764435797,
+    PopupHidden = 1917419428,
 
 }

@@ -104,6 +104,10 @@ namespace SHG
       return (this.scheduler.TryGetMatchFor(gameDate, out matchData));
     }
 
+    public bool IsParticipatable(in MatchData match) {
+      return (true);
+    }
+
     Match CreateMatch(MatchData data)
     {
       var match = new Match(
@@ -167,6 +171,5 @@ namespace SHG
       #endif
       }
     }
-
   }
 }

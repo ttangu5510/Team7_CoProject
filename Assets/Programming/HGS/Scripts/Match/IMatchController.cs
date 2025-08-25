@@ -39,5 +39,7 @@ namespace SHG
     public void UnRegister(in MatchData match);
     /// <summary> 경기 참가 등록 확인 </summary>
     public bool IsRegistered(in MatchData match);
+    /// <summary> 경기 참가 가능 여부 </summary>
+    public bool IsParticipatable(in MatchData match);
   }
 }

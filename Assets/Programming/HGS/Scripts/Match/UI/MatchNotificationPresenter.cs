@@ -14,6 +14,9 @@ namespace SHG
   [RequireComponent(typeof(StatefulComponent))]
   public class MatchNotificationPresenter : MonoBehaviour
   {
+    const string MATCH_PARTICIPATE_FAILED_NOTICE = "현재 대회 참가를 위한 선수 인원 조건을 만족하지 못했습니다. 대회 참가 신청을 했음에도 참여 불가능한 상태일 경우 대회에서 몰수패를 당합니다. 다음에는 선수단 관리에 주의해 주세요";
+    const string MATCH_PARTICIPATE_NOTICE = "이 대회에 참가하시겠습니까?\n대회 참가시 2주가 소요되며 선수들의 피로도가 증가합니다.";
+
     public enum NotificationType
     {
       None,
@@ -49,6 +52,7 @@ namespace SHG
     void Start()
     {
       this.view.SetState((int)StateRole.Hidden);
+
       this.timeFlowController.WeekInYear
         .Select(_ => this.matchController.NextMatch.Value)
         .Merge(this.matchController.NextMatch)
@@ -69,7 +73,7 @@ namespace SHG
         (int)ButtonRole.CloseButton).Button
         .OnClickAsObservable()
         .Subscribe(_ => {
-            this.popup.SetState((int)StateRole.Hidden);
+            this.view.SetState((int)StateRole.PopupHidden);
             this.view.SetState((int)StateRole.Hidden);
           })
         .AddTo(this.disposables);
@@ -77,26 +81,35 @@ namespace SHG
       this.popup.GetItem<ButtonReference>(
         (int)ButtonRole.ConfirmButton).Button
         .OnClickAsObservable()
-        .Subscribe(_ => this.OnClickRegister())
+        .Subscribe(_ => this.OnClickConfirm())
         .AddTo(this.disposables);
 
       this.OnDestroyAsObservable()
         .Subscribe(_ => this.disposables?.Dispose());
-    
     }
 
-    void OnClickRegister()
+    void OnClickConfirm()
     {
-      if (this.matchController.NextMatch.Value == null) {
-      #if UNITY_EDITOR
-        throw (new ApplicationException($"{nameof(OnClickRegister)}: {nameof(this.matchController.NextMatch)} is null"));
-      #else
-        return;
-      #endif
-      }
       var match = this.matchController.NextMatch.Value.Value;
-      this.matchController.Register(match); 
-      this.popup.SetState((int)StateRole.Hidden);
+      switch (this.CurrentNotification.Value) {
+        case (NotificationType.Register):
+          if (this.matchController.NextMatch.Value == null) {
+          #if UNITY_EDITOR
+            throw (new ApplicationException(
+                $"{nameof(OnClickConfirm)}: {nameof(this.matchController.NextMatch)} is null"));
+          #else
+            return;
+          #endif
+          }
+          this.matchController.Register(match); 
+          break;
+        case (NotificationType.Opening):
+          if (this.matchController.IsParticipatable(match)) {
+            // TODO: Open Match view
+          }
+          break;
+      }
+      this.view.SetState((int)StateRole.PopupHidden);
       this.view.SetState((int)StateRole.Hidden);
     }
 
@@ -112,28 +125,62 @@ namespace SHG
         case NotificationType.Register:
           var match = this.matchController.NextMatch.Value.Value;
           if (!match.IsMandatory && 
-            !this.matchController.IsRegistered( match)) {
-            this.FillPopupContent(match);
-            this.popup.SetState((int)StateRole.Shown);
+            !this.matchController.IsRegistered(match)) {
+            this.FillRegisterPopupContent(match);
+            this.view.SetState((int)StateRole.PopupShown);
           }
           else {
             this.view.SetState((int)StateRole.Hidden);
           }
-          return;
+          break;
         case NotificationType.Opening:
-          return;
+          this.FillOpeningPopupContent();
+          this.view.SetState((int)StateRole.PopupShown);
+          break;
       }
     }
 
-    void FillPopupContent(in MatchData match)
+    void FillRegisterPopupContent(in MatchData match)
     {
+      this.popup.SetState((int)StateRole.Register);
       int year = this.timeFlowController.Year.Value % 100;
       this.popup.SetRawTextByRole(
         (int)TextRole.Title,
+        "대회 참가");
+      this.popup.SetRawTextByRole(
+        (int)TextRole.MatchTitle,
         $"{year}년 {match.Name} 대회");
       this.popup.SetRawTextByRole(
         (int)TextRole.Description,
-        "이 대회에 참가하시겠습니까?\n대회 참가시 2주가 소요되며 선수들의 피로도가 증가합니다.");
+        MATCH_PARTICIPATE_NOTICE);
+    }
+
+    void FillOpeningPopupContent()
+    {
+      if (this.matchController.NextMatch.Value == null) {
+      #if UNITY_EDITOR
+        throw (new ApplicationException($"{nameof(FillOpeningPopupContent)}: {nameof(this.matchController.NextMatch)} is null"));
+      #else
+        return;
+      #endif
+      }
+      var match = this.matchController.NextMatch.Value.Value;
+      this.popup.SetState((int)StateRole.Opening);
+      if (this.matchController.IsParticipatable(match)) {
+        this.popup.SetRawTextByRole(
+          (int)TextRole.Title, "대회 입장 알림");   
+        int year = this.timeFlowController.Year.Value % 100;
+        this.popup.SetRawTextByRole(
+          (int)TextRole.Description,
+          $"{year}년 {match.Name} 대회가 오늘 개막했습니다\n대회장으로 이동합니다");
+      }
+      else {
+        this.popup.SetRawTextByRole(
+          (int)TextRole.Title, "대회 참가 불가");
+        this.popup.SetRawTextByRole(
+          (int)TextRole.Description,
+          MATCH_PARTICIPATE_FAILED_NOTICE);
+      }
     }
 
     void UpdateNotificationType(Nullable<MatchData> nextMatch)
@@ -163,6 +210,7 @@ namespace SHG
 
     void UpdateNotification(NotificationType notificationType)
     {
+      this.view.SetState((int)StateRole.PopupHidden);
       if (notificationType == NotificationType.None) {
         this.view.SetState((int)StateRole.Hidden);
         // 다음 애니메이션을 위해 위치 조정
@@ -207,7 +255,8 @@ namespace SHG
              Week = this.timeFlowController.WeekInYear.Value };
       var weeksLeft = match.DateOfEvent - now;
       string content;
-      if (!match.IsMandatory && !this.matchController.IsRegistered(nextMatch.Value)) {
+      if (!match.IsMandatory && 
+        !this.matchController.IsRegistered(nextMatch.Value)) {
         content = $"{weeksLeft}주 뒤 {matchName} 대회가 있습니다\n아직 대회 참가 신청을 안하셨네요.\n 대회에 참가할까요?";
       }
       else {
