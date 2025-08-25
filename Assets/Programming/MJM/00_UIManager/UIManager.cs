@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -11,7 +11,14 @@ public class UIPopupOptions : MonoBehaviour { public bool IsModal = true; }
 
 public class UIManager : MonoBehaviour
 {
-    public static bool IsUIOpen { get; set; }   // 유아이 켜짐 꺼짐 상태변수 
+    public static bool IsUIOpen { get; set; }   // 유아이 켜짐 꺼짐 상태변수 (rx 사용하지 않는 사람들을 위해 남겨둠)
+
+
+    // ===== UI 열림 여부를 Rx로 노출 =====
+    // 외부 스크립트에서: UIManager.IsUIOpenRx.Subscribe(open => { ... });
+    public static readonly BoolReactiveProperty IsUIOpenRx = new BoolReactiveProperty(false);
+
+
 
     private static UIManager instance;
     public static UIManager Instance => instance;
@@ -101,6 +108,7 @@ public class UIManager : MonoBehaviour
 
 
         UpdateBlockerByStack();
+        UpdateUIState();
 
     }
 
@@ -187,7 +195,7 @@ public class UIManager : MonoBehaviour
 
     // ===================== 패널 제어 =====================
     // OpenPanel("Info") → "Panel.Info"를 찾음
-    public void OpenPanel(string rawKey)
+    public void OpenPanel(string rawKey, bool toggleIfSame = true) // 토글 기능 제어용 false 일 경우 같은 패널을 눌러도 토글로 안꺼짐
     {
         string key = NormalizeKey(rawKey);
         if (string.IsNullOrEmpty(key))
@@ -206,7 +214,13 @@ public class UIManager : MonoBehaviour
         // 같은 패널이 이미 열려 있으면 토글처럼 전체 닫기
         if (!string.IsNullOrEmpty(currentPanelKey) && currentPanelKey == key)
         {
-            CloseAllPanels();
+            if (toggleIfSame)
+            {
+                // 같은 패널이면 닫기
+                CloseAllPanels();
+            }
+            // 같은 패널인데 toggleIfSame=false라면 그냥 유지
+            UpdateUIState();
             return;
         }
 
@@ -214,14 +228,13 @@ public class UIManager : MonoBehaviour
         foreach (var kv in panels)
             kv.Value?.SetActive(kv.Key == key);
 
-        currentPanelKey = key;
+        UpdateUIState();
 
         // 베이스 패널은 블로커 불필요 (모달 아님)
         if (popupStack.Count == 0) popupBlocker?.SetActive(false);
 
         // isuiopen 상태변수 제어용
-        currentPanelKey = key;
-        UpdateUIOpenFlag();
+        UpdateUIState();
     }
 
     public void CloseAllPanels()
@@ -234,8 +247,7 @@ public class UIManager : MonoBehaviour
         if (popupStack.Count == 0) popupBlocker?.SetActive(false);
 
         // isuiopen 상태변수 제어용
-        currentPanelKey = null;
-        UpdateUIOpenFlag();
+        UpdateUIState();
     }
 
     // ===================== 팝업 =====================
@@ -248,10 +260,7 @@ public class UIManager : MonoBehaviour
         popupStack.Push(popup);
         UpdatePopupSorting();
         UpdateBlockerByStack();
-
-        // isuiopen 상태변수 제어용
-        popupStack.Push(popup);
-        UpdateUIOpenFlag();
+        UpdateUIState();
     }
 
     public void CloseTopPopup()
@@ -268,9 +277,7 @@ public class UIManager : MonoBehaviour
         }
         UpdatePopupSorting();
         UpdateBlockerByStack();
-
-        // isuiopen 상태변수 제어용
-        UpdateUIOpenFlag();
+        UpdateUIState();
     }
 
     public void CloseSpecificPopup(GameObject popup)
@@ -301,6 +308,7 @@ public class UIManager : MonoBehaviour
 
         UpdatePopupSorting();
         UpdateBlockerByStack();
+        UpdateUIState();
     }
 
     // 스택 안에 파괴된(GameObject == null) 항목들을 제거
@@ -439,6 +447,8 @@ public class UIManager : MonoBehaviour
         var toast = go.GetComponent<Toast>();
         if (toast) toast.SetText(msg);
 
+
+        UpdateUIState();
         // 수명 코루틴
         StartCoroutine(_ToastLifetime(go, toast));
 
@@ -469,6 +479,7 @@ public class UIManager : MonoBehaviour
         }
 
         if (go) Destroy(go);
+        UpdateUIState();
 
         // isuiopen 상태변수 제어 현재 주석처리로 토스트는 처리 안함
         // UpdateUIOpenFlag();
@@ -543,4 +554,21 @@ public class UIManager : MonoBehaviour
                    || activeToasts.Count > 0;
     }
 
+
+    // UI 상태(패널/팝업/토스트 중 하나라도 켜져 있으면 true)를 한 번에 갱신
+    // 생각해보니 토스트 있을때도 막는게 괜찮을 거 같아서 토스트도 적용을 해봄
+    private void UpdateUIState()
+    {
+        bool hasPanel = !string.IsNullOrEmpty(currentPanelKey);
+        bool hasPopup = popupStack.Count > 0;
+        bool hasToast = activeToasts.Count > 0;
+
+        // ★ 핵심: UniRx 값 갱신
+        IsUIOpenRx.Value = hasPanel || hasPopup || hasToast;
+
+        UIManager.IsUIOpen = IsUIOpenRx.Value; // 기존의 불값또한 같이 동기화
+    }
+
+
+    
 }

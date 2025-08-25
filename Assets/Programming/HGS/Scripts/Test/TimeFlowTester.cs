@@ -15,7 +15,7 @@ namespace SHG
     [SerializeField] [ReadOnly]
     int week;
     [SerializeField] [ReadOnly]
-    ITimeFlowController.Season season;
+    Season season;
     [SerializeField] [ReadOnly]
     string text;
 

@@ -106,16 +106,16 @@ namespace SHG
       return (expense);
     }
 
-    string GetTitleString(int year, ITimeFlowController.Season season)
+    string GetTitleString(int year, Season season)
     {
       switch (season) {
-        case ITimeFlowController.Season.Spring:
+        case Season.Spring:
           return ($"{(year - 1) % 100}년 겨울 정산서");
-        case ITimeFlowController.Season.Summer:
+        case Season.Summer:
           return ($"{year % 100}년 봄 정산서");
-        case ITimeFlowController.Season.Fall:
+        case Season.Fall:
           return ($"{year % 100}년 여름 정산서");
-        case ITimeFlowController.Season.Winter:
+        case Season.Winter:
           return ($"{year % 100}년 가을 정산서"); 
       }
       return (string.Empty);

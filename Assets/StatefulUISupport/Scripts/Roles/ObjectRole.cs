@@ -7,5 +7,7 @@ public enum ObjectRole
     Squircle = -438356540,
     Container = 363867727,
     Popup = 889390096,
+    ScrollView = -757283198,
+    MatchListView = 1419307118,
 
 }
