@@ -15,15 +15,22 @@ namespace SHG
   {
     [Inject]
     IFacilitiesController facilitiesController;
+    [Inject]
+    IResourceController resourceController;
     public StatefulComponent View;
     public ContainerView GradeSectionContainer;
     CompositeDisposable disposable;
+
+    StatefulComponent popup;
 
     void Awake()
     {
       this.View = this.GetComponent<StatefulComponent>();
       this.GradeSectionContainer = this.View.GetItem<ContainerReference>(
         (int)ContainerRole.GradeSectionContainer).Container;
+      this.popup = 
+      this.View.GetItem<ObjectReference>(
+        (int)ObjectRole.Popup).Object.GetComponent<StatefulComponent>();
       this.disposable = new ();
     }
 
@@ -40,6 +47,13 @@ namespace SHG
         .AddTo(this.disposable);
       this.OnDestroyAsObservable()
         .Subscribe(_ => this.disposable.Dispose());
+      this.resourceController.Money
+        .Merge(this.resourceController.Fame)
+        .Where(_ => this.facilitiesController.Selected.Value != null)
+        .Subscribe(_ => 
+          this.FillGradeSectionContainer(
+            this.facilitiesController.Selected.Value.Value.facility))
+        .AddTo(this.disposable);
     }
 
     void ShowInfo(IFacility facility)
@@ -118,8 +132,10 @@ namespace SHG
       view.SetRawTextByRole(
         (int)TextRole.GradeSectionLabel1,
         this.GetEffectString(facility, grade));
+
       string resourceString = this.GetResourceText(facility, grade);
       if (!string.IsNullOrEmpty(resourceString)) {
+        view.SetState((int)StateRole.ResourceShown);
         view.SetRawTextByRole(
           (int)TextRole.GradeSectionLabel2,
           resourceString);
@@ -133,7 +149,7 @@ namespace SHG
           "완료");
       }
       else if (facility.CurrentStage.Value + 1 == grade &&
-        facility.IsUpgradable) {
+        this.IsUpgradable(facility)) {
         view.SetState((int)StateRole.Upgradable);
         view.SetRawTextByRole(
           (int)TextRole.UpgradeButtonLabel,
@@ -150,8 +166,32 @@ namespace SHG
         .Subscribe(_ => {
           if (facility.CurrentStage.Value + 1 == grade &&
             facility.IsUpgradable) {
-            facility.Upgrade();
+            this.popup.SetState((int)StateRole.Shown);
           }});
+    }
+
+    bool IsUpgradable(IFacility facility)
+    {
+      if (!facility.IsUpgradable) {
+        return (false);
+      }
+      foreach (var (resourceType, amount) in facility.ResourcesNeeded.Value) {
+        switch (resourceType) {
+          case ResourceType.Money:
+            if (this.resourceController.Money.Value < amount) {
+              return (false);
+            }
+            break;
+          case ResourceType.Fame:
+            if (this.resourceController.Fame.Value < amount) {
+              return (false);
+            }
+            break;
+          default: 
+            throw (new ApplicationException($"{nameof(IsUpgradable)}: {resourceType}"));
+        }
+      }
+      return (true);
     }
 
     string GetEffectString(IFacility facility, int grade)
@@ -177,7 +217,7 @@ namespace SHG
     }
 
     string GetResourceText(IFacility facility, int grade) {
-      if (grade == 0) {
+      if (facility.CurrentStage.Value >= grade) {
         return (null);
       }
       IFacilityData data = (facility.Type) switch {
@@ -193,9 +233,9 @@ namespace SHG
       var builder = new StringBuilder();
       builder.Append("조건: ");
       if (fame > 0) {
-        builder.Append($"명성 {fame} 이상, ");
+        builder.Append($"<sprite=1> {fame}  ");
       }
-      builder.Append($"비용 {money}G");
+      builder.Append($"<sprite=0> {money:n0}G");
       return (builder.ToString());
     }
 

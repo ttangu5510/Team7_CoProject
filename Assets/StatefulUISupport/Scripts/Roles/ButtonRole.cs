@@ -7,5 +7,8 @@ public enum ButtonRole
     CloseButton = 347293458,
     UpgradeButton = 674808542,
     ConfirmButton = 1774490630,
+    CancelButton = 1874676936,
+    RegisterButton = 2005020735,
+    QuoteButton = 139962882,
 
 }

@@ -1,6 +1,5 @@
-using System;
+﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
 using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
 using UniRx;
@@ -28,8 +27,16 @@ namespace SHG
       var closeButton = this.view.GetItem<ButtonReference>(
         (int)ButtonRole.CloseButton).Button;
       closeButton.OnClickAsObservable()
-        .Subscribe(_ => this.facilitiesController.UnSelectFacility());
-      this.view.SetRawTextByRole((int)TextRole.CloseButtonLabel, "닫기");
+        .Subscribe(_ => {
+            this.transform.DOMoveY(
+              endValue: -500f,
+              duration: 0.5f)
+            .SetEase(Ease.InOutSine)
+            .OnComplete(() => {
+              this.view.SetState((int)StateRole.Hidden);
+              this.facilitiesController.UnSelectFacility();
+              });
+          });
     }
 
     void SubscribeFacility()
@@ -41,9 +48,9 @@ namespace SHG
             this.view.SetRawTextByRole(
               (int)TextRole.FacilityNameLabel, selected.Value.facility.Name);
             this.view.SetState((int)StateRole.Shown);
-            this.transform.DOMoveY(
-              endValue: 300f,
-              duration: 0.8f)
+            this.transform.DOLocalMoveY(
+              endValue: -300f,
+              duration: 0.5f)
             .SetEase(Ease.InOutSine);
             StateRole state = selected.Value.facility.Type switch {
               FacilityType.Accomodation => StateRole.Accomodation,
@@ -54,15 +61,7 @@ namespace SHG
 
             };
             this.view.SetState((int)state);
-          }
-          else {
-            this.view.SetState((int)StateRole.Hidden);
-            this.transform.DOMoveY(
-              endValue: -500f,
-              duration: 0.8f)
-            .SetEase(Ease.InOutSine);
-          }
-          });
+          }});
     }
 
     // Start is called before the first frame update

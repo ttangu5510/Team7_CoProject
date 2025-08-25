@@ -25,5 +25,13 @@ public enum TextRole
     ScoutCost = -1185194747,
     FacilityCost = -1838525786,
     TotalAmount = -1451966148,
+    Description = 873740972,
+    BeforeStageLabel = 1378117927,
+    AfterStageLabel = 355547868,
+    WeekLabel = -2051126176,
+    MatchLabel = -898335799,
+    CharacterNameLabel = -999651080,
+    CharacterQuotesLabel = -1642233930,
+    RegisterButtonLabel = 345763217,
 
 }
