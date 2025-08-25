@@ -3,7 +3,7 @@ using JYL;
 
 namespace JWS
 {
-    public class AthleteCsvData
+    public class DomAthleteCsvData
     {
         public readonly int ID;
         public readonly string Name;
@@ -17,10 +17,10 @@ namespace JWS
         public readonly int Speed;
         public readonly int Balance;
         
-        public AthleteCsvData(string[] row)
+        public DomAthleteCsvData(string[] row)
         {
             if (row.Length < 18)
-                throw new ArgumentException("Athlete CSV row 데이터 오류");
+                throw new ArgumentException("Dom Athlete CSV row 데이터 오류");
 
             ID = int.Parse(row[0]);
             Name = row[1];
@@ -52,6 +52,35 @@ namespace JWS
             Name = row[1];
             Grade = Enum.Parse<CoachGrade>(row[2]);
             Age = int.Parse(row[3]);
+        }
+    }
+    
+    public class ForAthleteCsvData
+    {
+        public readonly int ID;
+        public readonly string Name;
+        public readonly AthleteAffiliation Affiliation;
+        public readonly int Health;
+        public readonly int Quickness;
+        public readonly int Flexibility;
+        public readonly int Technic;
+        public readonly int Speed;
+        public readonly int Balance;
+        
+        public ForAthleteCsvData(string[] row)
+        {
+            if (row.Length < 10)
+                throw new ArgumentException("For Athlete CSV row 데이터 오류");
+
+            ID = int.Parse(row[0]);
+            Name = row[1];
+            Affiliation = Enum.Parse<AthleteAffiliation>(row[2]);
+            Health = int.Parse(row[3]);
+            Quickness = int.Parse(row[4]);
+            Flexibility = int.Parse(row[5]);
+            Technic = int.Parse(row[6]);
+            Speed = int.Parse(row[7]);
+            Balance = int.Parse(row[8]);
         }
     }
 }

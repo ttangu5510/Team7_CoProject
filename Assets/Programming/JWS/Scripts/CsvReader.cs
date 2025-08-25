@@ -6,14 +6,14 @@ using JWS;
 
 public static class CsvReader
 {
-    public static List<AthleteCsvData> ReadAthletes(string fileName)
+    public static List<DomAthleteCsvData> ReadAthletes(string fileName)
     {
         var rows = Read(fileName);
         if (rows == null) return null;
 
-        List<AthleteCsvData> list = new();
+        List<DomAthleteCsvData> list = new();
         foreach (var row in rows.Skip(1)) // 헤더 스킵
-            list.Add(new AthleteCsvData(row));
+            list.Add(new DomAthleteCsvData(row));
         return list;
     }
 

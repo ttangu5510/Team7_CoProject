@@ -16,7 +16,7 @@ namespace JYL
             return entity;
         }
         // TODO : CsvReader 만들면 부활
-        public static DomAthEntity CreateFromCsv(AthleteCsvData row)
+        public static DomAthEntity CreateFromCsv(DomAthleteCsvData row)
         {
             var entity = new DomAthEntity();
             entity.Init(
