@@ -10,7 +10,7 @@ namespace JYL
     {
         public static CoachEntity CreateCoachEntity(int i) // TODO : 코치 테스트 생성 함수
         {
-            CoachEntity entity = new(10222, $"coach_{i}", CoachGrade.Veteran, 32);
+            CoachEntity entity = new(10222, $"coach_{i}", CoachGrade.선수출신, 32);
             return entity;
         }
         // TODO : CSVReader완성되면 사용

@@ -164,7 +164,7 @@ namespace JYL
 
         public void RecruitCoach(CoachEntity entity) // Repository에서 사용. 코치 세이브 객체 생성. 현재 세이브 객체에 추가
         {
-            if (entity.grade == CoachGrade.Veteran) // 코치가 일반 등급이면, 세이브 객체를 생성 후 저장함.
+            if (entity.grade == CoachGrade.선수출신) // 코치가 일반 등급이면, 세이브 객체를 생성 후 저장함.
             {
                 CoachSave coach = new(entity); // 생성자로 코치 객체를 기준으로 생성
                 curSave.coachSaves.Add(coach);
@@ -202,7 +202,7 @@ namespace JYL
             CoachSave coach = curSave.FindCoach(entity); // 코치 동적 객체 찾음
             // 후보급 이상에서 온 선수면, 나이가 무조건 28세로 돌아감.
             // 세이브 객체 삭제 안함(다시 영입하려면 Hidden 초기값을 피해야함)
-            if (entity.grade == CoachGrade.Master)
+            if (entity.grade == CoachGrade.스카우트센터)
             {
                 coach.age = 28;
                 coach.state = CoachState.Unrecruited;

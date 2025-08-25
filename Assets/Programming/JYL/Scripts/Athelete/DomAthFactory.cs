@@ -11,7 +11,7 @@ namespace JYL
         public static DomAthEntity CreateFromCsv(int i) // TODO :테스트로 사용
         {
             DomAthEntity entity = new();
-            entity.Init(1001, $"athlete_{i}", AthleteAffiliation.Regular, AthleteGrade.A,
+            entity.Init(1001, $"athlete_{i}", AthleteAffiliation.일반선수, AthleteGrade.A,
                 19, 5, 4, 6, 9, 10, 1);
             return entity;
         }
