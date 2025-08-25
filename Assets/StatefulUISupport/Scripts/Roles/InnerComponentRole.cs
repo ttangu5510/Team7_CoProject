@@ -4,5 +4,6 @@
 public enum InnerComponentRole
 {
     Unknown = 0,
+    Popup = 889390096,
 
 }

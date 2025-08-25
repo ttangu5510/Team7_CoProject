@@ -33,7 +33,7 @@ namespace SHG
         _ => this.disposable.Dispose());
     }
 
-    void SetSeasonIcon(ITimeFlowController.Season season)
+    void SetSeasonIcon(Season season)
     {
       this.view.SetImageByRawRole(
         (int)ImageRole.SeasonIcon,
@@ -84,13 +84,13 @@ namespace SHG
     void SetLabel()
     {
       int year = this.timeFlowController.Year.Value;
-      ITimeFlowController.Season season = this.timeFlowController.CurrentSeason.Value;
+      Season season = this.timeFlowController.CurrentSeason.Value;
       int week = this.timeFlowController.WeekInYear.Value;
       string seasonString = season switch {
-        ITimeFlowController.Season.Spring => "봄",
-        ITimeFlowController.Season.Summer => "여름",
-        ITimeFlowController.Season.Fall => "가을",
-        ITimeFlowController.Season.Winter => "겨울",
+        Season.Spring => "봄",
+        Season.Summer => "여름",
+        Season.Fall => "가을",
+        Season.Winter => "겨울",
         _ => ""
       };
       this.view.SetRawTextByRole(
