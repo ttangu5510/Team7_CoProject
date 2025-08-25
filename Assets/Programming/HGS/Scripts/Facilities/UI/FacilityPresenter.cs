@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
 using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
 using UniRx;
