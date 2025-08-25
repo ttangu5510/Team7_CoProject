@@ -18,7 +18,7 @@ namespace JYL
             
             subscription = MessageBroker.Default //선수 은퇴 이벤트가 발행되면, 구독해뒀다가 수행
                 .Receive<AthleteRetiredEvent>()
-                .Where(e => e.affiliation != AthleteAffiliation.Regular) // 후보급 이상 선수만
+                .Where(e => e.affiliation != AthleteAffiliation.일반선수) // 후보급 이상 선수만
                 .Subscribe(OnAthleteRetiredEvent); // 코치로 전환 작업
         }
         
