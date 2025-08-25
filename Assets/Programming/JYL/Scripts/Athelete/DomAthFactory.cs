@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using JWS;
+
 namespace JYL
 {
     public static class DomAthFactory
@@ -14,17 +16,16 @@ namespace JYL
             return entity;
         }
         // TODO : CsvReader 만들면 부활
-        // public static DomAthEntity CreateFromCsv(CsvData row)
-        // {
-        //     var entity = new DomAthEntity();
-        //     entity.Init(
-        //         row.id, row.name, row.affiliation, row.maxGrade,
-        //         row.recruitAge, row.health, row.quickness, row.flexibility,
-        //         row.technic,row.speed,row.balance
-        //     );
-        //     return entity;
-        // }
-        
+        public static DomAthEntity CreateFromCsv(AthleteCsvData row)
+        {
+            var entity = new DomAthEntity();
+            entity.Init(
+                row.ID, row.Name, row.Affiliation, row.Grade,
+                row.RecruitAge, row.Health, row.Quickness, row.Flexibility,
+                row.Technic,row.Speed,row.Balance
+            );
+            return entity;
+        }
     }
 }
 
