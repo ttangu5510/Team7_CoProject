@@ -19,33 +19,33 @@ namespace JWS
         
         public AthleteCsvData(string[] row)
         {
-            if (row.Length < 11)
+            if (row.Length < 18)
                 throw new ArgumentException("Athlete CSV row 데이터 오류");
 
             ID = int.Parse(row[0]);
             Name = row[1];
             Affiliation = Enum.Parse<AthleteAffiliation>(row[2]);
-            Grade = Enum.Parse<AthleteGrade>(row[3]);
-            RecruitAge = int.Parse(row[4]);
-            Health = int.Parse(row[5]);
-            Quickness = int.Parse(row[6]);
-            Flexibility = int.Parse(row[7]);
-            Technic = int.Parse(row[8]);
-            Speed = int.Parse(row[9]);
-            Balance = int.Parse(row[10]);
+            Grade = Enum.Parse<AthleteGrade>(row[5]);
+            RecruitAge = int.Parse(row[3]);
+            Health = int.Parse(row[6]);
+            Quickness = int.Parse(row[7]);
+            Flexibility = int.Parse(row[8]);
+            Technic = int.Parse(row[9]);
+            Speed = int.Parse(row[10]);
+            Balance = int.Parse(row[11]);
         }
     }
 
     public class CoachCsvData
     {
-        public int ID;
-        public string Name;
-        public CoachGrade Grade;
-        public int Age;
+        public readonly int ID;
+        public readonly string Name;
+        public readonly CoachGrade Grade;
+        public readonly int Age;
 
         public CoachCsvData(string[] row)
         {
-            if (row.Length < 4)
+            if (row.Length < 6)
                 throw new ArgumentException("Coach CSV row 데이터 오류");
 
             ID = int.Parse(row[0]);
