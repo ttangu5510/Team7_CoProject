@@ -195,7 +195,7 @@ public class UIManager : MonoBehaviour
 
     // ===================== 패널 제어 =====================
     // OpenPanel("Info") → "Panel.Info"를 찾음
-    public void OpenPanel(string rawKey, bool toggleIfSame = true) // 토글 기능 제어용 false 일 경우 같은 패널을 눌러도 토글로 안꺼짐
+    public void OpenPanel(string rawKey, bool toggleIfSame = true)
     {
         string key = NormalizeKey(rawKey);
         if (string.IsNullOrEmpty(key))
@@ -215,12 +215,9 @@ public class UIManager : MonoBehaviour
         if (!string.IsNullOrEmpty(currentPanelKey) && currentPanelKey == key)
         {
             if (toggleIfSame)
-            {
-                // 같은 패널이면 닫기
-                CloseAllPanels();
-            }
-            // 같은 패널인데 toggleIfSame=false라면 그냥 유지
-            UpdateUIState();
+                CloseAllPanels();    // CloseAllPanels() 안에서 UpdateUIState() 호출됨
+            else
+                UpdateUIState();     // 토글 안 할 때는 상태만 갱신
             return;
         }
 
@@ -228,7 +225,7 @@ public class UIManager : MonoBehaviour
         foreach (var kv in panels)
             kv.Value?.SetActive(kv.Key == key);
 
-        UpdateUIState();
+        currentPanelKey = key;
 
         // 베이스 패널은 블로커 불필요 (모달 아님)
         if (popupStack.Count == 0) popupBlocker?.SetActive(false);
