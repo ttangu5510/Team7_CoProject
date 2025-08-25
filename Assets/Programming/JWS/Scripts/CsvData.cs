@@ -40,7 +40,7 @@ namespace JWS
     {
         public int ID;
         public string Name;
-        public AthleteGrade Grade;
+        public CoachGrade Grade;
         public int Age;
 
         public CoachCsvData(string[] row)
@@ -50,7 +50,7 @@ namespace JWS
 
             ID = int.Parse(row[0]);
             Name = row[1];
-            Grade = Enum.Parse<AthleteGrade>(row[2]);
+            Grade = Enum.Parse<CoachGrade>(row[2]);
             Age = int.Parse(row[3]);
         }
     }
