@@ -59,6 +59,9 @@ public class EndingFlowController : MonoBehaviour
             }
         };
 
+
+       
+
         // 내부 로컬 함수
         void OpenSelect()
         {
@@ -74,12 +77,27 @@ public class EndingFlowController : MonoBehaviour
             selectPanel.onRestart = () => Debug.Log("첨부터하기 누름, 씬전환은 없어~ 가고파도~");
             //LoadScene(startSceneName);
         }
+
+
         void OpenCredits()
         {
             creditsPanel.gameObject.SetActive(true);
-            Debug.Log("엔딩크레딧 누름~");
-            // creditsPanel.onCreditFinished = () => LoadScene(titleSceneName); // ★ 자동 타이틀 이동
+
+            // 스킵 → 선택 화면으로 복귀
+            creditsPanel.onSkip = () =>
+            {
+                creditsPanel.gameObject.SetActive(false);
+                selectPanel.gameObject.SetActive(true);
+            };
+
+            // 자연 종료 → 타이틀로 이동
+            creditsPanel.onCreditFinished = () =>
+            {
+                //LoadScene(titleSceneName);
+                Debug.Log("타이틀로 이동~");
+            };
         }
+
     }
 
     EndingScoreData FetchLive() => new EndingScoreData(); // 실제 값 연결 지점

@@ -1,34 +1,39 @@
-﻿using UnityEngine;
+﻿// EndingCreditsPanel.cs
+using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 public class EndingCreditsPanel : MonoBehaviour
 {
     [Header("Scroll Root")]
-    [SerializeField] RectTransform content; // 크레딧 전체 텍스트의 RectTransform
-    [SerializeField] float scrollSpeed = 80f; // px/sec
+    [SerializeField] RectTransform content;
+    [SerializeField] float scrollSpeed = 80f;
+
     [Header("Controls")]
     [SerializeField] Button btnSkip;
 
-    public System.Action onCreditFinished;   // ★ 끝나면 타이틀로
+    // 콜백을 둘로 분리
+    public System.Action onCreditFinished; // 자연 종료(끝까지 스크롤)
+    public System.Action onSkip;           // 스킵 버튼 눌림
 
     float startY, endY;
     bool playing;
 
     void Awake()
     {
-        if (btnSkip) btnSkip.onClick.AddListener(FinishNow);
+        if (btnSkip) btnSkip.onClick.AddListener(SkipNow);
     }
 
     void OnEnable()
     {
-        // 시작/종료 위치 계산(아래에서 위로 올림)
         var parent = content.parent as RectTransform;
         startY = -parent.rect.height * 0.5f - content.rect.height * 0.5f;
         endY = parent.rect.height * 0.5f + content.rect.height * 0.5f;
+
         var pos = content.anchoredPosition;
         pos.y = startY;
         content.anchoredPosition = pos;
+
         playing = true;
     }
 
@@ -39,13 +44,18 @@ public class EndingCreditsPanel : MonoBehaviour
         pos.y += scrollSpeed * Time.deltaTime;
         content.anchoredPosition = pos;
 
-        if (pos.y >= endY) FinishNow();
+        if (pos.y >= endY) FinishNow();  // 자연 종료
     }
 
-    public void FinishNow()
+    void FinishNow()
     {
-        if (!gameObject.activeInHierarchy) return;
         playing = false;
-        onCreditFinished?.Invoke(); // 컨트롤러에서 타이틀 로드
+        onCreditFinished?.Invoke();
+    }
+
+    void SkipNow()
+    {
+        playing = false;
+        onSkip?.Invoke();                // 스킵 전용 콜백
     }
 }
