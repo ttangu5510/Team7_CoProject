@@ -23,7 +23,7 @@ namespace JYL
         public AthleteSave(DomAthEntity entity) // 생성자. 선수 정보 초기화
         {
             id = entity.id;
-            age = entity.curAge;
+            age = entity.curAge.Value;
             
             health = entity.stats.health;
             quickness = entity.stats.quickness;
@@ -38,7 +38,7 @@ namespace JYL
 
         public void UpdateStatus(DomAthEntity entity) // 선수 정보 최신화
         {
-            age = entity.curAge;
+            age = entity.curAge.Value;
             
             health = entity.stats.health;
             quickness = entity.stats.quickness;

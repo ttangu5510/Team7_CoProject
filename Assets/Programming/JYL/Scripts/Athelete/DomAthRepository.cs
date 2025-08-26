@@ -20,12 +20,12 @@ namespace JYL
         private Dictionary<string,DomAthEntity> athleteDict { get; set; } = new();
 
         // 테스트 세이브 매니저. 전역 접근 필요함(Zenject)
-        private Test_JYL_SaveManager saveM;
+        private ISaveManager saveManager;
 
         // 국내 선수 전체 숫자만큼(CSV의 캐릭터 숫자만큼) 만들어서 딕셔너리에 저장. 세이브가 있을 경우, 가져와서 최신화
-        public DomAthRepository(Test_JYL_SaveManager saveManager)
+        public DomAthRepository(ISaveManager saveManager)
         {
-            saveM = saveManager;
+            this.saveManager = saveManager;
             // TODO : CSV 로드
             // var csvData = ;
             // foreach(var row in csvData)
@@ -43,7 +43,7 @@ namespace JYL
                     Debug.LogWarning($"이미 추가된 선수임{entity.entityName}");
                 }
 
-                saveM.UpdateAthleteEntity(entity); // 선수 세이브 객체를 통해 최신화
+                this.saveManager.UpdateAthleteEntity(entity); // 선수 세이브 객체를 통해 최신화
             }
             
         }
@@ -65,23 +65,23 @@ namespace JYL
 
         public void Save(DomAthEntity entity) // 선수 영입에서 호출.
         {
-            saveM.RecruitAthlete(entity); // 선수 세이브 객체 생성
+            saveManager.RecruitAthlete(entity); // 선수 세이브 객체 생성
             // 딕셔너리와 리스트는 알아서 최신화 된다.
         }
 
         public void Update(DomAthEntity entity) // 선수의 변동사항을 세이브객체에 저장.
         {
-            saveM.curSave.FindAthlete(entity).UpdateStatus(entity); // 선수 세이브 객체 최신화
+            saveManager.GetCurrentSave().FindAthlete(entity).UpdateStatus(entity); // 선수 세이브 객체 최신화
             if (entity.affiliation != AthleteAffiliation.일반선수 && entity.curState == AthleteState.Retired) // 만약 후보급 이상의 선수고 은퇴한 경우 
             {
                 // 세이브 파일에서 은퇴 나이(28세)와 코치 목록에 활성화.
-                saveM.curSave.FindCoach(entity.id + 779).UpdateStatus(entity.curAge, CoachState.Unrecruited);
+                saveManager.GetCurrentSave().FindCoach(entity.id + 779).UpdateStatus(entity.curAge.Value, CoachState.Unrecruited);
             }
         }
 
         public void Delete(DomAthEntity entity) // 선수 방출
         {
-            saveM.OutAthlete(entity); // 선수 세이브 객체 삭제
+            saveManager.OutAthlete(entity); // 선수 세이브 객체 삭제
             // 딕셔너리, 제공하는 리스트는 알아서 최신화 됨.
         }
     }

@@ -1,35 +1,59 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace JYL
 {
-    public class Test_JYL_SaveManager : MonoBehaviour // 테스트용 세이브 매니저. CSV에서 불러오거나 Json으로 저장하는 기능없음
-    { // Zenject 사용시, MonoBehaviour를 탈피하고 IInitializable 상속해서 구현 가능
+    public class SaveManager : ISaveManager // 세이브 매니저. 인터페이스를 상속함.
+    {
         #if UNITY_EDITOR
         private static string savePath = Application.dataPath + "/Programming/JYL/Test_Save";
         #else
         private static string savePath = Application.persistentDataPath + "/Save";
         #endif
 
-        public static Test_JYL_SaveManager Instance;
+        
         public List<SaveData> saves = new();
         public SaveData curSave;
         
         public readonly Dictionary<string, DateTime> savedTime = new(); // 세이브 파일이 저장된 시간 딕셔너리
         public readonly Dictionary<string, SaveData> saveDataByName = new(); //세이브 객체를 이름으로 찾는 딕셔너리
-        
-        public void Init() // 세이브 데이터를 전부 불러옴. Zenject 사용 시, 알아서 처리되게 할 수 있음
+     
+        #region 초기화
+        public void Initialize() // IInitializable 인터페이스 구현 함수
         {
-            // 경로에서 모든 세이브 파일 불러오기
             LoadAllSave();
-            Instance = this;
         }
+        
+        private void LoadAllSave() // 모든 세이브 파일을 경로상에서 불러오고 리스트에 넣음
+        {
+            saves.Clear(); // 불러오기 전에 비우기
+            savedTime.Clear();
+            saveDataByName.Clear();
+
+            if (!Directory.Exists(savePath))
+            {
+                Debug.LogWarning($"경로에 폴더가 없음{savePath}");
+                return;
+            }
+            
+            // 경로에 폴더가 있으면 들어옴. 모든 세이브 파일을 불러와야 함.
+            string[] files = Directory.GetFiles(savePath,"*.json");
+            
+            foreach (var file in files)
+            {
+                SaveData save = JsonUtility.FromJson<SaveData>(File.ReadAllText(file));
+                
+                saves.Add(save);
+                string fileName = Path.GetFileName(file);
+                savedTime[fileName] = File.GetCreationTime(file);
+                saveDataByName[fileName] = save;
+            }
+        }
+        #endregion
+
+        #region 세이브
         public void CreateSaveData(string playerName) // 게임을 새로 시작할 때 사용함. UI에서 사용할 함수
         {
             SaveData save = new SaveData();
@@ -57,19 +81,7 @@ namespace JYL
             
             Debug.Log($"자동 저장됨{path}");
         }
-
-        public void AutoLoad() // 자동 저장 된 파일들 중에서 자동 불러오기에 사용됨
-        {
-            if (saveDataByName.TryGetValue("AutoSave.json", out var value))
-            {
-                curSave = value; // 전체 파일을 불러오는 과정이 선행되기 때문에 가능함
-            }
-            else
-            {
-                Debug.LogWarning("저장된 세이브 파일이 없음_AutoSave.json");
-            }
-        }
-
+        
         public void SaveProgress(SaveData save) // 현재 사용중인 세이브 객체를 세이브 파일로 저장함.
         {
             if (!Directory.Exists(savePath))
@@ -89,30 +101,21 @@ namespace JYL
             
             Debug.Log($"세이브 파일 저장됨{path}");
         }
+        #endregion
+        
+        
+        
+        #region 로드
 
-        private void LoadAllSave() // 모든 세이브 파일을 경로상에서 불러오고 리스트에 넣음
+        public void AutoLoad() // 자동 저장 된 파일들 중에서 자동 불러오기에 사용됨
         {
-            saves.Clear(); // 불러오기 전에 비우기
-            savedTime.Clear();
-            saveDataByName.Clear();
-
-            if (!Directory.Exists(savePath))
+            if (saveDataByName.TryGetValue("AutoSave.json", out var value))
             {
-                Debug.LogWarning($"경로에 폴더가 없음{savePath}");
-                return;
+                curSave = value; // 전체 파일을 불러오는 과정이 선행되기 때문에 가능함
             }
-            
-            // 경로에 폴더가 있으면 들어옴. 모든 세이브 파일을 불러와야 함.
-            string[] files = Directory.GetFiles(savePath,"*.json");
-            
-            foreach (var file in files)
+            else
             {
-                SaveData save = JsonUtility.FromJson<SaveData>(File.ReadAllText(file));
-                
-                saves.Add(save);
-                string fileName = Path.GetFileName(file);
-                savedTime[fileName] = File.GetCreationTime(file);
-                saveDataByName[fileName] = save;
+                Debug.LogWarning("저장된 세이브 파일이 없음_AutoSave.json");
             }
         }
 
@@ -126,7 +129,15 @@ namespace JYL
             curSave = saveDataByName[fileName];
         }
 
-#region 선수 영입, 은퇴, 방출, 업데이트
+        public SaveData GetCurrentSave()
+        {
+            return curSave;
+        }
+        #endregion
+        
+        
+        
+        #region 선수 영입, 은퇴, 방출, 업데이트
         public void RecruitAthlete(DomAthEntity entity) // 선수 영입 시 현재 세이브 객체에 선수세이브 추가
         {
             AthleteSave athlete = new(entity);
@@ -156,11 +167,11 @@ namespace JYL
                 Debug.Log($"선수 세이브 객체를 찾지 못함_{entity.entityName}");
             }
         }
-#endregion
+        #endregion
 
 
 
-#region 코치 영입, 은퇴, 방출, 업데이트
+        #region 코치 영입, 은퇴, 방출, 업데이트
 
         public void RecruitCoach(CoachEntity entity) // Repository에서 사용. 코치 세이브 객체 생성. 현재 세이브 객체에 추가
         {
@@ -228,7 +239,8 @@ namespace JYL
                 Debug.Log($"코치 세이브 객체가 없음{entity.entityName}");
             }
         }
-        #endregion 
+        #endregion
+        
     }
 }
 

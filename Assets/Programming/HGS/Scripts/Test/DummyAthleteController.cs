@@ -20,9 +20,9 @@ namespace SHG
       public AthleteStats Stats => this.stats;
 
       public AthleteAffiliation Level => (this.Grade switch {
-        "일반 선수" => AthleteAffiliation.Regular,
-        "국가대표 후보" => AthleteAffiliation.Prospect,
-        "국가대표" => AthleteAffiliation.National,
+        "일반 선수" => AthleteAffiliation.일반선수,
+        "국가대표 후보" => AthleteAffiliation.국가대표후보,
+        "국가대표" => AthleteAffiliation.국가대표,
         _ => throw (new ApplicationException())
         });
 
@@ -53,13 +53,13 @@ namespace SHG
       int numberOfNationalAthlete = 0;
       foreach (var athlete in this.Athletes) {
         switch (athlete.affiliation) {
-          case AthleteAffiliation.Regular:
+          case AthleteAffiliation.일반선수:
             numberOfGeneralAthlete++;
             break;
-          case AthleteAffiliation.Prospect:
+          case AthleteAffiliation.국가대표후보:
             numberOfNationalAthleteCandidate++;
             break;
-          case AthleteAffiliation.National:
+          case AthleteAffiliation.국가대표:
             numberOfNationalAthlete++;
             break;
         } 
@@ -104,9 +104,9 @@ namespace SHG
     AthleteAffiliation GetAffliation(string grade)
     {
        return (grade switch {
-        "일반 선수" => AthleteAffiliation.Regular,
-        "국가대표 후보" => AthleteAffiliation.Prospect,
-        "국가대표" => AthleteAffiliation.National,
+        "일반 선수" => AthleteAffiliation.일반선수,
+        "국가대표 후보" => AthleteAffiliation.국가대표후보,
+        "국가대표" => AthleteAffiliation.국가대표,
         _ => throw (new ApplicationException())
         });
     }
