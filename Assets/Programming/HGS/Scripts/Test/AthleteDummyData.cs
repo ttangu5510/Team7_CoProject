@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Collections.Generic;
 using Defective.JSON;
@@ -18,9 +18,9 @@ namespace SHG
     public AthleteStats Stats => this.stats;
 
     public AthleteAffiliation Level => (this.Grade switch {
-        "일반 선수" => AthleteAffiliation.Regular,
-        "국가대표 후보" => AthleteAffiliation.Prospect,
-        "국가대표" => AthleteAffiliation.National,
+        "일반 선수" => AthleteAffiliation.일반선수,
+        "국가대표 후보" => AthleteAffiliation.국가대표후보,
+        "국가대표" => AthleteAffiliation.국가대표,
         _ => throw (new ApplicationException())
       });
 
