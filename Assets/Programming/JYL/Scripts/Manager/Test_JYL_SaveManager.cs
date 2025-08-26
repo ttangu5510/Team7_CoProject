@@ -41,21 +41,17 @@ namespace JYL
 
         public void AutoSave() // 자동 저장에 사용되는 함수. 턴 넘길 때마다 사용. 이벤트 순서에서 로직부분 맨 마지막에 추가
         {
-            if (!Directory.Exists(savePath))
-            {
-                Directory.CreateDirectory(savePath);
-            }
+            EnsureSaveDirectory();
 
-            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
             string fileName = "AutoSave.json"; // 자동저장에 사용되는 파일은 하나 뿐
-            savedTime[fileName] =  DateTime.Now;
+            savedTime[fileName] = DateTime.Now;
             saveDataByName[fileName] = curSave;
 
             string path = Path.Combine(savePath, fileName);
-            string json = JsonUtility.ToJson(curSave);
+            string json = JsonUtility.ToJson(curSave, true);
             File.WriteAllText(path, json);
             
-            Debug.Log($"자동 저장됨{path}");
+            Debug.Log($"자동 저장됨 {path}");
         }
 
         public void AutoLoad() // 자동 저장 된 파일들 중에서 자동 불러오기에 사용됨
@@ -72,10 +68,8 @@ namespace JYL
 
         public void SaveProgress(SaveData save) // 현재 사용중인 세이브 객체를 세이브 파일로 저장함.
         {
-            if (!Directory.Exists(savePath))
-            {
-                Directory.CreateDirectory(savePath);
-            }
+            EnsureSaveDirectory();
+
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
             string fileName = $"Save_{save.playerName}_{timestamp}.json";
             
@@ -84,10 +78,10 @@ namespace JYL
             save.saveTime = timestamp;
             
             string path = Path.Combine(savePath, fileName);
-            string json = JsonUtility.ToJson(save,true);
-            File.WriteAllText(path,json);
+            string json = JsonUtility.ToJson(save, true);
+            File.WriteAllText(path, json);
             
-            Debug.Log($"세이브 파일 저장됨{path}");
+            Debug.Log($"세이브 파일 저장됨 {path}");
         }
 
         private void LoadAllSave() // 모든 세이브 파일을 경로상에서 불러오고 리스트에 넣음
@@ -98,12 +92,12 @@ namespace JYL
 
             if (!Directory.Exists(savePath))
             {
-                Debug.LogWarning($"경로에 폴더가 없음{savePath}");
+                Debug.LogWarning($"경로에 폴더가 없음 {savePath}");
                 return;
             }
             
             // 경로에 폴더가 있으면 들어옴. 모든 세이브 파일을 불러와야 함.
-            string[] files = Directory.GetFiles(savePath,"*.json");
+            string[] files = Directory.GetFiles(savePath, "*.json");
             
             foreach (var file in files)
             {
@@ -123,7 +117,22 @@ namespace JYL
 
         public void LoadProgress(string fileName) // 이름으로 불러올 수 있게 만듦. 어떤 걸 쓰게 될 지 모름.
         {
-            curSave = saveDataByName[fileName];
+            if (saveDataByName.TryGetValue(fileName, out var save))
+            {
+                curSave = save;
+            }
+            else
+            {
+                Debug.LogWarning($"세이브 파일을 찾지 못함_{fileName}");
+            }
+        }
+
+        private void EnsureSaveDirectory()
+        {
+            if (!Directory.Exists(savePath))
+            {
+                Directory.CreateDirectory(savePath);
+            }
         }
 
 #region 선수 영입, 은퇴, 방출, 업데이트
@@ -157,8 +166,6 @@ namespace JYL
             }
         }
 #endregion
-
-
 
 #region 코치 영입, 은퇴, 방출, 업데이트
 
@@ -195,7 +202,7 @@ namespace JYL
             if (entity.curAge >= entity.retireAge) // 예외처리. 은퇴 나이보다 높거나 같으므로 은퇴로 변경
             {
                 RetireCoach(entity);
-                Debug.Log($"은퇴나이를 넘음{entity.entityName}_현재:{entity.curAge}_은퇴:{entity.retireAge}");
+                Debug.Log($"은퇴나이를 넘음 {entity.entityName}_현재:{entity.curAge}_은퇴:{entity.retireAge}");
                 return;
             } 
             
@@ -225,10 +232,9 @@ namespace JYL
             }
             else
             {
-                Debug.Log($"코치 세이브 객체가 없음{entity.entityName}");
+                Debug.Log($"코치 세이브 객체가 없음 {entity.entityName}");
             }
         }
-        #endregion 
+#endregion 
     }
 }
-
