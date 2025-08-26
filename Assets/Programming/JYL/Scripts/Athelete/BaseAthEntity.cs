@@ -13,8 +13,9 @@ namespace JYL
 
     public enum AthleteAffiliation // 선수 소속
     {
-        Regular, Prospect, National
+        일반선수, 국가대표후보, 국가대표
     }
+
 
     public enum AthleteGrade // 선수 성장 등급
     {
