@@ -17,7 +17,7 @@ namespace JYL
             this.id = id;
             entityName = name;
             this.grade = grade;
-            curState = grade == CoachGrade.Master ? CoachState.Hidden : CoachState.Unrecruited;
+            curState = grade == CoachGrade.스카우트센터 ? CoachState.Hidden : CoachState.Unrecruited;
             retireAge = 40;
             curAge = age;
         }
@@ -66,8 +66,8 @@ namespace JYL
     [System.Serializable]
     public enum CoachGrade
     {
-        Veteran = 1,
-        Master
+        선수출신 = 1,
+        스카우트센터
     }
 }
 
