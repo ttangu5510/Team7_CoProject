@@ -34,5 +34,9 @@ public enum TextRole
     CharacterQuotesLabel = -1642233930,
     RegisterButtonLabel = 345763217,
     MatchTitle = 1921366235,
+    SportLabel = 1261345538,
+    NationalityLabel = 523188770,
+    AthleteNameLabel = 568117748,
+    StatLabel = 1165732026,
 
 }

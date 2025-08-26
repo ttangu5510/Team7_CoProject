@@ -10,5 +10,7 @@ public enum ButtonRole
     CancelButton = 1874676936,
     RegisterButton = 2005020735,
     QuoteButton = 139962882,
+    UserAthleteButton = -166184056,
+    BackButton = 1984317533,
 
 }

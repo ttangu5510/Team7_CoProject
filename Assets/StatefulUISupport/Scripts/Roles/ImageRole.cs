@@ -8,5 +8,8 @@ public enum ImageRole
     Icon = 446311563,
     BeforeIcon = 1912130232,
     AfterIcon = -1647888689,
+    SportIcon = 1698862277,
+    Background = 332801758,
+    ButtonBackground = 1627819466,
 
 }

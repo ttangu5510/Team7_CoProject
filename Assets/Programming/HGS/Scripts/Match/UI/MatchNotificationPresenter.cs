@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
@@ -105,7 +104,7 @@ namespace SHG
           break;
         case (NotificationType.Opening):
           if (this.matchController.IsParticipatable(match)) {
-            // TODO: Open Match view
+            this.matchController.EnterNextMatch();
           }
           break;
       }
@@ -149,7 +148,7 @@ namespace SHG
         "대회 참가");
       this.popup.SetRawTextByRole(
         (int)TextRole.MatchTitle,
-        $"{year}년 {match.Name} 대회");
+        $"{year}년 {match.Name}");
       this.popup.SetRawTextByRole(
         (int)TextRole.Description,
         MATCH_PARTICIPATE_NOTICE);

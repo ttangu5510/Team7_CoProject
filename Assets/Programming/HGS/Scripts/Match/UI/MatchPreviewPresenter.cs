@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
 using Zenject;
@@ -94,8 +93,7 @@ namespace SHG
       var season = (Season)((date.Week - 1) / ITimeFlowController.WEEK_FOR_SEASON);
       if (weekInSeason > 1) {
         view.SetRawTextByRole(
-          (int)TextRole.WeekLabel,
-          $"{weekInSeason}");
+          (int)TextRole.WeekLabel, $"{weekInSeason}");
       }
       else {
         view.SetRawTextByRole(

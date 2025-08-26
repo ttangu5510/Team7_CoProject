@@ -31,5 +31,12 @@ public enum StateRole
     Opening = -995601238,
     PopupShown = -764435797,
     PopupHidden = 1917419428,
+    Changable = -2017505619,
+    Fixed = -649865172,
+    Available = 394229313,
+    UnAvailable = 2082910552,
+    SportSelect = -1064793600,
+    AthleteSelect = 160571553,
+    AthleteList = -1680615137,
 
 }

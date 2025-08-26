@@ -154,15 +154,25 @@ namespace SHG
 
     void FillMatchRow(StatefulComponent view, MatchData match)
     {
+      var now = new GameDate { 
+        Year = this.timeFlowController.YearPassedAfterStart,
+        Week = this.timeFlowController.WeekInYear.Value };
+
       if (match.IsMandatory) {
         view.SetState((int)StateRole.MandatoryMatch);
       }
       else {
-        if (this.matchController.IsRegistered(match)) {
-          view.SetState((int)StateRole.Registered);
+        if (match.DateOfEvent - now < 1) {
+          view.SetState((int)StateRole.Fixed);
         }
         else {
-          view.SetState((int)StateRole.UnRegistered);
+          view.SetState((int)StateRole.Changable);
+          if (this.matchController.IsRegistered(match)) {
+            view.SetState((int)StateRole.Registered);
+          }
+          else {
+            view.SetState((int)StateRole.UnRegistered);
+          }
         }
         var button = view.GetItem<ButtonReference>(
           (int)ButtonRole.RegisterButton).Button;
@@ -208,14 +218,14 @@ namespace SHG
       var match = this.matchController.NextMatch.Value.Value;
       this.popup.SetRawTextByRole(
         (int)TextRole.Title,
-        isRegistered ? "참가 취소":"대회 참가"); 
+        isRegistered ? "대회 참가": "참가 취소"); 
       this.popup.SetState(
         (int)(isRegistered ? StateRole.Registered: StateRole.UnRegistered));
       int year = this.timeFlowController.Year.Value % 100;
 
       this.popup.SetRawTextByRole(
         (int)TextRole.MatchTitle,
-        $"{year}년 {match.Name} 대회");
+        $"{year}년 {match.Name} ");
       this.popup.SetRawTextByRole(
         (int)TextRole.Description,
         isRegistered ? MATCH_REGISTERED_NOTICE: MATCH_UNREGISTERED_NOTICE);
@@ -238,11 +248,25 @@ namespace SHG
       if (match.IsMandatory) {
         return ("강제 참여");
       }
-      if (this.matchController.IsRegistered(match)) {
-        return ("참가취소");
+      var now = new GameDate { 
+        Year = this.timeFlowController.YearPassedAfterStart,
+        Week = this.timeFlowController.WeekInYear.Value };
+      if (match.DateOfEvent - now < 1) {
+
+        if (this.matchController.IsRegistered(match)) {
+          return ("참가함");
+        }
+        else {
+          return ("참가하지 않음");
+        }
       }
       else {
-        return ("참가하기");
+        if (this.matchController.IsRegistered(match)) {
+          return ("참가취소");
+        }
+        else {
+          return ("참가하기");
+        }
       }
     }
   }

@@ -43,6 +43,11 @@ namespace SHG
       this.FillSportContenders();
     }
 
+    //TODO: Calc stats 
+    public static string GetAverageStatTextOf(AthleteStats stat) {
+      return ("B");
+    }
+
     public void SelectAthlete(DomAthEntity athlete, SportType sportType)
     {
       if (this.Data.IsSingleSport && 
@@ -145,6 +150,7 @@ namespace SHG
           contenders.Add(this.SelectContender(sportType, country)); 
         }
       }
+      this.ContenderAthletesBySport[sportType] = new (contenders);
     }
 
     void FillContendersForSport(SportType sportType)
