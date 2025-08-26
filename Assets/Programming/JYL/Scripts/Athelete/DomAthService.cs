@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UniRx;
 
 namespace JYL
 {
@@ -9,7 +10,7 @@ namespace JYL
     {
         private readonly IDomAthRepository repository;
          
-        // 생성자를 통해 Repository를 주입받는다 (DI)
+        // 생성자를 통해 Repository를 주입받는다 (Dependency Injection)
         public DomAthService(IDomAthRepository repository)
         {
             this.repository = repository;
@@ -39,15 +40,12 @@ namespace JYL
             repository.Save(entity);
         }
 
-        public string RetireAthlete(DomAthEntity entity) // 이벤트로 인해서 자동 수행됨. 결과에 따라서 코치가 될 수 있음. UI 상에서 기능 연결 할 수 있게 해야 함.
+        public void RetireAthlete(DomAthEntity entity) // 일반 선수면 그냥 Retired 상태.
+                                                       // 후보 이상이면 추가적으로 CoachService에서
+                                                       // 코치 동적, 세이브 객체의 상태를 Hidden -> Unrecruited로 변경
         {
-            // UI에서 이벤트 연결할 때, string값을 받을 경우 CoachService에서 string을 받아서 관련 함수 수행
-            bool canCoach = entity.Retire(); // 코치 되는 애인지 확인
-            repository.Update(entity); // 은퇴 상태 저장
-            
-            
-            if (canCoach) return entity.entityName; // 코치 이름을 넘겨줌
-            return null; // 안되면 null 
+            entity.Retire(); // 도메인 로직 수행
+            MessageBroker.Default.Publish(new AthleteRetiredEvent(entity.entityName, entity.affiliation)); // 이벤트 발행
         }
 
         public void OutAthlete(string athleteName) // 선수 방출할 때 쓰는 함수
