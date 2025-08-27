@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using JWS;
 
 namespace JYL
 {
@@ -19,7 +20,9 @@ namespace JYL
         
         public readonly Dictionary<string, DateTime> savedTime = new(); // 세이브 파일이 저장된 시간 딕셔너리
         public readonly Dictionary<string, SaveData> saveDataByName = new(); //세이브 객체를 이름으로 찾는 딕셔너리
-     
+
+        private long PlayTimeTick = 0; // 실제 플레이 타임 재는 타이머
+            
         #region 초기화
         public void Initialize() // IInitializable 인터페이스 구현 함수
         {
@@ -52,12 +55,22 @@ namespace JYL
             }
         }
         #endregion
+        
+        #region 타이머 갱신
+
+        public void UpdatePlayTime()
+        {
+            if (curSave == null) return;
+            
+            long playTick = DateTime.UtcNow.Ticks - curSave.time.playTick;
+        }
+        #endregion
 
         #region 세이브
-        public void CreateSaveData(string playerName) // 게임을 새로 시작할 때 사용함. UI에서 사용할 함수
+        public void CreateSaveData(string playerName, string clanName, string uid) // 게임을 새로 시작할 때 사용함. UI에서 사용할 함수
         {
             SaveData save = new SaveData();
-            save.Init(playerName);
+            save.Init(uid,playerName,clanName);
             saves.Add(save);
             curSave = save;
             SaveProgress(save);
@@ -91,9 +104,9 @@ namespace JYL
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
             string fileName = $"Save_{save.playerName}_{timestamp}.json";
             
-            savedTime[fileName] = DateTime.Now;
+            savedTime[fileName] = DateTime.UtcNow;
             saveDataByName[fileName] = save;
-            save.saveTime = timestamp;
+            save.time.lastSaveUtcIso = timestamp;
             
             string path = Path.Combine(savePath, fileName);
             string json = JsonUtility.ToJson(save,true);
@@ -135,8 +148,6 @@ namespace JYL
         }
         #endregion
         
-        
-        
         #region 선수 영입, 은퇴, 방출, 업데이트
         public void RecruitAthlete(DomAthEntity entity) // 선수 영입 시 현재 세이브 객체에 선수세이브 추가
         {
@@ -157,7 +168,10 @@ namespace JYL
         }
         public void UpdateAthleteEntity(DomAthEntity entity) // 선수 세이브 객체로 선수 객체를 최신화
         {
-            AthleteSave save = curSave.FindAthlete(entity);
+            if (curSave == null) return;
+            AthleteSave save;
+            save = curSave.FindAthlete(entity);
+
             if (save != null)
             {
                 entity.UpdateFromSave(save);
@@ -175,7 +189,7 @@ namespace JYL
 
         public void RecruitCoach(CoachEntity entity) // Repository에서 사용. 코치 세이브 객체 생성. 현재 세이브 객체에 추가
         {
-            if (entity.grade == CoachGrade.선수출신) // 코치가 일반 등급이면, 세이브 객체를 생성 후 저장함.
+            if (entity.grade == CoachGrade.스카우트센터) // 코치가 일반 등급이면, 세이브 객체를 생성 후 저장함.
             {
                 CoachSave coach = new(entity); // 생성자로 코치 객체를 기준으로 생성
                 curSave.coachSaves.Add(coach);
@@ -203,7 +217,7 @@ namespace JYL
 
         public void OutCoach(CoachEntity entity) // Repository 코치 방출에서 사용
         {
-            if (entity.curAge >= entity.retireAge) // 예외처리. 은퇴 나이보다 높거나 같으므로 은퇴로 변경
+            if (entity.curAge.Value >= entity.retireAge) // 예외처리. 은퇴 나이보다 높거나 같으므로 은퇴로 변경
             {
                 RetireCoach(entity);
                 Debug.Log($"은퇴나이를 넘음{entity.entityName}_현재:{entity.curAge}_은퇴:{entity.retireAge}");
@@ -213,9 +227,8 @@ namespace JYL
             CoachSave coach = curSave.FindCoach(entity); // 코치 동적 객체 찾음
             // 후보급 이상에서 온 선수면, 나이가 무조건 28세로 돌아감.
             // 세이브 객체 삭제 안함(다시 영입하려면 Hidden 초기값을 피해야함)
-            if (entity.grade == CoachGrade.스카우트센터)
+            if (entity.grade == CoachGrade.선수출신)
             {
-                coach.age = 28;
                 coach.state = CoachState.Unrecruited;
             }
             
@@ -229,7 +242,10 @@ namespace JYL
 
         public void UpdateCoachEntity(CoachEntity entity) // 세이브 객체를 통해 코치 동적 객체를 최신화 함
         {
-            CoachSave save = curSave.FindCoach(entity); // 세이브 객체 찾기
+
+            if (curSave == null) return;
+            CoachSave save;
+            save = curSave.FindCoach(entity); // 세이브 객체 찾기
             if (save != null)
             {
                 entity.UpdateFromSave(save); // 세이브 객체를 통해 최신화

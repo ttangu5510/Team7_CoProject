@@ -13,7 +13,10 @@ namespace JWS
         public string userId; // 유저 계정 고유 ID (예: "UID 72819210")
         
         // 유저 이름
-        public string userName;
+        public string playerName;
+        
+        // 선수단 이름
+        public string clanName;
 
         // 시간
         public TimeStamp time = new(); // 인게임 시간 + 현실 플레이 타임
@@ -44,17 +47,19 @@ namespace JWS
         public List<EncyclopediaState> encyclopedia = new(); // 전체 목록 + 트로피/메달 보유 여부
 
         // ==== Init 메서드 ====
-        public void Init(string userId, string userName)
+        public void Init(string userId, string userName, string clanName)
         {
             this.userId = userId;
-            this.userName = userName;
+            playerName = userName;
+            this.clanName = clanName;
 
             // 시간 초기화
             time.yearCycle = 1;
             time.season = Season.Spring;
             time.week = 1;
+            time.playTick = DateTime.UtcNow.Ticks;
             time.realPlayMinutesTotal = 0;
-            time.lastSaveUtcIso = DateTime.UtcNow.ToString("o"); // ISO 8601
+            time.lastSaveUtcIso = DateTime.UtcNow.ToString("YYYY-MM-dd HH-MM-ss"); // ISO 8601
 
             // 재화 초기화
             currencies.gold = 0;
@@ -106,6 +111,7 @@ namespace JWS
 
         // 현실 플레이 타임 - XX시간 XX분 (분 단위로 저장하고 표시할 때 변환 추천)
         public int realPlayMinutesTotal; // 누적 플레이 분
+        public long playTick = 0;
 
         // 선택: 마지막 저장 UTC ISO (로그/백업용)
         public string lastSaveUtcIso;
@@ -226,4 +232,7 @@ namespace JWS
     //     public string teamName; // 소속
     //     public List<string> playerIds = new(); // 파악된 선수 ID 목록(마스터 참조)
     // }
+    
+    // 경기 결과 (2차,메달 딴거, 각 메달 딴 타이밍)
+    // 경기 신청 여부 (2차)
 }

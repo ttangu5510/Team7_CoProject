@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 namespace JYL
 {
+    [Serializable]
     public class AthleteStats // 선수들의 능력치를 담당하는 값 객체
     {
         public int health { get; private set; } // 체력
@@ -74,8 +77,10 @@ namespace JYL
             if(fatigue > 100) fatigue = 100;
             else if(fatigue < 0) fatigue = 0;
         }
-    }
-    // 캐릭터의 정보를 CSV에서 읽어와서 만드는 캐릭터 정보 객체
+    } 
+
+// 캐릭터의 정보를 CSV에서 읽어와서 만드는 캐릭터 정보 객체
+[Serializable]
 public class DomAthEntity : BaseAthEntity
 {
     public AthleteGrade maxGrade { get; private set; } //최대 성장 가능성
@@ -194,7 +199,7 @@ public class DomAthEntity : BaseAthEntity
         curAge.Value++;
     }
 }
-[System.Serializable]
+[Serializable]
 public enum AthleteState // 선수의 현재 상태
 {
     Unrecruited,// 영입되지 않음

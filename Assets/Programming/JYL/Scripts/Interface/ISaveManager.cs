@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using Zenject;
+using JWS;
 
 namespace JYL
 {
     public interface ISaveManager : IInitializable
     {
         // 세이브
-        void CreateSaveData(string playerName);
+        void CreateSaveData(string playerName, string clanName, string userId = "testPlayer123");
         void AutoSave();
         void SaveProgress(SaveData save);
 

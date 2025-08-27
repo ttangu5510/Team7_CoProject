@@ -8,6 +8,8 @@ namespace JYL
     public interface ICoachRepository
     {
         CoachEntity FindByName(string entityName);
+        
+        List<CoachEntity> FindAllCoaches();
         List<CoachEntity> FindAllCanRecruit();
         List<CoachEntity> FindAllRecruited();
         List<CoachEntity> FindAllRetired();
@@ -24,31 +26,35 @@ namespace JYL
         public CoachRepository(ISaveManager saveManager)
         {
             this.saveManager = saveManager;
+
+            Init(); //초기화 시작
+        }
+
+        public void Init()
+        {
+            coachDict.Clear(); // 딕셔너리 초기화
             
             var csvData = CsvReader.ReadCoaches("CoachTable");
             foreach(var data in csvData)
             {
-                 var entity = CoachFactory.CreateCoachEntityFromCSV(data);
-                 if (!coachDict.TryAdd(entity.entityName, entity))
-                 {
-                     Debug.LogWarning($"이미 추가된 선수임{entity.entityName}");
-                 }
-                 this.saveManager.UpdateCoachEntity(entity);
+                var entity = CoachFactory.CreateCoachEntityFromCSV(data);
+                if (!coachDict.TryAdd(entity.entityName, entity))
+                {
+                    Debug.LogWarning($"이미 추가된 선수임{entity.entityName}");
+                }
+                
+                saveManager.UpdateCoachEntity(entity);
             }
-            
-            // TODO : 코치 테스트 생산
-            // for (int i = 0; i < 25; i++)
-            // {
-            //     CoachEntity entity = CoachFactory.CreateCoachEntity(i); // 팩토리로 객체 생산
-            //     this.saveManager.UpdateCoachEntity(entity); // 세이브 객체가 있으면 그걸로 업데이트
-            //     coachDict[entity.entityName] = entity; // 딕셔너리에 추가
-            // }
         }
         public CoachEntity FindByName(string entityName) // 이름으로 코치 객체 찾기
         {
             return  coachDict.GetValueOrDefault(entityName);
         }
 
+        public List<CoachEntity> FindAllCoaches()
+        {
+            return  coachDict.Values.ToList();
+        }
         public List<CoachEntity> FindAllCanRecruit() // 현재 기준 영입 가능한 코치 리스트
         {
             return coachDict.Values.Where(x => x.curState == CoachState.Unrecruited).ToList();

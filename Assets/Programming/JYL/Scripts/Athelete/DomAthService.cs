@@ -4,19 +4,24 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace JYL
 {
     public class DomAthService : MonoBehaviour
     {
-        private readonly IDomAthRepository repository;
-        private readonly IDisposable subscription;
-         
-        // 생성자를 통해 Repository를 주입받는다 (Dependency Injection) Zenject를 통해 주입 예정
-        public DomAthService(IDomAthRepository repository)
+        [Inject] private readonly IDomAthRepository repository;
+        private IDisposable subscription;
+        
+        // TODO: 에디터 테스트
+        public List<DomAthEntity> testList = new();
+        private void Awake()
         {
-            this.repository = repository;
-            // 초기 작업 이후, 등록된 선수들은 능력치 및 나이에 이벤트 구독 필요. UI에서 구현
+            Init();
+        }
+
+        public void Init()
+        {
             List<DomAthEntity> athleteList = GetRecruitedAthleteList();
             foreach (DomAthEntity athlete in athleteList)
             {
@@ -27,6 +32,8 @@ namespace JYL
                     .Subscribe(x => RetireAthlete(athlete)) // 은퇴 구독
                     .AddTo(this); // 객체 파괴 시 이벤트 구독 해제
             }
+            
+            testList = GetAllAthleteList();
         }
 
         #region 선수 목록
