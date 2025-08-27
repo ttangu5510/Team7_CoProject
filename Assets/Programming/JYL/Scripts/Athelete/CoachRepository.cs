@@ -19,8 +19,8 @@ namespace JYL
     }
     public class CoachRepository : ICoachRepository
     {
-        private Dictionary<string, CoachEntity> coachDict { get; set; } = new(); // 코치 동적 객체를 이름으로 찾을 때 사용 됨
-        private ISaveManager saveManager;
+        private Dictionary<string, CoachEntity> coachDict { get; } = new(); // 코치 동적 객체를 이름으로 찾을 때 사용 됨
+        private ISaveManager saveManager { get; }
 
         // 레포지토리 생성 시 사용되는 생성자. 세이브 매니저의 종속성을 주입한다.
         public CoachRepository(ISaveManager saveManager)

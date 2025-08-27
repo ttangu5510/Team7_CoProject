@@ -181,7 +181,7 @@ public class DomAthEntity : BaseAthEntity
         stats.ApplyTrainValue(ability, amount, maxStat);
         
         // 훈련 완료 후 피로도 증가. 코치가 있을 경우, 코치 버프만큼 감소
-        stats.SetFatigue(Random.Range(7, 12) - coach);
+        stats.SetFatigue(Random.Range(7, 12) + coach);
     }
 
     public void RecoverAthlete(int amount) // 선수 회복에 쓰이는 함수
