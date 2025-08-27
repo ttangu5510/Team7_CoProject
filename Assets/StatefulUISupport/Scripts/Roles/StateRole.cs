@@ -27,5 +27,6 @@ public enum StateRole
     MandatoryMatch = -177531802,
     Registered = -1153052774,
     UnRegistered = 541474191,
+    Active = 720978296,
 
 }
