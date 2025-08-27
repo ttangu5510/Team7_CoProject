@@ -4,6 +4,7 @@ using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using StatefulUI.Runtime.Core;
 
 namespace SJL
 {
@@ -22,6 +23,8 @@ namespace SJL
         [SerializeField] private GameObject TrainingBox;
         [SerializeField] private GameObject specialTrainingBox;
 
+        [SerializeField] private StatefulComponent statefulComponent;
+
 
         private void Awake()
         {
@@ -33,7 +36,10 @@ namespace SJL
                 .Subscribe(_ => ShowPanel(PanelType.FacilityInformation)).AddTo(this);
 
             trainingButton.OnClickAsObservable()
-                .Subscribe(_ => ShowPanel(PanelType.Training)).AddTo(this);
+                .Subscribe(_ => { statefulComponent.SetState((int)StateRole.Active);
+                    statefulComponent.SetRawTextByRole((int)TextRole.ExplanatioryText, "선수틀을 배치하여 훈련시킬 수 있습니다.\n루틴에 따라 상승하는 능력치가 달라집니다.\n\n루틴 진행 시 1주가 소모됩니다.");
+                });
+                //.Subscribe(_ => ShowPanel(PanelType.Training)).AddTo(this);
 
             specialTrainingButton.OnClickAsObservable()
                 .Subscribe(_ => ShowPanel(PanelType.SpecialTraining)).AddTo(this); 
