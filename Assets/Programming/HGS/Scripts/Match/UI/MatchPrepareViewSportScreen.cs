@@ -8,8 +8,9 @@ using UniRx;
 
 namespace SHG
 {
-  public class MatchViewSportScreen 
+  public class MatchPrepareViewSportScreen 
   {
+
     static Sprite[] SPORT_ICONS;
 
     ContainerView sportsGrid;
@@ -17,7 +18,7 @@ namespace SHG
     CompositeDisposable disposables;
     HashSet<Button> subscribedButtons;
 
-    static MatchViewSportScreen()
+    static MatchPrepareViewSportScreen()
     {
       SPORT_ICONS = new Sprite[Enum.GetValues(typeof(SportType)).Length];
       foreach (var sport in MatchData.DefaultSports) {
@@ -42,7 +43,7 @@ namespace SHG
       }
     }
 
-    public MatchViewSportScreen(
+    public MatchPrepareViewSportScreen(
       ReactiveProperty<Nullable<SportType>> selectedSport,
       ContainerView sportsGrid)
     {

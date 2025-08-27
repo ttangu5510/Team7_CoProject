@@ -4,5 +4,6 @@
 public enum SliderRole
 {
     Unknown = 0,
+    StatSlider = 57765059,
 
 }

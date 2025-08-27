@@ -38,5 +38,13 @@ public enum TextRole
     NationalityLabel = 523188770,
     AthleteNameLabel = 568117748,
     StatLabel = 1165732026,
+    AthletePotentionLabel = -128161825,
+    AthleteGradeLabel = 1407948638,
+    AthleteRetireLabel = -598092100,
+    TitleLabel = 223750830,
+    RankLabel = -967988750,
+    RecordLabel = -1296891025,
+    MedalLabel = 1638489267,
+    TotalLabel = 1357520602,
 
 }

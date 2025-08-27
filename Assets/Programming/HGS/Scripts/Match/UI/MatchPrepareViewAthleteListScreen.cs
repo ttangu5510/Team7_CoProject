@@ -6,17 +6,16 @@ using JYL;
 
 namespace SHG
 {
-  public class MatchViewAthleteListScreen 
+  public class MatchPrepareViewAthleteListScreen 
   {
-    
-    ReactiveProperty<MatchViewPresenter.ViewState> parentState;
+    ReactiveProperty<MatchPrepareViewPresenter.ViewState> parentState;
     StatefulComponent view;
     ContainerView contenderContainer;
     ScrollRect scrollView;
     CompositeDisposable disposables;
 
-    public MatchViewAthleteListScreen(
-      ReactiveProperty<MatchViewPresenter.ViewState> parentState, 
+    public MatchPrepareViewAthleteListScreen(
+      ReactiveProperty<MatchPrepareViewPresenter.ViewState> parentState, 
       StatefulComponent view,
       ContainerView contenderContainer)
     {
@@ -31,14 +30,14 @@ namespace SHG
         (int)ButtonRole.UserAthleteButton).Button
         .OnClickAsObservable()
         .Subscribe(_ => 
-          parentState.Value = MatchViewPresenter.ViewState.AthleteSelect)
+          parentState.Value = MatchPrepareViewPresenter.ViewState.AthleteSelect)
         .AddTo(this.disposables);
       
       this.view.GetItem<ButtonReference>(
         (int)ButtonRole.BackButton).Button
         .OnClickAsObservable()
         .Subscribe(_ => 
-          parentState.Value = MatchViewPresenter.ViewState.SportSelect)
+          parentState.Value = MatchPrepareViewPresenter.ViewState.SportSelect)
         .AddTo(this.disposables);
     }
 
@@ -65,7 +64,7 @@ namespace SHG
           "대한민국");
         this.view.SetRawTextByRole(
           (int)TextRole.StatLabel,
-          Match.GetAverageStatTextOf(athlete.stats));
+          IAthleteController.GetAverageStatTextOf(athlete.stats));
       }
       else {
         this.view.SetState((int)StateRole.UnRegistered);
@@ -86,7 +85,7 @@ namespace SHG
             contender.Country.Name);
           view.SetRawTextByRole(
             (int)TextRole.StatLabel,
-            Match.GetAverageStatTextOf(contender.Stats));
+            IAthleteController.GetAverageStatTextOf(contender.Stats));
         });
       this.scrollView.verticalNormalizedPosition = 1.0f;
     }

@@ -99,6 +99,19 @@ namespace SHG
       this.CurrentMatch.Value = this.CreateMatch(this.NextMatch.Value.Value);
     }
 
+    public void EndCurrentMatch()
+    {
+      if (this.CurrentMatch.Value == null) {
+      #if UNITY_EDITOR
+        throw (new ApplicationException($"{nameof(EndCurrentMatch)}: {nameof(CurrentMatch)} is null"));
+      #else
+        return ;
+      #endif
+      }
+      this.CurrentMatch.Value = null;
+      this.timeFlowController.ProgressWeeks(2);
+    }
+
     public bool TryGetMatchFor(in GameDate gameDate, out MatchData matchData)
     {
       return (this.scheduler.TryGetMatchFor(gameDate, out matchData));

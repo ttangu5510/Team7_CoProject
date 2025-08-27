@@ -31,6 +31,8 @@ namespace SHG
     /// 예정된 경기를 시작하는 기능 (현재 해당 경기를 실행할 수 있는지는 확인하지 않음)
     /// </summary>
     public void EnterNextMatch();
+
+    public void EndCurrentMatch();
     public bool TryGetMatchFor(in GameDate gameDate, out MatchData matchData);
 
     /// <summary> 경기 참가 등록 </summary>

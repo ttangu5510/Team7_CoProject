@@ -18,9 +18,9 @@ namespace SHG
     public AthleteStats Stats => this.stats;
 
     public AthleteAffiliation Level => (this.Grade switch {
-        "일반 선수" => AthleteAffiliation.Regular,
-        "국가대표 후보" => AthleteAffiliation.Prospect,
-        "국가대표" => AthleteAffiliation.National,
+        "일반 선수" => (AthleteAffiliation)0,
+        "국가대표 후보" => (AthleteAffiliation)1,
+        "국가대표" => (AthleteAffiliation)2,
         _ => throw (new ApplicationException())
       });
 

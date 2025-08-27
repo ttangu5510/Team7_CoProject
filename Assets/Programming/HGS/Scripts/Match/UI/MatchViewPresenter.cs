@@ -1,11 +1,8 @@
-using System;
 using UnityEngine;
 using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
 using UniRx;
-using UniRx.Triggers;
 using Zenject;
-using JYL;
 
 namespace SHG
 {
@@ -15,197 +12,117 @@ namespace SHG
     public enum ViewState
     {
       None,
-      SportSelect = StateRole.SportSelect,
-      AthleteList = StateRole.AthleteList,
-      AthleteSelect = StateRole.AthleteSelect
+      Record = StateRole.Record,
+      Rank = StateRole.Rank,
+      Result = StateRole.Result,
+      Reward = StateRole.Reward
     }
-
-    public ReactiveProperty<bool> IsShowing { get; private set; }
 
     [Inject]
     IMatchController matchController;
-    [Inject]
-    IAthleteController athleteController;
 
-    MatchViewSportScreen sportScreen;
-    MatchViewAthleteListScreen athleteListScreen;
-    MatchViewAthleteSelectionScreen athleteSelectionScreen;
+    MatchViewRecordScreen recordScreen;
+    MatchViewRankScreen rankScreen;
+    MatchViewResultScreen resultScreen;
 
     StatefulComponent view;
-    CompositeDisposable disposables;
-    IDisposable userAthleteSubscription;
-    ReactiveProperty<Nullable<SportType>> selectedSport;
-
     ReactiveProperty<ViewState> currentState;
+    CompositeDisposable matchSubscription;
 
     void Awake()
     {
-      this.disposables = new ();
-      this.selectedSport = new (null);
+      this.currentState = new (ViewState.None);
       this.view = this.GetComponent<StatefulComponent>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-      this.InitStates();
-      this.InitScreens();
-      this.SubscribeMatch();
-      this.SubscribeSportSelection();
-
-      this.OnDestroyAsObservable()
-        .Subscribe(_ => this.disposables?.Dispose());
-    }
-
-    void InitStates()
-    {
-      this.currentState = new (ViewState.None);
       this.currentState
-        .Subscribe(state => {
-          if (state != ViewState.None) {
-            this.view.SetState((int)state);
-          }
-          this.OnViewStateChanged();
-          })
-      .AddTo(this.disposables);
-      this.IsShowing = new (false);
-      this.IsShowing
-        .Subscribe(show => {
-          if (show) {
-            this.view.SetState((int)StateRole.Shown);
-            this.currentState.Value = ViewState.SportSelect;
-          }
-          else {
-            this.view.SetState((int)StateRole.Hidden);
-            this.currentState.Value = ViewState.None;
-          }
-          })
-        .AddTo(this.disposables);
+        .Subscribe(this.OnViewStateChanged)
+        .AddTo(this);
+      this.InitScreens();
+      this.matchController.CurrentMatch.Subscribe(this.OnMatchChanged);
     }
 
     void InitScreens()
     {
-      this.sportScreen = new MatchViewSportScreen(
-        selectedSport: this.selectedSport,
-        sportsGrid: this.view.GetItem<ContainerReference>(
-        (int)ContainerRole.SportGrid).Container);
-
-      this.athleteListScreen = new MatchViewAthleteListScreen(
+      this.recordScreen = new MatchViewRecordScreen(
         parentState: this.currentState,
         view: this.view.GetItem<InnerComponentReference>(
-          (int)InnerComponentRole.AthleteListScreen).InnerComponent,
-        contenderContainer: this.view.GetItem<ContainerReference>(
-          (int)ContainerRole.AthleteContainer).Container);
-
-      this.athleteSelectionScreen = new MatchViewAthleteSelectionScreen(
-        parentState: this.currentState,
+          (int)InnerComponentRole.RecordScreen).InnerComponent);
+      this.rankScreen = new MatchViewRankScreen(
+        parentState: this.currentState, 
         view: this.view.GetItem<InnerComponentReference>(
-          (int)InnerComponentRole.AthleteSelectionScreen).InnerComponent
-        );
-
+          (int)InnerComponentRole.RankScreen).InnerComponent);
     }
 
-    void SubscribeSportSelection()
+    void OnViewStateChanged(ViewState state)
     {
-      this.selectedSport
-        .Subscribe(selected => {
-            if (selected != null) {
-              this.currentState.Value = ViewState.AthleteList;
-            } 
-            else if (this.currentState.Value != ViewState.None) {
-              this.currentState.Value = ViewState.SportSelect;
-            }
-          })
-        .AddTo(this.disposables);
-    }
-
-    void SubscribeMatch()
-    {
-      this.matchController.CurrentMatch
-        .Subscribe(match => {
-            if (match == null) {
-              this.userAthleteSubscription?.Dispose();
-              this.IsShowing.Value = false;
-              return;
-            }
-            this.IsShowing.Value = true;
-            this.view.SetState((int)StateRole.Shown);
-            this.userAthleteSubscription = match.UserAthletes
-            .ObserveAdd()
-            .Select(_ => UniRx.Unit.Default)
-            .Merge(match.UserAthletes.ObserveRemove()
-              .Select(_ => UniRx.Unit.Default))
-            .Subscribe(_ => this.OnUserAthleteChanged(match));
-          })
-        .AddTo(this.disposables);
-    }
-
-    void OnUserAthleteChanged(Match match)
-    {
-      switch (this.currentState.Value) {
-        case ViewState.SportSelect:
-          this.sportScreen.FillSportsGrid(match);
-          break;
-        case ViewState.AthleteList:
-          var sportType = this.selectedSport.Value;
-          if (sportType == null) {
-          #if UNITY_EDITOR
-            throw (new ApplicationException($"{nameof(OnUserAthleteChanged)}: {nameof(this.selectedSport)} is null"));
-          #else
-            return;
-          #endif
-          }
-          this.athleteListScreen.UpdateHeader(match, sportType.Value);
-          break;
+      if (state != ViewState.None) {
+        this.view.SetState((int)state);
+        this.view.SetState((int)StateRole.Shown);
       }
-
+      else {
+        this.view.SetState((int)StateRole.Hidden);
+      }
     }
 
-    void OnViewStateChanged()
+    void OnMatchChanged(Match match)
     {
-      var match = this.matchController.CurrentMatch.Value;
-      if (this.currentState.Value != ViewState.None && 
-        match == null) {
-        #if UNITY_EDITOR
-        throw (new ApplicationException($"{nameof(OnViewStateChanged)}: {nameof(this.matchController.CurrentMatch)} is null"));
-        #else
+      if (match == null) {
+        this.matchSubscription?.Dispose();
+        this.matchSubscription = null;
+        this.currentState.Value = ViewState.None;
         return ;
-        #endif
       }
-      switch (this.currentState.Value) {
-        case ViewState.SportSelect:
-          this.view.SetRawTextByRole(
-            (int)TextRole.MatchTitle, match.Data.Name);
-          this.selectedSport.Value = null;
-          this.sportScreen.FillSportsGrid(match);
+      this.matchSubscription = new ();
+
+      match.CurrentState.Subscribe(
+        state => this.OnMatchStateChanged(state, match))
+      .AddTo(this.matchSubscription);
+
+      match.CurrentSport
+        .Subscribe(currentSport => {
+            if (currentSport == null) {
+              return ;
+            }
+            this.recordScreen.OnSportChanged(currentSport.Value, match);
+          })
+        .AddTo(this.matchSubscription);
+
+      match.SportRecords
+        .ObserveReplace()
+        .Subscribe(replaced => 
+          this.recordScreen.UpdateScoreBoard(replaced.NewValue))
+        .AddTo(this.matchSubscription);
+    }
+
+    void OnMatchStateChanged(Match.State state, Match match)
+    {
+      switch (state) {
+        case Match.State.BeforeStart:
+        case Match.State.NotStartable:
+          this.currentState.Value = ViewState.None;
+          return ;
+        case Match.State.InSport:
+          this.recordScreen.UpdateHeader(match);
+          this.currentState.Value = ViewState.Record;
           break;
-        case ViewState.AthleteList:
-          var sportType = this.selectedSport.Value;
-          if (sportType == null) {
-          #if UNITY_EDITOR
-            throw (new ApplicationException($"{nameof(OnViewStateChanged)}: {nameof(this.selectedSport)} is null"));
-          #else
-            return;
-          #endif
+        case Match.State.BeforeSport:
+          match.StartCurrentSport();
+          break;
+        case Match.State.AfterSport:
+          if (match.CurrentSport.Value != null) {
+            this.currentState.Value = ViewState.Rank;
+            this.rankScreen.UpdateView(match);
           }
-          this.athleteListScreen.UpdateHeader(match, sportType.Value);
-          this.athleteListScreen.UpdateList(match, sportType.Value);
+          break; 
+        case Match.State.Ended:
+          this.currentState.Value = ViewState.Result;
+          this.matchController.EndCurrentMatch();
           break;
-        case ViewState.AthleteSelect:
-          if (this.selectedSport.Value == null) {
-          #if UNITY_EDITOR
-            throw (new ApplicationException($"{nameof(OnViewStateChanged)}: {nameof(this.selectedSport)} is null"));
-          #else
-            return;
-          #endif
-          }
-          this.athleteSelectionScreen.UpdateList(
-            match: match,
-            sportType: this.selectedSport.Value.Value,
-            athletes: this.athleteController.Athletes,
-            registeredAthletes: match.UserAthletes);
-          break;
-      } 
+      }
     }
   }
 }

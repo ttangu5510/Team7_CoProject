@@ -11,5 +11,9 @@ public enum ImageRole
     SportIcon = 1698862277,
     Background = 332801758,
     ButtonBackground = 1627819466,
+    NationalFlagIcon = 2018510077,
+    FirstFlag = -1618121434,
+    SecondFlag = -2067292772,
+    ThirdFlag = 215228975,
 
 }

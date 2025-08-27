@@ -38,5 +38,11 @@ public enum StateRole
     SportSelect = -1064793600,
     AthleteSelect = 160571553,
     AthleteList = -1680615137,
+    Transition = -342171253,
+    AthleteStat = 551134355,
+    Record = -1339961347,
+    Rank = -1516408252,
+    Result = 1624192333,
+    Reward = 2027218411,
 
 }
