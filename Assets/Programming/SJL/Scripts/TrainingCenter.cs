@@ -15,6 +15,7 @@ namespace SJL
         [SerializeField] private Button FacilityInformationButton;
         [SerializeField] private Button trainingButton;
         [SerializeField] private Button specialTrainingButton;
+        [SerializeField] private Button coachButton;
         [Header("Text")]
         [SerializeField] private TextMeshProUGUI explanatoryText;
         [Header("panel")]
@@ -37,7 +38,9 @@ namespace SJL
 
             trainingButton.OnClickAsObservable()
                 .Subscribe(_ => { statefulComponent.SetState((int)StateRole.Active);
-                    statefulComponent.SetRawTextByRole((int)TextRole.ExplanatioryText, "선수틀을 배치하여 훈련시킬 수 있습니다.\n루틴에 따라 상승하는 능력치가 달라집니다.\n\n루틴 진행 시 1주가 소모됩니다.");
+                    statefulComponent.SetRawTextByRole((int)TextRole.ExplanatioryText, "선수틀을 배치하여 훈련시킬 수 있습니다.\n" +
+                        "루틴에 따라 상승하는 능력치가 달라집니다.\n\n" +
+                        "<color=#FF3333>훈련을 진행할 때 7~12의 피로도가 상승하며 1턴(1주)가 소모됩니다.</color>");
                 });
                 //.Subscribe(_ => ShowPanel(PanelType.Training)).AddTo(this);
 
@@ -58,7 +61,9 @@ namespace SJL
                     specialTrainingBox.SetActive(false);
                     break;
                 case PanelType.Training:
-                    explanatoryText.text = "선수틀을 배치하여 훈련시킬 수 있습니다.\n루틴에 따라 상승하는 능력치가 달라집니다.\n\n루틴 진행 시 1주가 소모됩니다.";
+                    explanatoryText.text = "선수틀을 배치하여 훈련시킬 수 있습니다.\n" +
+                        "루틴에 따라 상승하는 능력치가 달라집니다.\n\n" +
+                        "<color=#FF3333>훈련을 진행할 때 7~12의 피로도가 상승하며 1턴(1주)가 소모됩니다.</color>";
                     FacilityInformationBox.SetActive(false);
                     TrainingBox.SetActive(true);
                     specialTrainingBox.SetActive(false);
