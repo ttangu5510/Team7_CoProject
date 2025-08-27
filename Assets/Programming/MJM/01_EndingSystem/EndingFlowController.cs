@@ -33,17 +33,17 @@ public class EndingFlowController : MonoBehaviour
 
     public void RunFlow()
     {
-        // 1) 데이터 준비 & 점수 계산
+        // 데이터 준비 & 점수 계산
         var data = formula.useDummy ? formula.dummy : FetchLive();
         var bd = EndingScorer.Compute(data, formula);
 
-        // 2) 점수 팝업
+        // 점수 팝업
         scorePopup.gameObject.SetActive(true);
         scorePopup.Bind(data, bd);
         scorePopup.onConfirm = () =>
         {
             scorePopup.gameObject.SetActive(false);
-            // 3) (선택) 애니메이션 → 바로 버튼 선택으로 가고 싶으면 이 블럭 건너뛰기
+            // (선택) 애니메이션 / 바로 버튼 선택으로 가고 싶으면 이 블럭 건너뛰기
             if (animationView != null)
             {
                 animationView.gameObject.SetActive(true);
@@ -102,7 +102,8 @@ public class EndingFlowController : MonoBehaviour
 
     EndingScoreData FetchLive() => new EndingScoreData(); // 실제 값 연결 지점
 
-    void LoadScene(string scene)
+    // 지금은 모든 걸 하나의 씬에서 진행하지만 나중에 씬 분리가 된다면 사용할 함수~
+    void LoadScene(string scene) 
     {
         // TODO: 세이브/리셋 로직 등 삽입
         SceneManager.LoadScene(scene);

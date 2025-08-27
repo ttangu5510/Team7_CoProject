@@ -16,7 +16,7 @@ public class EndingManager : MonoBehaviour
             return;
         }
 
-        // 지금은 엑셀이 우선 → SO의 dummy 또는 이후 실데이터 바인딩
+        // 지금은 엑셀이 우선 -> SO의 dummy 또는 이후 실데이터 바인딩
         EndingScoreData data = formula.useDummy ? formula.dummy : FetchLiveData();
 
         var bd = EndingScorer.Compute(data, formula);
