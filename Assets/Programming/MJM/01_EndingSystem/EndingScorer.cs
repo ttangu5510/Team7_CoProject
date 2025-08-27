@@ -18,6 +18,10 @@ public class EndingScorer
 
         public float totalF;   // 부동소수 총합
         public int total;    // 반올림 정수 총합
+
+
+        public string rank;        
+        public string rankMessage;
     }
 
 
@@ -39,6 +43,25 @@ public class EndingScorer
                    b.medalScore + b.facilityScore + b.goldScore + b.achievementScore + b.reputationScore;
 
         b.total = Mathf.RoundToInt(b.totalF);
+
+
+
+
+
+
+        string best = "C"; string msg = ""; int cut = int.MinValue;
+        foreach (var r in f.rankThresholds)
+        {
+            if (b.total >= r.minScoreInclusive && r.minScoreInclusive > cut)
+            {
+                cut = r.minScoreInclusive;
+                best = string.IsNullOrEmpty(r.rankName) ? best : r.rankName;
+                msg = r.message;
+            }
+        }
+        b.rank = best;
+        b.rankMessage = msg;
+
         return b;
     }
 

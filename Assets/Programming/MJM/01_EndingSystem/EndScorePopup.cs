@@ -14,6 +14,10 @@ public class EndScorePopup : MonoBehaviour
     [Header("Buttons")]
     [SerializeField] Button btnConfirm;     // 확인(=다음 단계)
 
+
+    [SerializeField] TMP_Text txtRank;      // "등급 S" 같은 표시
+    [SerializeField] TMP_Text txtRankMsg;   // 등급 설명
+
     public System.Action onConfirm;
 
     public void Bind(EndingScoreData raw, EndingScorer.Breakdown bd)
@@ -33,6 +37,13 @@ public class EndScorePopup : MonoBehaviour
         if (txtList) txtList.text = sb.ToString();
 
         if (txtTotal) txtTotal.text = $"총합  {bd.total:N0} 점";
+
+
+        if (txtTotal) txtTotal.text = $"총합  {bd.total:N0} 점";
+        if (txtRank) txtRank.text = $"등급  {bd.rank}";
+        if (txtRankMsg) txtRankMsg.text = bd.rankMessage;
+
+
     }
 
     void Awake()

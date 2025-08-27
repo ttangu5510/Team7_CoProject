@@ -35,4 +35,25 @@ public class EndingScoreFormula : ScriptableObject
         reputationTotal = 120
     };
 
+
+
+
+    [System.Serializable]
+    public struct EndingRankDef
+    {
+        public string rankName;          // "C","B","A","S","SS" 등
+        public int minScoreInclusive; // 이 점수 이상이면 해당 랭크
+        [TextArea] public string message;
+    }
+
+    [Header("랭크 컷(점수별 등급)")]
+    public List<EndingRankDef> rankThresholds = new List<EndingRankDef>()
+{
+    new EndingRankDef{ rankName="C",  minScoreInclusive=0,    message="Normal" },
+    new EndingRankDef{ rankName="B",  minScoreInclusive=200,  message="Great" },
+    new EndingRankDef{ rankName="A",  minScoreInclusive=400,  message="League of Legend" },
+    new EndingRankDef{ rankName="S",  minScoreInclusive=700,  message="Mythic" },
+   
+};
+
 }
