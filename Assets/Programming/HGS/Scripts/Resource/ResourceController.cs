@@ -202,6 +202,19 @@ namespace SHG
       generalAthletes = 0; 
       nationalAthleteCandidates = 0;
       nationalAthletes = 0;
+      foreach (var athlete in athletes) {
+        switch ((int)athlete.affiliation) {
+          case 0:
+            generalAthletes++;
+            break;
+          case 1:
+            nationalAthleteCandidates++;
+            break;
+          case 2:
+            nationalAthletes++;
+            break;
+        }
+      }
     }
 
 
