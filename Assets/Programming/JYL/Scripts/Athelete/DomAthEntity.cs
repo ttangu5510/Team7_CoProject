@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -82,7 +83,7 @@ public class DomAthEntity : BaseAthEntity
     
     public int recruitAge { get; private set; } // 초기 나이
     public int retireAge { get; private set; } // 은퇴 나이
-    public int curAge { get; private set; } // 현재 나이
+    public ReactiveProperty<int> curAge { get; private set; } = new();// 현재 나이
     
     // 능력치
     public AthleteStats stats { get; private set; }
@@ -103,7 +104,7 @@ public class DomAthEntity : BaseAthEntity
         this.affiliation = affiliation;
         this.maxGrade = maxGrade;
         this.recruitAge = recruitAge;
-        curAge = recruitAge;
+        curAge.Value = recruitAge;
         this.retireAge = retireAge;
         stats = new AthleteStats(health, quickness, flexibility, technic, speed, balance);
         curState = AthleteState.Unrecruited;
@@ -111,7 +112,7 @@ public class DomAthEntity : BaseAthEntity
 
     public void UpdateFromSave(AthleteSave save) //세이브 파일로부터 업데이트
     {
-        curAge = save.age;
+        curAge.Value = save.age;
 
         stats = new AthleteStats(save.health, save.quickness, save.flexibility, save.technic, save.speed, save.balance);
         stats.SetFatigue(save.fatigue);
@@ -131,7 +132,7 @@ public class DomAthEntity : BaseAthEntity
     
     public void Retire() // 선수 은퇴 시 사용하는 함수
     {
-        if (curAge >= retireAge && curState !=  AthleteState.Unrecruited) // 은퇴 나이가 되었고, 영입이 된 상태라면
+        if (curAge.Value >= retireAge && curState !=  AthleteState.Unrecruited) // 은퇴 나이가 되었고, 영입이 된 상태라면
         {
             curState = AthleteState.Retired; // 은퇴 상태로 변경
         }
@@ -187,6 +188,11 @@ public class DomAthEntity : BaseAthEntity
             leftInjury = 0;
             curState = AthleteState.Active;
         }
+    }
+
+    public void GetAge()
+    {
+        curAge.Value++;
     }
 }
 [System.Serializable]

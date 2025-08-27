@@ -67,14 +67,16 @@ namespace SHG
         .WithArguments(MatchDummyData.DummyData);
     }
 
-    DomAthService CreateDomesticAthleteService()
-    {
-      var saveObject = new GameObject(nameof(Test_JYL_SaveManager));
-      DontDestroyOnLoad(saveObject);
-      var saveManager = saveObject.AddComponent<Test_JYL_SaveManager>();
-      saveManager.Init();
-      var repository = new DomAthRepository(saveManager);
-      return (new DomAthService(repository));
-    }
+    
+    // DomAthService CreateDomesticAthleteService()
+    // {
+    //   var saveObject = new GameObject(nameof(SaveManager));
+    //   DontDestroyOnLoad(saveObject);
+    //   var saveManager = saveObject.AddComponent<SaveManager>();
+    //   saveManager.Initialize();
+    //   var repository = new DomAthRepository(saveManager);
+    //   return (new DomAthService(repository));
+    //   return null;
+    // }
   }
 }
