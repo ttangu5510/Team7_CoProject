@@ -26,25 +26,30 @@ namespace JYL
         public DomAthRepository(ISaveManager saveManager)
         {
             this.saveManager = saveManager;
-            // TODO : CSV 로드
-            // var csvData = ;
-            // foreach(var row in csvData)
-            // {
-            //     var athlete = DomAthFactory.CreateFromCsv(row);
-            //     athleteDict.Add(athlete.name,athlete);
-            // }
             
-            for (int i = 0; i < 25; i++) //csv의 행 수 만큼 반복
+            var csvData = CsvReader.ReadAthletes("DomAthTable");
+            foreach(var data in csvData)
             {
-                DomAthEntity entity = DomAthFactory.CreateFromCsv(i); // CSV에서 읽어와서 초기화
-
+                var entity = DomAthFactory.CreateAthEntityFromCSV(data);
                 if (!athleteDict.TryAdd(entity.entityName, entity))
                 {
                     Debug.LogWarning($"이미 추가된 선수임{entity.entityName}");
                 }
 
-                this.saveManager.UpdateAthleteEntity(entity); // 선수 세이브 객체를 통해 최신화
+                this.saveManager.UpdateAthleteEntity(entity);
             }
+            
+            // for (int i = 0; i < 25; i++) //csv의 행 수 만큼 반복
+            // {
+            //     DomAthEntity entity = DomAthFactory.CreateFromCsv(i); // CSV에서 읽어와서 초기화
+            //
+            //     if (!athleteDict.TryAdd(entity.entityName, entity))
+            //     {
+            //         Debug.LogWarning($"이미 추가된 선수임{entity.entityName}");
+            //     }
+            //
+            //     this.saveManager.UpdateAthleteEntity(entity); // 선수 세이브 객체를 통해 최신화
+            // }
             
         }
 

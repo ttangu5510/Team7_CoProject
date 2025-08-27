@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-
 using JYL;
 
 namespace JWS
@@ -13,6 +11,9 @@ namespace JWS
     {
         // 유저
         public string userId; // 유저 계정 고유 ID (예: "UID 72819210")
+        
+        // 유저 이름
+        public string userName;
 
         // 시간
         public TimeStamp time = new(); // 인게임 시간 + 현실 플레이 타임
@@ -24,14 +25,14 @@ namespace JWS
         public List<BuildingState> buildings = new(); // 건물 상태 목록
 
         // 선수
-        public Roster roster = new(); // 보유/은퇴/퇴출 목록
-        public List<AthleteState> playerStates = new(); // 개별 선수 현재 상태(능력치/나이/성별/부상 등)
+        //public Roster roster = new(); // 보유/은퇴/퇴출 목록
+        public List<AthleteSave> athleteSaves = new(); // 개별 선수 현재 상태(능력치/나이/성별/부상 등)
 
         // 코치
-        public List<CoachState> coaches = new(); // 코치 보유 + 영입 내역
+        public List<CoachSave> coachSaves = new(); // 코치 보유 + 영입 내역
 
         // 상대 선수(스카우팅/대전 등으로 파악한 정보)
-        public List<OpponentRecord> opponentRecords = new();
+        //public List<OpponentRecord> opponentRecords = new();
 
         // 퀘스트
         public List<QuestState> quests = new(); // 전체 목록 + 진행/클리어 여부
@@ -43,9 +44,10 @@ namespace JWS
         public List<EncyclopediaState> encyclopedia = new(); // 전체 목록 + 트로피/메달 보유 여부
 
         // ==== Init 메서드 ====
-        public void Init(string userId)
+        public void Init(string userId, string userName)
         {
             this.userId = userId;
+            this.userName = userName;
 
             // 시간 초기화
             time.yearCycle = 1;
@@ -63,10 +65,12 @@ namespace JWS
             buildings.Clear();
 
             // 선수/코치 초기화
-            roster = new Roster();
-            playerStates.Clear();
-            coaches.Clear();
-            opponentRecords.Clear();
+            // roster = new Roster();
+            // playerStates.Clear();
+            // coaches.Clear();
+            // opponentRecords.Clear();
+            athleteSaves.Clear();
+            coachSaves.Clear();
 
             // 퀘스트/업적/도감 초기화
             quests.Clear();
@@ -74,19 +78,19 @@ namespace JWS
             encyclopedia.Clear();
         }
         
-        public AthleteState FindAthlete(DomAthEntity entity)
+        public AthleteSave FindAthlete(DomAthEntity entity)
         {
-            return playerStates.Find(x => x.id == entity.id);
+            return athleteSaves.Find(ath => ath.id == entity.id);
         }
 
-        public CoachState FindCoach(CoachEntity entity)
+        public CoachSave FindCoach(CoachEntity entity)
         {
-            return coaches.Find(x => x.id == entity.id);
+            return coachSaves.Find(coach => coach.id == entity.id);
         }
 
-        public CoachState FindCoach(int id)
+        public CoachSave FindCoach(int id)
         {
-            return coaches.Find(x => x.id == id); // CoachState.id가 string이므로 변환
+            return coachSaves.Find(coach => coach.id == id); // CoachState.id가 string이므로 변환
         }
     }
 
@@ -115,7 +119,7 @@ namespace JWS
         Winter
     }
 
-/* ========================= 시간 ========================= */
+/* ========================= 재화 ========================= */
 
     [Serializable]
     public class Currencies
@@ -138,49 +142,7 @@ namespace JWS
         public List<string> scoutedPlayerIds = new(); // 스카우트 건물에 등장한 선수
         public List<string> assignedCoachIds = new(); // 코치(리세마라 방지)
     }
-
-/* ========================= 선수 ========================= */
-
-    [Serializable]
-    public class Roster
-    {
-        public List<string> owned = new(); // 획득한 선수 ID
-        public List<string> retired = new(); // 은퇴 선수 ID
-        public List<string> dismissed = new(); // 퇴출 선수 ID
-    }
-
-// 선수 개별 상태(세이브용) — 마스터 CSV(기본능력치) + 현재 상태(세이브) 분리 권장
-    [Serializable]
-    public class AthleteState
-    {
-        public int id; // 선수 ID (마스터 CSV 키)
-        public string sex; // "M"/"F" 등 (필요 없으면 삭제)
-        public int age; // 현재 나이
-        public bool isInjured; // 부상 상태
-        public int fatigue; // 피로도
-
-    }
-
-/* ========================= 코치 ========================= */
-
-    [Serializable]
-    public class CoachState
-    {
-        public int id; // 코치 ID
-        public string hiredDate; // 영입 날짜(UTC ISO)
-        public string hiredRoute; // 영입 경로(예: "Scout", "Quest", "Shop")
-    }
-
-/* ========================= 상대 선수 ========================= */
-
-    [Serializable]
-    public class OpponentRecord
-    {
-        public string country; // 국적 (예: "KR", "JP")
-        public string teamName; // 소속
-        public List<string> playerIds = new(); // 파악된 선수 ID 목록(마스터 참조)
-    }
-
+    
 /* ========================= 퀘스트 ========================= */
 
     [Serializable]
@@ -221,4 +183,47 @@ namespace JWS
         public string id; // 도감 항목 ID(전체 목록 포함)
         public int obtainedCount; // 누적 획득 개수
     }
+    
+    
+/* ========================= 선수 ========================= */
+
+    // [Serializable]
+    // public class Roster
+    // {
+    //     public List<string> owned = new(); // 획득한 선수 ID
+    //     public List<string> retired = new(); // 은퇴 선수 ID
+    //     public List<string> dismissed = new(); // 퇴출 선수 ID
+    // }
+
+    // 선수 개별 상태(세이브용) — 마스터 CSV(기본능력치) + 현재 상태(세이브) 분리 권장
+    // [Serializable]
+    // public class AthleteState
+    // {
+    //     public int id; // 선수 ID (마스터 CSV 키)
+    //     public string sex; // "M"/"F" 등 (필요 없으면 삭제)
+    //     public int age; // 현재 나이
+    //     public bool isInjured; // 부상 상태
+    //     public int fatigue; // 피로도
+    //
+    // }
+
+/* ========================= 코치 ========================= */
+
+    // [Serializable]
+    // public class CoachState
+    // {
+    //     public int id; // 코치 ID
+    //     public string hiredDate; // 영입 날짜(UTC ISO)
+    //     public string hiredRoute; // 영입 경로(예: "Scout", "Quest", "Shop")
+    // }
+
+/* ========================= 상대 선수 ========================= */
+
+    // [Serializable]
+    // public class OpponentRecord
+    // {
+    //     public string country; // 국적 (예: "KR", "JP")
+    //     public string teamName; // 소속
+    //     public List<string> playerIds = new(); // 파악된 선수 ID 목록(마스터 참조)
+    // }
 }

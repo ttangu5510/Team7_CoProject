@@ -121,7 +121,6 @@ public class DomAthEntity : BaseAthEntity
     
     public void Recruit() // 선수 영입할 때 쓰는 함수. 재화 나가는건 다른데서 처리해야 함
     {
-        // TODO : 확률  시설 UI 쪽에서 확률 건드려야 함
         if (recruitAge < retireAge)
         {
             curState = AthleteState.Active;

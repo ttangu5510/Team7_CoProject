@@ -13,8 +13,8 @@ namespace JYL
         public int playerFame;
         public int progressWeek;
         public string saveTime;
-        public List<AthleteSave> athleteSaves;
-        public List<CoachSave> coachSaves;
+        public List<AthleteSave> athleteSaves = new();
+        public List<CoachSave> coachSaves = new();
 
         public void Init(string name) // 세이브 파일 최초 생성시에 사용
         {
@@ -22,8 +22,8 @@ namespace JYL
             playerGold = 0;
             playerFame = 0;
             progressWeek = 0;
-            saveTime = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
-            athleteSaves = new List<AthleteSave>();
+            saveTime = DateTime.UtcNow.ToString("yyyy-MM-dd HH-mm-ss");
+            //athleteSaves = new List<AthleteSave>();
         }
 
         public AthleteSave FindAthlete(DomAthEntity entity)
