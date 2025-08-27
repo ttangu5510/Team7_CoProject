@@ -33,5 +33,6 @@ public enum TextRole
     CharacterNameLabel = -999651080,
     CharacterQuotesLabel = -1642233930,
     RegisterButtonLabel = 345763217,
+    ExplanatioryText = 1619094563,
 
 }
