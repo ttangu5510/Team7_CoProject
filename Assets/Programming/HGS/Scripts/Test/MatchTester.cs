@@ -13,8 +13,8 @@ namespace SHG
   public class MatchTester : MonoBehaviour {
     [Inject]
     IMatchController matchController;
-    [Inject]
-    IAthleteController athleteController;
+//    [Inject]
+//    IAthleteController athleteController;
     [Inject]
     ITimeFlowController timeFlowController;
     CompositeDisposable subscribeMatch;
@@ -61,14 +61,14 @@ namespace SHG
       this.athleteDummyData = new ();
       this.koreaContenders = new ();
       this.registeredMatch = new ();
-      this.athletesIds = this.athleteController.Athletes.ToList().ConvertAll(
-        athlete => athlete.id.ToString());
+//      this.athletesIds = this.athleteController.Athletes.ToList().ConvertAll(
+//        athlete => athlete.id.ToString());
+//
+//      foreach (var athlete in this.athleteController.Athletes) {
+//        this.koreaContenders.Add(new ConvertedDomesticAthlete(athlete));
+//      }
 
-      foreach (var athlete in this.athleteController.Athletes) {
-        this.koreaContenders.Add(new ConvertedDomesticAthlete(athlete));
-      }
-
-      (this.matchController as MatchController).ContenderGetter = this.GetContenderAthletes;
+      //(this.matchController as MatchController).ContenderGetter = this.GetContenderAthletes;
       this.timeFlowController.WeekInYear.Subscribe(
         week => {
         if (this.matchController.NextMatch.Value != null) {
@@ -187,12 +187,12 @@ namespace SHG
         throw (new ArgumentException($"{nameof(RegisterAthlete)}: {sportIndex} is in range of {nameof(SportType)}"));
       }
       var sportType = (SportType)sportIndex;
-      if (!this.athleteController.TryGetAthleteBy(
-          id, out DomAthEntity athlete)) {
-        throw (new ApplicationException(nameof(RegisterAthlete)));
-      }
-      this.currentMatch.SelectAthlete(
-        athlete, sportType);
+//      if (!this.athleteController.TryGetAthleteBy(
+//          id, out DomAthEntity athlete)) {
+//        throw (new ApplicationException(nameof(RegisterAthlete)));
+//      }
+//      this.currentMatch.SelectAthlete(
+//        athlete, sportType);
     }
 
     [Button]

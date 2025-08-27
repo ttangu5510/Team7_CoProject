@@ -72,7 +72,7 @@ namespace SHG
     public void UpdateList(
       Match match,
       SportType sportType,
-      ReactiveCollection<DomAthEntity> athletes,
+      IList<DomAthEntity> athletes,
       ReactiveDictionary<SportType, DomAthEntity> registeredAthletes)
     {
       this.athleteContainer.Clear();

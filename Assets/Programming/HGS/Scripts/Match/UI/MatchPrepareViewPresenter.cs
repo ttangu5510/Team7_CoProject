@@ -6,6 +6,7 @@ using StatefulUI.Runtime.References;
 using UniRx;
 using UniRx.Triggers;
 using Zenject;
+using JYL;
 
 namespace SHG
 {
@@ -24,8 +25,10 @@ namespace SHG
 
     [Inject]
     IMatchController matchController;
+//    [Inject]
+//    IAthleteController athleteController;
     [Inject]
-    IAthleteController athleteController;
+    DomAthService domAthService;
 
     MatchPrepareViewSportScreen sportScreen;
     MatchPrepareViewAthleteListScreen athleteListScreen;
@@ -227,7 +230,7 @@ namespace SHG
           this.athleteSelectionScreen.UpdateList(
             match: match,
             sportType: this.selectedSport.Value.Value,
-            athletes: this.athleteController.Athletes,
+            athletes: this.domAthService.GetRecruitedAthleteList(),
             registeredAthletes: match.UserAthletes);
           break;
       } 
