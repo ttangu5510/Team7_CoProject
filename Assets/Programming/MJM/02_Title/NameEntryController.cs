@@ -2,13 +2,9 @@
 using TMPro;
 using UnityEngine.UI;
 using System.IO;
-
-[System.Serializable]
-public class PlayerProfile
-{
-    public string protagonistName;
-    public string teamName;
-}
+using JYL;
+using UnityEngine.SceneManagement;
+using Zenject;
 
 public class NameEntryController : MonoBehaviour
 {
@@ -27,7 +23,7 @@ public class NameEntryController : MonoBehaviour
     [Header("Actions")]
     [SerializeField] private Button confirmButton;
 
-    string SavePath => Path.Combine(Application.persistentDataPath, "player_profile.json");
+    [Inject] public ISaveManager saveManager;
 
     void Awake()
     {
@@ -55,21 +51,13 @@ public class NameEntryController : MonoBehaviour
         }
 
         // 저장(JSON)
-        var profile = new PlayerProfile
-        {
-            protagonistName = nameField.text.Trim(),
-            teamName = teamNameField.text.Trim()
-        };
+        string protagonistName = nameField.text.Trim();
+        string teamName = teamNameField.text.Trim();
+        if (saveManager == null) Debug.Log("세이브매니저 널");
+        saveManager.CreateSaveData(protagonistName,teamName);
 
-        var json = JsonUtility.ToJson(profile, true);
-        File.WriteAllText(SavePath, json);
-
-        // 필요하면 PlayerPrefs 백업도 가능:
-        // PlayerPrefs.SetString("player_profile_json", json);
-
-        // 다음 로직으로 진행 (입력 팝업 닫기 등)
         nameInputPopup.SetActive(false);
-        Debug.Log($"Saved: {SavePath}\n{json}");
+        SceneManager.LoadSceneAsync("JYL_MainScene");
     }
 
     void ShowError(string message)
@@ -84,11 +72,6 @@ public class NameEntryController : MonoBehaviour
         if (nameInputPopup) nameInputPopup.SetActive(true);   // 입력 팝업으로 복귀(이미 켜져 있으면 그대로)
     }
 
-    // 필요 시 다른 씬에서 불러쓰기
-    public PlayerProfile LoadProfile()
-    {
-        if (!File.Exists(SavePath)) return null;
-        var json = File.ReadAllText(SavePath);
-        return JsonUtility.FromJson<PlayerProfile>(json);
-    }
+    // TODO : 세이브 매니저에서 데이터 불러오기, 세이브 패널 열기
+    
 }

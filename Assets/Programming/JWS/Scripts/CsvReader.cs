@@ -30,7 +30,7 @@ public static class CsvReader
 
     private static List<string[]> Read(string fileName)
     {
-        TextAsset csvFile = Resources.Load<TextAsset>($"csv/{fileName}");
+        TextAsset csvFile = Resources.Load<TextAsset>($"CSV/{fileName}");
         if (csvFile == null)
         {
             Debug.LogError($"CSV 파일을 찾을 수 없음: {fileName}");
