@@ -53,8 +53,11 @@ namespace SHG
       this.rankingContainer.FillWithItems(
         record.RecordsByAthletes,
         (view, recordWithAthlete) => {
+
+          int rank = recordWithAthlete.record.Rank;
           view.SetRawTextByRole(
-            (int)TextRole.RankLabel, $"{recordWithAthlete.record.Rank}위");
+            (int)TextRole.RankLabel, rank > 0 ?
+            $"{recordWithAthlete.record.Rank}위": string.Empty);
 
           view.SetRawTextByRole(
             (int)TextRole.NationalityLabel, 

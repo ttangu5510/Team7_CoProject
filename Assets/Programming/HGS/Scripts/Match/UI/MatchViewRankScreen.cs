@@ -60,12 +60,6 @@ namespace SHG
         return;
       #endif
       } 
-      if (this.currentMatch.IsLastSport()) {
-        this.parentState.Value = MatchViewPresenter.ViewState.Result;
-      }
-      else {
-        this.parentState.Value = MatchViewPresenter.ViewState.Record;
-      }
       this.currentMatch.EndCurrentSport();
     }
   }

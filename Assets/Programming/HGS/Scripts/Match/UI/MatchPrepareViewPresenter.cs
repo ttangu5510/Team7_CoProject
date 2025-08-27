@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using StatefulUI.Runtime.Core;
@@ -26,7 +27,7 @@ namespace SHG
     [Inject]
     IMatchController matchController;
 //    [Inject]
-//    IAthleteController athleteController;
+    IAthleteController athleteController => DummyAthleteController.Instance;
     [Inject]
     DomAthService domAthService;
 
@@ -110,6 +111,7 @@ namespace SHG
 
       this.athleteSelectionScreen = new MatchPrepareViewAthleteSelectionScreen(
         parentState: this.currentState,
+        selectedSport: this.selectedSport,
         view: this.view.GetItem<InnerComponentReference>(
           (int)InnerComponentRole.AthleteSelectionScreen).InnerComponent
         );
@@ -138,6 +140,7 @@ namespace SHG
               this.matchSubscription?.Dispose();
               this.matchSubscription = null;
               this.IsShowing.Value = false;
+              this.athleteSelectionScreen.OnMatchEnded();
               return;
             }
             this.IsShowing.Value = true;
@@ -227,10 +230,13 @@ namespace SHG
             return;
           #endif
           }
+          var recruitedAthletes = this.domAthService.GetRecruitedAthleteList();
+          
           this.athleteSelectionScreen.UpdateList(
             match: match,
             sportType: this.selectedSport.Value.Value,
-            athletes: this.domAthService.GetRecruitedAthleteList(),
+            athletes: recruitedAthletes.Count > 0 ? recruitedAthletes: 
+            this.athleteController.Athletes.Take(5).ToList(),
             registeredAthletes: match.UserAthletes);
           break;
       } 

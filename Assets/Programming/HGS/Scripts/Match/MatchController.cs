@@ -143,10 +143,17 @@ namespace SHG
           this.domAthService.GetRecruitedAthleteList());
 
         var allAhteltes = this.domAthService.GetAllAthleteList();
-        return (allAhteltes.Where(
+        var convertedAthletes = allAhteltes.Where(
             athlete => !recuruitedAthletes.Contains(athlete)) 
           .ToList()
-          .ConvertAll(athlete => new ConvertedDomesticAthlete(athlete) as IContenderAthlete));
+          .ConvertAll(athlete => 
+            new ConvertedDomesticAthlete(athlete) as IContenderAthlete);
+        if (convertedAthletes.Count < 10) {
+          return (this.athleteDummyData.Althetes[country]);
+        }
+        else {
+          return (convertedAthletes);
+        }
       } 
       else {
         return (this.athleteDummyData.Althetes[country]);

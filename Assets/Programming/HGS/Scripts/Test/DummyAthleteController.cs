@@ -9,6 +9,18 @@ using UniRx;
 namespace SHG
 {
   public class DummyAthleteController : IAthleteController {
+
+    public static IAthleteController Instance
+    {
+      get {
+        if (instance == null) {
+          instance = new DummyAthleteController();
+        }
+        return (instance);
+      }
+    }
+    static IAthleteController instance;
+
     [Serializable]
     public struct ParsedUserAthleteData : IContenderAthlete {
       public string Name;

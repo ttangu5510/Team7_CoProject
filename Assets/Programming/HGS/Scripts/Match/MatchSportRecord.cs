@@ -59,7 +59,7 @@ namespace SHG
     {
       this.SportType = oldRecord.SportType;
       Array.Sort(oldRecord.RecordsByAthletes, 
-        (lhs, rhs) => (lhs.record.Value < rhs.record.Value ? -1 : 1));
+        (lhs, rhs) => (lhs.record.Rank < rhs.record.Rank ? -1 : 1));
       this.RecordsByAthletes = oldRecord.RecordsByAthletes;
       this.CurrentStage = oldRecord.CurrentStage + 1;
     }
@@ -121,9 +121,9 @@ namespace SHG
       min *= stageAdjust;
       max *= stageAdjust;
       float rankAdjust = this.SportType switch {
-        SportType.Skeleton | SportType.SpeedSkating => 
+        SportType.Skeleton or SportType.SpeedSkating => 
           (float)(record.Rank) / (float)this.RecordsByAthletes.Length,
-        SportType.SkiJumping | SportType.FigureSkating =>
+        SportType.SkiJumping or SportType.FigureSkating =>
           (float)(this.RecordsByAthletes.Length - record.Rank) / (float)this.RecordsByAthletes.Length,
         _ => throw (new NotImplementedException())
       };

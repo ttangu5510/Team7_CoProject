@@ -93,8 +93,13 @@ namespace SHG
 
       match.SportRecords
         .ObserveReplace()
-        .Subscribe(replaced => 
-          this.recordScreen.UpdateScoreBoard(replaced.NewValue))
+        .Subscribe(replacedEvent => 
+          this.recordScreen.UpdateScoreBoard(replacedEvent.NewValue))
+        .AddTo(this.matchSubscription);
+
+      match.SportRecords
+        .ObserveAdd()
+        .Subscribe(addedEvent => this.recordScreen.UpdateScoreBoard(addedEvent.Value))
         .AddTo(this.matchSubscription);
     }
 

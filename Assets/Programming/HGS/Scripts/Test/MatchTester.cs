@@ -16,6 +16,8 @@ namespace SHG
 //    [Inject]
 //    IAthleteController athleteController;
     [Inject]
+    DomAthService domAthService;
+    [Inject]
     ITimeFlowController timeFlowController;
     CompositeDisposable subscribeMatch;
 
@@ -46,7 +48,7 @@ namespace SHG
     string[] sports = Enum.GetNames(typeof(SportType));
 
     [SerializeField] [ReadOnly]
-    List<string> athletesIds;
+    List<string> athletesNames;
     [SerializeField] [ReadOnly]
     string currentMatchAthleteText;
     [SerializeField] [ReadOnly]
@@ -69,6 +71,8 @@ namespace SHG
 //      }
 
       //(this.matchController as MatchController).ContenderGetter = this.GetContenderAthletes;
+      this.athletesNames = this.domAthService.GetAllAthleteList()
+        .ConvertAll(athlete => athlete.entityName);
       this.timeFlowController.WeekInYear.Subscribe(
         week => {
         if (this.matchController.NextMatch.Value != null) {
@@ -164,6 +168,12 @@ namespace SHG
     void EnterMatch()
     {
       this.matchController.EnterNextMatch(); 
+    }
+
+    [Button]
+    void RecruteAthlete(int index)
+    {
+      this.domAthService.RecruitAthlete(this.athletesNames[index]);
     }
 
     [Button]

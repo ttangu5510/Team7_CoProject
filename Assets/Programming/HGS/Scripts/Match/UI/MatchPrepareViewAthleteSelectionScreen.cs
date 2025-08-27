@@ -14,6 +14,7 @@ namespace SHG
   public class MatchPrepareViewAthleteSelectionScreen 
   {
     ReactiveProperty<MatchPrepareViewPresenter.ViewState> parentState;
+    ReactiveProperty<Nullable<SportType>> selectedSport;
     StatefulComponent view;
     ContainerView athleteContainer;
     ContainerView statContainer;
@@ -26,9 +27,11 @@ namespace SHG
 
     public MatchPrepareViewAthleteSelectionScreen(
       ReactiveProperty<MatchPrepareViewPresenter.ViewState> parentState, 
+      ReactiveProperty<Nullable<SportType>> selectedSport,
       StatefulComponent view)
     {
       this.parentState = parentState;
+      this.selectedSport = selectedSport;
       this.view = view;
       this.disposables = new ();
       this.athleteToShowStat = new (null);
@@ -161,8 +164,16 @@ namespace SHG
       }
       var subscription = button.OnClickAsObservable()
         .Subscribe(_ => 
-          this.OnClickRegisterAthlete(athlete, match, sportType));
+          this.OnClickRegisterAthlete(athlete, match));
       this.subscribedRegisterButtons[button] = (athlete, subscription);
+    }
+
+    public void OnMatchEnded()
+    {
+      foreach (var (athlete, subscription) in this.subscribedRegisterButtons.Values) {
+        subscription.Dispose();      
+      }
+      this.subscribedRegisterButtons.Clear();
     }
 
     void UpdateCellButton(Button button, DomAthEntity athlete)
@@ -200,10 +211,17 @@ namespace SHG
       }
     }
 
-    void OnClickRegisterAthlete(DomAthEntity athlete, Match match, SportType sport)
+    void OnClickRegisterAthlete(DomAthEntity athlete, Match match)
     {
+      if (this.selectedSport.Value == null) {
+      #if UNITY_EDITOR
+        throw (new ApplicationException($"{nameof(OnClickRegisterAthlete)}: {nameof(this.selectedSport)} is null"));
+      #else
+        return ;
+      #endif
+      }
       this.parentState.Value = MatchPrepareViewPresenter.ViewState.AthleteList;
-      match.SelectAthlete(athlete, sport);
+      match.SelectAthlete(athlete, this.selectedSport.Value.Value);
     }
   }
 }
