@@ -127,7 +127,7 @@ namespace SHG
       string potentialText = $"최대 성장 가능성: {athlete.maxGrade}";
       this.view.SetRawTextByRole(
         (int)TextRole.AthletePotentionLabel, potentialText);
-      int retireYear = athlete.retireAge - athlete.curAge;
+      int retireYear = athlete.retireAge - athlete.curAge.Value;
       string retireText = $"은퇴까지 {retireYear}년";
       this.view.SetRawTextByRole(
         (int)TextRole.AthleteRetireLabel, retireText);
