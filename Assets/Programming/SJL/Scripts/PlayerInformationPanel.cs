@@ -9,13 +9,16 @@ namespace SJL
 {
     public class PlayerInformationPanel : MonoBehaviour
     {
+        [Header("Button")]
         [SerializeField] Button closeButton;
-
+        [Header("Player Information")]
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI gradeText;
         [SerializeField] private TextMeshProUGUI ageText;
         [SerializeField] private TextMeshProUGUI typeText;
-
+        [SerializeField] private TextMeshProUGUI growthPotentialText;
+        [SerializeField] private TextMeshProUGUI retreatText;
+        [Header("Player Attributes")]
         [SerializeField] private Slider staminaSlider;
         [SerializeField] private Slider agilitySlider;
         [SerializeField] private Slider flexibilitySlider;
@@ -33,6 +36,8 @@ namespace SJL
             gradeText.text = player.grade;
             ageText.text = player.age.ToString();
             typeText.text = player.type;
+            growthPotentialText.text = $"최대 성장 가능성 : {player.type}";
+            retreatText.text = "은퇴까지 N년 N주";
             // 슬라이더 값 설정
             staminaSlider.value = player.stamina;
             agilitySlider.value = player.agility;

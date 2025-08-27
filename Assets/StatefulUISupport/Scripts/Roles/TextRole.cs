@@ -46,5 +46,6 @@ public enum TextRole
     RecordLabel = -1296891025,
     MedalLabel = 1638489267,
     TotalLabel = 1357520602,
+    ExplanatioryText = 1619094563,
 
 }

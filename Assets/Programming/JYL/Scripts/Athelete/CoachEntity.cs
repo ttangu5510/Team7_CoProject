@@ -1,25 +1,27 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 namespace JYL
 {
-    
+    [Serializable]
     public class CoachEntity : BaseAthEntity
     {
         public CoachState curState { get; private set; }
         public CoachGrade grade { get; private set; }
         public int retireAge { get; private set; }
-        public int curAge { get; private set; }
+        public ReactiveProperty<int> curAge { get; private set; } = new();
 
         public CoachEntity(int id, string name, CoachGrade grade, int age = 28)
         {
             this.id = id;
             entityName = name;
             this.grade = grade;
-            curState = grade == CoachGrade.스카우트센터 ? CoachState.Hidden : CoachState.Unrecruited;
+            curState = grade == CoachGrade.선수출신 ? CoachState.Hidden : CoachState.Unrecruited;
             retireAge = 40;
-            curAge = age;
+            curAge.Value = age;
         }
 
         public void UpdateFromSave(CoachSave save) // 코치 업데이트. 세이브 객체로 업데이트함. Repository에서 수행.
@@ -27,7 +29,7 @@ namespace JYL
             curState = save.state;
             if (curState == CoachState.Recruited)
             {
-                curAge = save.age;
+                curAge.Value = save.age;
             }
         }
         public void Recruit() // 코치 영입 . Repository에서 수행
@@ -66,8 +68,8 @@ namespace JYL
     [System.Serializable]
     public enum CoachGrade
     {
-        선수출신 = 1,
-        스카우트센터
+        스카우트센터 = 1,
+        선수출신
     }
 }
 

@@ -44,5 +44,6 @@ public enum StateRole
     Rank = -1516408252,
     Result = 1624192333,
     Reward = 2027218411,
+    Active = 720978296,
 
 }

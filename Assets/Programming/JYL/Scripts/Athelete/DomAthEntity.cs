@@ -1,10 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 namespace JYL
 {
+    [Serializable]
     public class AthleteStats // 선수들의 능력치를 담당하는 값 객체
     {
         public int health { get; private set; } // 체력
@@ -73,8 +77,10 @@ namespace JYL
             if(fatigue > 100) fatigue = 100;
             else if(fatigue < 0) fatigue = 0;
         }
-    }
-    // 캐릭터의 정보를 CSV에서 읽어와서 만드는 캐릭터 정보 객체
+    } 
+
+// 캐릭터의 정보를 CSV에서 읽어와서 만드는 캐릭터 정보 객체
+[Serializable]
 public class DomAthEntity : BaseAthEntity
 {
     public AthleteGrade maxGrade { get; private set; } //최대 성장 가능성
@@ -82,7 +88,7 @@ public class DomAthEntity : BaseAthEntity
     
     public int recruitAge { get; private set; } // 초기 나이
     public int retireAge { get; private set; } // 은퇴 나이
-    public int curAge { get; private set; } // 현재 나이
+    public ReactiveProperty<int> curAge { get; private set; } = new();// 현재 나이
     
     // 능력치
     public AthleteStats stats { get; private set; }
@@ -103,7 +109,7 @@ public class DomAthEntity : BaseAthEntity
         this.affiliation = affiliation;
         this.maxGrade = maxGrade;
         this.recruitAge = recruitAge;
-        curAge = recruitAge;
+        curAge.Value = recruitAge;
         this.retireAge = retireAge;
         stats = new AthleteStats(health, quickness, flexibility, technic, speed, balance);
         curState = AthleteState.Unrecruited;
@@ -111,7 +117,7 @@ public class DomAthEntity : BaseAthEntity
 
     public void UpdateFromSave(AthleteSave save) //세이브 파일로부터 업데이트
     {
-        curAge = save.age;
+        curAge.Value = save.age;
 
         stats = new AthleteStats(save.health, save.quickness, save.flexibility, save.technic, save.speed, save.balance);
         stats.SetFatigue(save.fatigue);
@@ -120,7 +126,6 @@ public class DomAthEntity : BaseAthEntity
     
     public void Recruit() // 선수 영입할 때 쓰는 함수. 재화 나가는건 다른데서 처리해야 함
     {
-        // TODO : 확률  시설 UI 쪽에서 확률 건드려야 함
         if (recruitAge < retireAge)
         {
             curState = AthleteState.Active;
@@ -131,7 +136,7 @@ public class DomAthEntity : BaseAthEntity
     
     public void Retire() // 선수 은퇴 시 사용하는 함수
     {
-        if (curAge >= retireAge && curState !=  AthleteState.Unrecruited) // 은퇴 나이가 되었고, 영입이 된 상태라면
+        if (curAge.Value >= retireAge && curState !=  AthleteState.Unrecruited) // 은퇴 나이가 되었고, 영입이 된 상태라면
         {
             curState = AthleteState.Retired; // 은퇴 상태로 변경
         }
@@ -176,7 +181,7 @@ public class DomAthEntity : BaseAthEntity
         stats.ApplyTrainValue(ability, amount, maxStat);
         
         // 훈련 완료 후 피로도 증가. 코치가 있을 경우, 코치 버프만큼 감소
-        stats.SetFatigue(Random.Range(7, 12) - coach);
+        stats.SetFatigue(Random.Range(7, 12) + coach);
     }
 
     public void RecoverAthlete(int amount) // 선수 회복에 쓰이는 함수
@@ -188,8 +193,13 @@ public class DomAthEntity : BaseAthEntity
             curState = AthleteState.Active;
         }
     }
+
+    public void GetAge()
+    {
+        curAge.Value++;
+    }
 }
-[System.Serializable]
+[Serializable]
 public enum AthleteState // 선수의 현재 상태
 {
     Unrecruited,// 영입되지 않음

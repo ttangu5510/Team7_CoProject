@@ -1,28 +1,46 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks.Triggers;
 using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace JYL
 {
     public class CoachService : MonoBehaviour
     {
-        private readonly ICoachRepository repository;
-        private readonly IDisposable subscription; // 구독 해제를 위한 객체
+        [Inject] private readonly ICoachRepository repository;
+        private IDisposable subscription; // 구독 해제를 위한 객체
         
-        // 생성자를 통해 Repository를 주입함 (Dependency Injection)
-        public CoachService(ICoachRepository repository)
+        // TODO: 에디터 테스트
+        public List<CoachEntity> coachList = new ();
+
+
+        private void Awake()
         {
-            this.repository = repository;
-            
+            Init();
+        }
+
+        public void Init()
+        {
             subscription = MessageBroker.Default //선수 은퇴 이벤트가 발행되면, 구독해뒀다가 수행
                 .Receive<AthleteRetiredEvent>()
                 .Where(e => e.affiliation != AthleteAffiliation.일반선수) // 후보급 이상 선수만
                 .Subscribe(OnAthleteRetiredEvent); // 코치로 전환 작업
+
+            // TODO : 코치의 은퇴 구독 필요함
+            
+            // TODO: 테스트용
+            coachList = GetAllCoaches();
         }
         
         #region 코치 리스트
+
+        public List<CoachEntity> GetAllCoaches()
+        {
+            return repository.FindAllCoaches();
+        }
         public List<CoachEntity> GetCanRecruitCoaches() // 영입 가능한 코치 리스트
         {
             return repository.FindAllCanRecruit();

@@ -14,5 +14,7 @@ public enum ButtonRole
     BackButton = 1984317533,
     CellButton = 1565742530,
     NextButton = -512366159,
+    Training = 1468994080,
+    Close = -1261564850,
 
 }

@@ -37,15 +37,28 @@ namespace SJL
 
         private void DisplayPlayers()
         {
-            for (int i = 0; i < playerList.Count; i++)
+            // 플레이어 리스트를 복제 및 섞기
+            List<Player> shuffled = new List<Player>(playerList);
+            System.Random rng = new System.Random();
+            int n = shuffled.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                Player value = shuffled[k];
+                shuffled[k] = shuffled[n];
+                shuffled[n] = value;
+            }
+
+            // 앞에서부터 5명만 표시
+            int displayCount = Mathf.Min(5, shuffled.Count);
+            for (int i = 0; i < displayCount; i++)
             {
                 GameObject go = Instantiate(playerUIPrefab, playerListPanel);
                 PlayerUI ui = go.GetComponent<PlayerUI>();
-                ui.SetPlayer(playerList[i]);
-
+                ui.SetPlayer(shuffled[i]);
                 ui.playerInormationPanel = playerInformationPanel;
-                // Player 정보도 패널에 전달
-                ui.playerData = playerList[i];
+                ui.playerData = shuffled[i];
             }
         }
     }
@@ -67,5 +80,7 @@ namespace SJL
         public int balance;
         public int fatigue;
         public int mental;
+
+        public bool isInjured;
     }
 }

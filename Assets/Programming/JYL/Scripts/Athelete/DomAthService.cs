@@ -1,20 +1,39 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UniRx;
+using Zenject;
 
 namespace JYL
 {
     public class DomAthService : MonoBehaviour
     {
-        private readonly IDomAthRepository repository;
-         
-        // 생성자를 통해 Repository를 주입받는다 (Dependency Injection)
-        public DomAthService(IDomAthRepository repository)
+        [Inject] private readonly IDomAthRepository repository;
+        private IDisposable subscription;
+        
+        // TODO: 에디터 테스트
+        public List<DomAthEntity> testList = new();
+        private void Awake()
         {
-            this.repository = repository;
-            // 초기 작업 이후, 등록된 선수들은 능력치 및 나이에 이벤트 구독 필요
+            Init();
+        }
+
+        public void Init()
+        {
+            List<DomAthEntity> athleteList = GetRecruitedAthleteList();
+            foreach (DomAthEntity athlete in athleteList)
+            {
+                var age = athlete.curAge.ToReadOnlyReactiveProperty();
+
+                // 현재 나이가 은퇴나이보다 높고, 은퇴 상태가 아닐 때
+                age.Where(curAge => curAge >= athlete.retireAge && athlete.curState != AthleteState.Retired)
+                    .Subscribe(x => RetireAthlete(athlete)) // 은퇴 구독
+                    .AddTo(this); // 객체 파괴 시 이벤트 구독 해제
+            }
+            
+            testList = GetAllAthleteList();
         }
 
         #region 선수 목록
@@ -29,7 +48,7 @@ namespace JYL
         }
         #endregion
         
-        #region 선수 영입, 은퇴, 방출
+        #region 선수 영입, 은퇴, 방출, 나이 업데이트
         public void RecruitAthlete(string athleteName) // 새로운 선수를 영입할 때 사용하는 함수
         {
             // 레포지토리에서 Entity를 찾음
@@ -56,6 +75,12 @@ namespace JYL
             athlete.OutAthlete();
             // 레포지토리를 통해서 변경사항을 저장
             repository.Delete(athlete);
+        }
+
+        public void AhtleteAgeUpdate(DomAthEntity entity) // 선수 나이 업데이트
+        {
+            entity.GetAge();
+            repository.Update(entity);
         }
         #endregion
 
