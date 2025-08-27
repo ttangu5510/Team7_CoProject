@@ -67,5 +67,7 @@ namespace SJL
         public int balance;
         public int fatigue;
         public int mental;
+
+        public bool isInjured;
     }
 }

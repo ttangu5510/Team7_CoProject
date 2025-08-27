@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,8 +36,13 @@ namespace SJL
 
         private void Start()
         {
-            informationButton.onClick.AddListener(OnInformationButtonClicked);
-            recruitmentButton.onClick.AddListener(OnRecruitmentButtonClicked);
+            informationButton.OnClickAsObservable()
+                .Subscribe(_ => OnInformationButtonClicked())
+                .AddTo(this);
+
+            recruitmentButton.OnClickAsObservable()
+                .Subscribe(_ => OnRecruitmentButtonClicked())
+                .AddTo(this);
         }
 
         public void OnInformationButtonClicked()

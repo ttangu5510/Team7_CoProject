@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+using JYL;
+
 namespace JWS
 {
 
@@ -9,8 +11,6 @@ namespace JWS
     [Serializable]
     public class SaveData
     {
-        public int version = 1;
-
         // 유저
         public string userId; // 유저 계정 고유 ID (예: "UID 72819210")
 
@@ -25,7 +25,7 @@ namespace JWS
 
         // 선수
         public Roster roster = new(); // 보유/은퇴/퇴출 목록
-        public List<PlayerState> playerStates = new(); // 개별 선수 현재 상태(능력치/나이/성별/부상 등)
+        public List<AthleteState> playerStates = new(); // 개별 선수 현재 상태(능력치/나이/성별/부상 등)
 
         // 코치
         public List<CoachState> coaches = new(); // 코치 보유 + 영입 내역
@@ -41,9 +41,56 @@ namespace JWS
 
         // 도감
         public List<EncyclopediaState> encyclopedia = new(); // 전체 목록 + 트로피/메달 보유 여부
+
+        // ==== Init 메서드 ====
+        public void Init(string userId)
+        {
+            this.userId = userId;
+
+            // 시간 초기화
+            time.yearCycle = 1;
+            time.season = Season.Spring;
+            time.week = 1;
+            time.realPlayMinutesTotal = 0;
+            time.lastSaveUtcIso = DateTime.UtcNow.ToString("o"); // ISO 8601
+
+            // 재화 초기화
+            currencies.gold = 0;
+            currencies.fame = 0;
+            currencies.trainingCoin = 0;
+
+            // 건물 초기화
+            buildings.Clear();
+
+            // 선수/코치 초기화
+            roster = new Roster();
+            playerStates.Clear();
+            coaches.Clear();
+            opponentRecords.Clear();
+
+            // 퀘스트/업적/도감 초기화
+            quests.Clear();
+            achievements.Clear();
+            encyclopedia.Clear();
+        }
+        
+        public AthleteState FindAthlete(DomAthEntity entity)
+        {
+            return playerStates.Find(x => x.id == entity.id);
+        }
+
+        public CoachState FindCoach(CoachEntity entity)
+        {
+            return coaches.Find(x => x.id == entity.id);
+        }
+
+        public CoachState FindCoach(int id)
+        {
+            return coaches.Find(x => x.id == id); // CoachState.id가 string이므로 변환
+        }
     }
 
-/* ========================= 시간/재화 ========================= */
+/* ========================= 시간 ========================= */
 
     [Serializable]
     public class TimeStamp
@@ -67,6 +114,8 @@ namespace JWS
         Autumn,
         Winter
     }
+
+/* ========================= 시간 ========================= */
 
     [Serializable]
     public class Currencies
@@ -102,9 +151,9 @@ namespace JWS
 
 // 선수 개별 상태(세이브용) — 마스터 CSV(기본능력치) + 현재 상태(세이브) 분리 권장
     [Serializable]
-    public class PlayerState
+    public class AthleteState
     {
-        public string id; // 선수 ID (마스터 CSV 키)
+        public int id; // 선수 ID (마스터 CSV 키)
         public string sex; // "M"/"F" 등 (필요 없으면 삭제)
         public int age; // 현재 나이
         public bool isInjured; // 부상 상태
@@ -117,7 +166,7 @@ namespace JWS
     [Serializable]
     public class CoachState
     {
-        public string id; // 코치 ID
+        public int id; // 코치 ID
         public string hiredDate; // 영입 날짜(UTC ISO)
         public string hiredRoute; // 영입 경로(예: "Scout", "Quest", "Shop")
     }
