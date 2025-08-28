@@ -31,17 +31,19 @@ namespace SHG
 
   public class AthleteDummyData {
     public Dictionary<Country, List<IContenderAthlete>> Althetes;
-    const string DIRECTORY_PATH = "Programming/HGS/Scripts/Test/AthleteData";
+    //const string DIRECTORY_PATH = "Programming/HGS/Scripts/Test/AthleteData";
     static string[] COUNTRY_NAMES = new string[]{
       "america", "china", "germany", "greece", "hungary", "japan", "norway"
     };
 
     public AthleteDummyData() {
       this.Althetes = new();
-      var dir = $"{Application.dataPath}/{DIRECTORY_PATH}/";
+      //var dir = $"{Application.dataPath}/{DIRECTORY_PATH}/";
+      var dir = "AthleteData";
       foreach (var countryName in COUNTRY_NAMES) {
         List<IContenderAthlete> countryAthletes = new();
-        string json = File.ReadAllText($"{dir}/{countryName}.json");
+        string json = Resources.Load<TextAsset>($"{dir}/{countryName}").text;
+        Debug.Log(json);
         var jsonObject = new JSONObject(json);
         foreach (var athlete in jsonObject.list) {
           countryAthletes.Add(
