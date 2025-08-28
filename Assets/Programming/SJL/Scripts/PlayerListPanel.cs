@@ -6,16 +6,19 @@ using TMPro;
 using UniRx;
 using UniRx.Triggers;
 
-public class PlayerListInformation : MonoBehaviour
+namespace SJL
 {
-    [SerializeField] Button Button;
-
-    //[SerializeField] public GameObject Panel;
-
-    public void Awake()
+    public class PlayerListInformation : MonoBehaviour
     {
-        Button.OnClickAsObservable()
-            .Subscribe(_ => gameObject.SetActive(false));
-    }
+        [SerializeField] Button Button;
 
+        //[SerializeField] public GameObject Panel;
+
+        public void Awake()
+        {
+            Button.OnClickAsObservable()
+                .Subscribe(_ => gameObject.SetActive(false));
+        }
+
+    }
 }

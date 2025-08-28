@@ -4,17 +4,21 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 
-public class FacilityInformationBox : MonoBehaviour
+namespace SJL
 {
-    [SerializeField] Button Step0ProceedButton;
-    [SerializeField] Button Step1ProceedButton;
-    [SerializeField] Button Step2ProceedButton;
-    [SerializeField] Button Step3ProceedButton;
-
-    private void Awake()
+    public class FacilityInformationBox : MonoBehaviour
     {
-        //Step0ProceedButton.OnClickAsObservable()
-        //    .Subscribe(_ => );
-    }
+        [SerializeField] Button Step0ProceedButton;
+        [SerializeField] Button Step1ProceedButton;
+        [SerializeField] Button Step2ProceedButton;
+        [SerializeField] Button Step3ProceedButton;
 
+        private void Awake()
+        {
+            //Step0ProceedButton.OnClickAsObservable()
+            //    .Subscribe(_ => );
+        }
+
+    }
 }
+
