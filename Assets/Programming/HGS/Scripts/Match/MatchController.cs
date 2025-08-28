@@ -140,7 +140,7 @@ namespace SHG
     {
       if (country.Name == "korea") {
         var recuruitedAthletes = new HashSet<DomAthEntity>(
-          this.domAthService.GetRecruitedAthleteList());
+          this.domAthService.GetAllRecruitedAthleteList());
 
         var allAhteltes = this.domAthService.GetAllAthleteList();
         var convertedAthletes = allAhteltes.Where(

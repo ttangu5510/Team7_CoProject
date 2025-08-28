@@ -13,6 +13,7 @@ namespace JYL
         DomAthEntity FindByName(string name);
         List<DomAthEntity> FindAll();
         List<DomAthEntity> FindAllRecruited();
+        List<DomAthEntity> FindAllCanRecruit();
         void Save(DomAthEntity entity);
         void Update(DomAthEntity entity);
         void Delete(DomAthEntity entity);
@@ -59,6 +60,10 @@ namespace JYL
             return  athleteDict.Values.ToList();
         }
 
+        public List<DomAthEntity> FindAllCanRecruit()
+        {
+            return athleteDict.Values.Where(ath => ath.curState ==  AthleteState.Unrecruited).ToList();
+        }
         public List<DomAthEntity> FindAllRecruited() // 현재 영입된 선수들 리스트로 내보내기. 은퇴 선수도 포함이라 알아서 걸러써야 함
         {
             return  athleteDict.Values.Where(x => x.curState != AthleteState.Unrecruited).ToList();
