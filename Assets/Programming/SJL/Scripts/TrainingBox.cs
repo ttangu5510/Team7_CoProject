@@ -1,181 +1,171 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using JYL;
+using SHG;
 using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace SJL
 {
+    public enum TrainingType
+    {
+        None, Circuit, LadderDrill, Sprint, BurpeeTest
+    }
+    
     public class TrainingBox : MonoBehaviour
     {
-        [Header("Button")]
+        [Header("Training Center")] 
+        [SerializeField] private GameObject trainingCenter;
+        
+        [Header("Button")] 
         [SerializeField] private Button circuitTrainingPositioningPlayers;
         [SerializeField] private Button ladderDrillTrainingPositioningPlayers;
         [SerializeField] private Button sprintsPositioningPlayers;
         [SerializeField] private Button burpeeTestsPositioningPlayers;
+        [SerializeField] private Button popupCloseButton;
 
         [SerializeField] private Button startTrainingButton;
         [SerializeField] private Button ResetPlayerPlacementButton;
-        [Header("Text")]
+        
+        [Header("Text")] 
         [SerializeField] private TextMeshProUGUI circuitTrainingText;
         [SerializeField] private TextMeshProUGUI ladderDrillTrainingText;
         [SerializeField] private TextMeshProUGUI sprintsText;
         [SerializeField] private TextMeshProUGUI burpeeTestsText;
-        [Header("Player & Coach")]
-        [SerializeField] private Player currentPlayer; // 현재 훈련 중인 선수
-        [SerializeField] private bool coachAssigned = false; // 코치 배치 여부
+        
+        [Header("Assignment panel")]
+        [SerializeField] private PlayerListInformation assignmentPanel;
 
-        // 각 훈련 슬롯별로 4명까지 선수 보관
-        private readonly List<Player> circuitPlayers = new List<Player>();
-        private readonly List<Player> ladderDrillPlayers = new List<Player>();
-        private readonly List<Player> sprintsPlayers = new List<Player>();
-        private readonly List<Player> burpeePlayers = new List<Player>();
+        // 플레이어 서비스 의존성 주입
+        [Inject] private DomAthService athleteService;
+        // 시간 컨트롤러 의존성 주입
+        [Inject] private ITimeFlowController flowController;
 
+        public List<DomAthEntity> athleteList = new();
+        public Dictionary<DomAthEntity,TrainingType> assignDict = new();
+        
+        
+        
         private void Awake()
         {
             // 실제 프로젝트에서는 배치 UI에서 선택한 선수 객체를 받아서 배치합니다.
             // 아래는 예시로 더미 선수 할당
+            athleteList.Clear();
+            assignDict.Clear();
+            
             circuitTrainingPositioningPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(circuitPlayers, circuitTrainingText, "서킷 트레이닝"))
+                .Subscribe(_ => PositioningPlayers(athleteList, circuitTrainingText, TrainingType.Circuit))
                 .AddTo(this);
 
             ladderDrillTrainingPositioningPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(ladderDrillPlayers, ladderDrillTrainingText, "사다리 드릴 트레이닝"))
+                .Subscribe(_ => PositioningPlayers(athleteList, ladderDrillTrainingText, TrainingType.LadderDrill))
                 .AddTo(this);
 
             sprintsPositioningPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(sprintsPlayers, sprintsText, "단거리 전력 질주"))
+                .Subscribe(_ => PositioningPlayers(athleteList, sprintsText, TrainingType.Sprint))
                 .AddTo(this);
 
             burpeeTestsPositioningPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(burpeePlayers, burpeeTestsText, "버피 테스트"))
+                .Subscribe(_ => PositioningPlayers(athleteList, burpeeTestsText, TrainingType.BurpeeTest))
                 .AddTo(this);
 
             ResetPlayerPlacementButton.OnClickAsObservable()
-                .Subscribe(_ => {
-                    circuitPlayers.Clear(); ladderDrillPlayers.Clear();
-                    sprintsPlayers.Clear(); burpeePlayers.Clear();
+                .Subscribe(_ =>
+                {
+                    assignDict.Clear();
+                    foreach (var ath in athleteList)
+                    {
+                        assignDict[ath] = TrainingType.None;
+                    }
                     UpdateAllAssignmentTexts();
                 }).AddTo(this);
 
             startTrainingButton.OnClickAsObservable()
-                .Subscribe(_ => StartAllTrainings())
+                .Subscribe(_ => TrainPlayers())
+                .AddTo(this);
+            
+            popupCloseButton.OnClickAsObservable()
+                .Subscribe(_ => UpdateAllAssignmentTexts())
                 .AddTo(this);
 
             UpdateAllAssignmentTexts();
         }
 
-        private void PositioningPlayers(List<Player> targetList, TextMeshProUGUI uiText, string routine)
+        private void OnEnable()
         {
-            if (targetList.Count >= 4)
+            // 훈련 가능한 선수만 리스트로 가져옴
+            athleteList = athleteService.GetAllRecruitedAthleteList()
+                .Where(ath => ath.curState == AthleteState.Active)
+                .ToList();
+            
+            // 모든 훈련가능한 선수들을 현재 배치상황 None으로 설정
+            foreach (var ath in athleteList)
+            {
+                assignDict[ath] = TrainingType.None;
+            }
+        }
+
+        // 선수 배치. 선수 선택 UI 팝업 띄움
+        private void PositioningPlayers(List<DomAthEntity> targetList, TextMeshProUGUI uiText, TrainingType type)
+        {
+            if (assignDict.Values.Count(t => t == type) >= 4) // 해당 훈련에 배치된 선수가 이미 4명 이상임
                 return;
-
-            // 예시: 임시 플에이어 생성. 실제로는 선수 선택 UI 연동 필요
-            Player dummy = new Player { name = $"Player{Random.Range(1, 100)}" };
-            targetList.Add(dummy);
-            UpdateAssignmentText(targetList, uiText);
+            
+            assignmentPanel.gameObject.SetActive(true);
+            assignmentPanel.SelectTrainingAthlete(targetList, type, assignDict);
+            
+            UpdateAssignmentText(uiText, type);
         }
 
-        private void UpdateAssignmentText(List<Player> list, TextMeshProUGUI uiText)
+        // 각 종목의 배치 현황 텍스트 업데이트
+        private void UpdateAssignmentText(TextMeshProUGUI uiText, TrainingType type)
         {
-            uiText.text = $"배치된 선수 : {list.Count}/4";
+            uiText.text = $"$배치된 선수 : {assignDict.Values.Count(t => t == type)}/4";
         }
+
+        // 전종먹의 배치 현황 텍스트 업데이트
         private void UpdateAllAssignmentTexts()
         {
-            UpdateAssignmentText(circuitPlayers, circuitTrainingText);
-            UpdateAssignmentText(ladderDrillPlayers, ladderDrillTrainingText);
-            UpdateAssignmentText(sprintsPlayers, sprintsText);
-            UpdateAssignmentText(burpeePlayers, burpeeTestsText);
-        }
-
-        // 모든 루틴에 배치된 선수 훈련 실행
-        private void StartAllTrainings()
-        {
-            TrainPlayers(circuitPlayers, "CircuitTraining");
-            TrainPlayers(ladderDrillPlayers, "LadderDrillTraining");
-            TrainPlayers(sprintsPlayers, "SprintsTraining");
-            TrainPlayers(burpeePlayers, "BurpeeTestsTraining");
+            circuitTrainingText.text = $"배치된 선수 : {assignDict.Values.Count(t => t == TrainingType.Circuit)}/4";
+            ladderDrillTrainingText.text = $"배치된 선수 : {assignDict.Values.Count(t => t == TrainingType.LadderDrill)}/4";
+            sprintsText.text = $"배치된 선수 : {assignDict.Values.Count(t => t == TrainingType.Sprint)}/4";
+            burpeeTestsText.text = $"배치된 선수 : {assignDict.Values.Count(t => t == TrainingType.BurpeeTest)}/4";
         }
 
         // 훈련 메서드
-        private void TrainPlayers(List<Player> players, string routine)
+        private void TrainPlayers()
         {
-            foreach (var player in players)
+            foreach (var player in assignDict.Keys)
             {
-                if (IsTrainingFailed(player))
-                {
-                    ApplyInjury(player);
-                    Debug.Log($"{player.name} 선수가 피로 누적으로 부상당했습니다! ({routine})");
-                    continue;
-                }
-
                 // 훈련별 능력치 및 피로 상승
-                switch (routine)
+                switch (assignDict[player])
                 {
-                    case "CircuitTraining":
-                        player.stamina += 1;
-                        player.agility += 1;
-                        player.flexibility += 1;
-                        IncreaseFatigue(player);
+                    case TrainingType.Circuit:
+                        player.TrainAthlete(Ability.Health);
                         break;
-                    case "LadderDrillTraining":
-                        player.speed += 1;
-                        player.agility += 1;
-                        IncreaseFatigue(player);
+                    case TrainingType.LadderDrill:
+                        player.TrainAthlete(Ability.Quickness);
                         break;
-                    case "SprintsTraining":
-                        player.stamina += 2;
-                        player.speed += 1;
-                        IncreaseFatigue(player);
+                    case TrainingType.Sprint:
+                        player.TrainAthlete(Ability.Flexibility);
                         break;
-                    case "BurpeeTestsTraining":
-                        player.stamina += 1;
-                        player.mental += 1;
-                        IncreaseFatigue(player);
+                    case TrainingType.BurpeeTest:
+                        player.TrainAthlete(Ability.Balance);
                         break;
                 }
 
-                // 피로도 5이상시 부상 가능성
-                if (player.fatigue >= 5)
-                {
-                    float injuryChance = 0.1f * (player.fatigue - 4);
-                    if (Random.value < injuryChance)
-                    {
-                        player.isInjured = true;
-                        Debug.Log($"{player.name} 선수 추가 부상 획득! ({routine})");
-                    }
-                }
-                Debug.Log($"{player.name} 선수가 {routine} 훈련을 완료했습니다.");
+                Debug.Log($"{player.entityName} 선수가 {assignDict[player].ToString()} 훈련을 완료했습니다.");
             }
-        }
-
-        // 피로도 무작위 상승, 코치 있을 때 감소
-        private void IncreaseFatigue(Player player)
-        {
-            int fatigueIncrease = UnityEngine.Random.Range(7, 13); // 7~12
-
-            if (coachAssigned)
-            {
-                fatigueIncrease = Mathf.Max(0, fatigueIncrease - 5); // 코치가 피로도 증가 5 감소 시킴
-            }
-
-            player.fatigue += fatigueIncrease;
-        }
-
-        // 훈련 실패 확률 계산 (피로도 70 이상부터 확률 상승)
-        private bool IsTrainingFailed(Player player)
-        {
-            if (player.fatigue < 70) return false;
-
-            float failChance = (player.fatigue - 70) * 0.05f;
-            return UnityEngine.Random.value < failChance;
-        }
-
-        // 부상 처리
-        private void ApplyInjury(Player player)
-        {
-            player.isInjured = true;
+            athleteList.Clear(); // 훈련이 끝났으니 초기화
+            assignDict.Clear();
+            // 시간 보내기
+            flowController.ProgressWeek();
+            // 패널 종료
+            trainingCenter.SetActive(false);
         }
     }
 }

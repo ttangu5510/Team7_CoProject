@@ -6,22 +6,26 @@ using TMPro;
 using UniRx;
 using UniRx.Triggers;
 
-public class PlayerListPanel : MonoBehaviour
+namespace SJL
 {
-    [SerializeField] Image image;
-    [SerializeField] TMP_Text text;
-    [SerializeField] Button Button;
-
-    [SerializeField] public GameObject playerInformationPanel;
-
-    public void Awake()
+    public class PlayerListPanel : MonoBehaviour
     {
-        Button.OnClickAsObservable()
-            .Subscribe(_ => OnPlayerInformationPanel());
-    }
+        [SerializeField] Image image;
+        [SerializeField] TMP_Text text;
+        [SerializeField] Button Button;
 
-    private void OnPlayerInformationPanel()
-    {
-        playerInformationPanel.SetActive(true);
+        [SerializeField] public GameObject playerInformationPanel;
+
+        public void Awake()
+        {
+            Button.OnClickAsObservable()
+                .Subscribe(_ => OnPlayerInformationPanel());
+        }
+
+        private void OnPlayerInformationPanel()
+        {
+            playerInformationPanel.SetActive(true);
+        }
     }
 }
+

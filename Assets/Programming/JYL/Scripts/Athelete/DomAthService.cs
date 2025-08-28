@@ -22,7 +22,7 @@ namespace JYL
 
         public void Init()
         {
-            List<DomAthEntity> athleteList = GetRecruitedAthleteList();
+            List<DomAthEntity> athleteList = GetAllRecruitedAthleteList();
             foreach (DomAthEntity athlete in athleteList)
             {
                 var age = athlete.curAge.ToReadOnlyReactiveProperty();
@@ -42,7 +42,11 @@ namespace JYL
             return repository.FindAll();
         }
 
-        public List<DomAthEntity> GetRecruitedAthleteList() // 영입된 선수 목록 뽑아가기
+        public List<DomAthEntity> GetAllCanRecruitAthleteList()
+        {
+            return repository.FindAllCanRecruit();
+        }
+        public List<DomAthEntity> GetAllRecruitedAthleteList() // 영입된 선수 목록 뽑아가기
         {
             return repository.FindAllRecruited();
         }
