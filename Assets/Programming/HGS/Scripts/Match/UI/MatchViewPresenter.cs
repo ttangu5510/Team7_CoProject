@@ -20,6 +20,8 @@ namespace SHG
 
     [Inject]
     IMatchController matchController;
+    [Inject]
+    IResourceController resourceController;
 
     MatchViewRecordScreen recordScreen;
     MatchViewRankScreen rankScreen;
@@ -126,6 +128,9 @@ namespace SHG
         case Match.State.Ended:
           this.currentState.Value = ViewState.Result;
           this.matchController.EndCurrentMatch();
+          this.resourceController.AddMoney(
+            1000, IncomeType.CompetitionGrant);
+          this.resourceController.AddFame(300);
           break;
       }
     }

@@ -37,7 +37,6 @@ namespace SHG
       if (match.SportRecords.TryGetValue(
           sportType, out MatchSportRecord record)) {
         this.UpdateScoreBoard(record);
-        match.StartCurrentSport(); 
       }
 #if UNITY_EDITOR
       else {
