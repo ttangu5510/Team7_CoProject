@@ -13,8 +13,10 @@ namespace SHG
   public class MatchTester : MonoBehaviour {
     [Inject]
     IMatchController matchController;
+//    [Inject]
+//    IAthleteController athleteController;
     [Inject]
-    IAthleteController athleteController;
+    DomAthService domAthService;
     [Inject]
     ITimeFlowController timeFlowController;
     CompositeDisposable subscribeMatch;
@@ -46,7 +48,7 @@ namespace SHG
     string[] sports = Enum.GetNames(typeof(SportType));
 
     [SerializeField] [ReadOnly]
-    List<string> athletesIds;
+    List<string> athletesNames;
     [SerializeField] [ReadOnly]
     string currentMatchAthleteText;
     [SerializeField] [ReadOnly]
@@ -61,14 +63,16 @@ namespace SHG
       this.athleteDummyData = new ();
       this.koreaContenders = new ();
       this.registeredMatch = new ();
-      this.athletesIds = this.athleteController.Athletes.ToList().ConvertAll(
-        athlete => athlete.id.ToString());
+//      this.athletesIds = this.athleteController.Athletes.ToList().ConvertAll(
+//        athlete => athlete.id.ToString());
+//
+//      foreach (var athlete in this.athleteController.Athletes) {
+//        this.koreaContenders.Add(new ConvertedDomesticAthlete(athlete));
+//      }
 
-      foreach (var athlete in this.athleteController.Athletes) {
-        this.koreaContenders.Add(new ConvertedDomesticAthlete(athlete));
-      }
-
-      (this.matchController as MatchController).ContenderGetter = this.GetContenderAthletes;
+      //(this.matchController as MatchController).ContenderGetter = this.GetContenderAthletes;
+      this.athletesNames = this.domAthService.GetAllAthleteList()
+        .ConvertAll(athlete => athlete.entityName);
       this.timeFlowController.WeekInYear.Subscribe(
         week => {
         if (this.matchController.NextMatch.Value != null) {
@@ -167,6 +171,12 @@ namespace SHG
     }
 
     [Button]
+    void RecruteAthlete(int index)
+    {
+      this.domAthService.RecruitAthlete(this.athletesNames[index]);
+    }
+
+    [Button]
     void RegisterMatchAt(int index)
     {
       var match = this.scheduledMatches[index];
@@ -187,12 +197,12 @@ namespace SHG
         throw (new ArgumentException($"{nameof(RegisterAthlete)}: {sportIndex} is in range of {nameof(SportType)}"));
       }
       var sportType = (SportType)sportIndex;
-      if (!this.athleteController.TryGetAthleteBy(
-          id, out DomAthEntity athlete)) {
-        throw (new ApplicationException(nameof(RegisterAthlete)));
-      }
-      this.currentMatch.SelectAthlete(
-        athlete, sportType);
+//      if (!this.athleteController.TryGetAthleteBy(
+//          id, out DomAthEntity athlete)) {
+//        throw (new ApplicationException(nameof(RegisterAthlete)));
+//      }
+//      this.currentMatch.SelectAthlete(
+//        athlete, sportType);
     }
 
     [Button]
