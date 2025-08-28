@@ -23,7 +23,8 @@ namespace SJL
         [SerializeField] private GameObject FacilityInformationBox;
         [SerializeField] private GameObject TrainingBox;
         [SerializeField] private GameObject specialTrainingBox;
-        [SerializeField] private GameObject UnderBar;
+        [SerializeField] private GameObject underBar;
+        [SerializeField] private GameObject progressCanvas;
 
         [SerializeField] private StatefulComponent statefulComponent;
 
@@ -51,12 +52,14 @@ namespace SJL
 
         private void OnEnable()
         {
-            UnderBar.SetActive(false);
+            underBar.SetActive(false);
+           // progressCanvas.SetActive(false);
         }
 
         private void OnDisable()
         {
-            UnderBar.SetActive(true);
+            underBar.SetActive(true);
+            //progressCanvas.SetActive(true);
         }
 
         private enum PanelType { FacilityInformation, Training, SpecialTraining }

@@ -18,8 +18,8 @@ public class ScoutCenter : MonoBehaviour
 
     [Header("GameObject")] 
     [SerializeField] private GameObject scoutCenterCanvas;
-
-    [SerializeField] private GameObject UnderBar;
+    [SerializeField] private GameObject underBar;
+    [SerializeField] private GameObject progressCanvas;
     
     [SerializeField] private StatefulComponent statefulComponent;
 
@@ -40,12 +40,14 @@ public class ScoutCenter : MonoBehaviour
 
     private void OnEnable()
     {
-        UnderBar.SetActive(false);
+        underBar.SetActive(false);
+        //progressCanvas.SetActive(false);
     }
 
     private void OnDisable()
     {
-        UnderBar.SetActive(true);
+        underBar.SetActive(true);
+        //progressCanvas.SetActive(true);
     }
 
 }
