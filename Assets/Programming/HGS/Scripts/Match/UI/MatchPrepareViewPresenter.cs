@@ -230,7 +230,7 @@ namespace SHG
             return;
           #endif
           }
-          var recruitedAthletes = this.domAthService.GetRecruitedAthleteList();
+          var recruitedAthletes = this.domAthService.GetAllRecruitedAthleteList();
           
           this.athleteSelectionScreen.UpdateList(
             match: match,

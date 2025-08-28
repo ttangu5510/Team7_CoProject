@@ -172,7 +172,7 @@ namespace SHG
         return (0);
       }
       this.CountAthletes(
-        athletes: this.domAthService.GetRecruitedAthleteList(),
+        athletes: this.domAthService.GetAllRecruitedAthleteList(),
         generalAthletes: out int general,
         nationalAthleteCandidates: out int nationalCandidates,
         nationalAthletes: out int national

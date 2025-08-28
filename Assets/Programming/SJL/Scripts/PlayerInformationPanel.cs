@@ -1,6 +1,7 @@
 ﻿using SJL;
 using System.Collections;
 using System.Collections.Generic;
+using JYL;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,24 +30,24 @@ namespace SJL
         [SerializeField] private Slider mentalSlider;
 
 
-        public void SetPlayer(Player player)
+        public void SetPlayer(DomAthEntity player)
         {
             // 선수 정보 설정
-            nameText.text = player.name;
-            gradeText.text = player.grade;
-            ageText.text = player.age.ToString();
-            typeText.text = player.type;
-            growthPotentialText.text = $"최대 성장 가능성 : {player.type}";
+            nameText.text = player.entityName;
+            gradeText.text = player.affiliation.ToString();
+            ageText.text = player.recruitAge.ToString();
+            typeText.text = player.maxGrade.ToString();
+            growthPotentialText.text = $"최대 성장 가능성 : {player.maxGrade.ToString()}";
             retreatText.text = "은퇴까지 N년 N주";
             // 슬라이더 값 설정
-            staminaSlider.value = player.stamina;
-            agilitySlider.value = player.agility;
-            flexibilitySlider.value = player.flexibility;
-            techniqueSlider.value = player.technique;
-            speedSlider.value = player.speed;
-            balanceSlider.value = player.balance;
-            fatigueSlider.value = player.fatigue;
-            mentalSlider.value = player.mental;
+            staminaSlider.value = player.stats.health;
+            agilitySlider.value = player.stats.quickness;
+            flexibilitySlider.value = player.stats.flexibility;
+            techniqueSlider.value = player.stats.technic;
+            speedSlider.value = player.stats.speed;
+            balanceSlider.value = player.stats.balance;
+            fatigueSlider.value = player.stats.fatigue;
+            mentalSlider.value = 100; // TODO : 이거 있는건지 확인필요
 
         }
 

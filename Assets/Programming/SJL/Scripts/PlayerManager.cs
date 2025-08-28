@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using JYL;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace SJL
 {
@@ -10,7 +13,8 @@ namespace SJL
     {
         [SerializeField] Button playerRecruitmentButton;
 
-        public List<Player> playerList = new List<Player>();
+        [Inject] private DomAthService athService; 
+        private List<DomAthEntity> canRecruitList = new();
 
         [SerializeField] public GameObject playerUIPrefab;
         [SerializeField] public Transform playerListPanel; // 선수들을 담을 부모 오브젝트
@@ -18,69 +22,54 @@ namespace SJL
 
         private void Start()
         {
-            // 샘플 데이터
-            playerList.Add(new Player { name = "신재원", grade = "일반등급", age = 21, type = "C",
-                stamina = 1, agility=1, flexibility=1, technique=1, speed=1, balance=1, fatigue=1, mental=1});
-            playerList.Add(new Player { name = "이민호", grade = "국대 후보", age = 20, type = "B",
-                stamina = 2, agility=2, flexibility=2, technique=2, speed=2, balance=2, fatigue=2, mental=2});
-            playerList.Add(new Player { name = "민만준", grade = "국가대표", age = 22, type = "A",
-                stamina = 3, agility=3, flexibility=3, technique=3, speed=3, balance=3, fatigue=3, mental=3});
-            playerList.Add(new Player { name = "안정환", grade = "일반등급", age = 19, type = "C",
-                stamina = 1, agility=1, flexibility=1, technique=1, speed=1, balance=1, fatigue=1, mental=1});
-            playerList.Add(new Player { name = "이규진", grade = "국대 후보", age = 24, type = "B",
-                stamina = 2, agility=2, flexibility=2, technique=2, speed=2, balance=2, fatigue=2, mental=2});
-            playerList.Add(new Player { name = "신희관", grade = "국가대표", age = 26, type = "A",
-                stamina = 3, agility=3, flexibility=3, technique=3, speed=3, balance=3, fatigue=3, mental=3});
-
             playerRecruitmentButton.onClick.AddListener(DisplayPlayers);
         }
 
         private void DisplayPlayers()
         {
-            // 플레이어 리스트를 복제 및 섞기
-            List<Player> shuffled = new List<Player>(playerList);
+            canRecruitList.Clear();
+            canRecruitList = athService.GetAllCanRecruitAthleteList();
+            for (int i = 0; i < playerListPanel.transform.childCount; i++)
+            {
+                Destroy(playerListPanel.transform.GetChild(i).gameObject);
+            }
+            
+            // 다른 방법
+            // foreach (Transform item in playerInformationPanel.transform)
+            // {
+            //     Destroy(item.gameObject);
+            // }
+            
+            // 플레이어 리스트를 복제 및 섞기 // todo : 시설 수준과 선수의 등급별 확률 조정
+            List<DomAthEntity> shuffledList = new(canRecruitList);
+            
+            // if (shuffledList[0].affiliation == AthleteAffiliation.일반선수)
+            // {
+            //     // 확률 = 시설 수준이 0단계면, 65% (플로우 차트 참고)
+            // }
+            
+            
+            
             System.Random rng = new System.Random();
-            int n = shuffled.Count;
+            int n = shuffledList.Count;
             while (n > 1)
             {
                 n--;
-                int k = rng.Next(n + 1);
-                Player value = shuffled[k];
-                shuffled[k] = shuffled[n];
-                shuffled[n] = value;
+                int k = rng.Next(n + 1); 
+                (shuffledList[k], shuffledList[n]) = (shuffledList[n], shuffledList[k]);
             }
 
             // 앞에서부터 5명만 표시
-            int displayCount = Mathf.Min(5, shuffled.Count);
+            int displayCount = Mathf.Min(5, shuffledList.Count);
             for (int i = 0; i < displayCount; i++)
             {
                 GameObject go = Instantiate(playerUIPrefab, playerListPanel);
                 PlayerUI ui = go.GetComponent<PlayerUI>();
-                ui.SetPlayer(shuffled[i]);
+                ui.SetPlayer(shuffledList[i]);
                 ui.playerInormationPanel = playerInformationPanel;
-                ui.playerData = shuffled[i];
+                
+                ui.playerData = shuffledList[i];
             }
         }
-    }
-
-
-    [Serializable]
-    public class Player
-    {
-        public String name;
-        public int age;
-        public string grade;
-        public string type;
-
-        public int stamina;
-        public int agility;
-        public int flexibility;
-        public int technique;
-        public int speed;
-        public int balance;
-        public int fatigue;
-        public int mental;
-
-        public bool isInjured;
     }
 }
