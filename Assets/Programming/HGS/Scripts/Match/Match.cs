@@ -40,6 +40,7 @@ namespace SHG
     public Dictionary<SportType, ReactiveCollection<IContenderAthlete>> ContenderAthletesBySport { get; private set; }
     public ReactiveDictionary<SportType, MatchSportRecord> SportRecords;
     Dictionary<Country, List<IContenderAthlete>> contenderAthletesByContries;
+  
     [SerializeField]
     MatchData data;
     HashSet<IContenderAthlete> participatedAthletes;
@@ -103,7 +104,7 @@ namespace SHG
     public bool IsLastSport()
     {
       if (this.Data.IsSingleSport) {
-        return (!this.EndedSports.Contains(this.Data.SportType));
+        return (this.EndedSports.Contains(this.Data.SportType));
       }
       if (this.CurrentSport.Value == null) {
         return (false);
@@ -137,26 +138,6 @@ namespace SHG
       this.CurrentState.Value = State.AfterSport;
     }
 
-    void PrepareSport(SportType sportType)
-    {
-      #if UNITY_EDITOR
-      if (this.Data.IsSingleSport &&
-        sportType != this.Data.SportType) {
-        throw (new ArgumentException($"{nameof(PrepareSport)}: {sportType} is not selectable"));
-      } 
-      else if (this.EndedSports.Contains(sportType)) {
-        throw (new ArgumentException($"{nameof(PrepareSport)}: {sportType} is ended"));
-      }
-      #endif
-      var contenderCount = this.ContenderAthletesBySport[sportType].Count;
-      var athletes = new IContenderAthlete[contenderCount + 1];
-      athletes[0] = new ConvertedDomesticAthlete(this.UserAthletes[sportType]);
-      this.ContenderAthletesBySport[sportType].CopyTo(athletes, 1);
-      this.SportRecords.Add(
-        sportType, new MatchSportRecord (sportType, athletes));
-      this.CurrentSport.Value = sportType;
-    }
-
     public void EndCurrentSport()
     {
       #if UNITY_EDITOR
@@ -178,6 +159,52 @@ namespace SHG
         this.CurrentState.Value = State.Ended;
         this.CurrentSport.Value = null;
       }
+    }
+
+    public List<MatchResult> GetResults()
+    {
+      var results = new List<MatchResult>();
+      if (this.Data.IsSingleSport) {
+        int count = this.participatedAthletes.Count + 1;
+        foreach (var athlete in this.participatedAthletes) {
+          results.Add(
+            new MatchResult(
+              match: this, athlete: athlete));
+        }
+        results.Add(
+          new MatchResult(
+            match: this, 
+            athlete: new ConvertedDomesticAthlete(
+              this.UserAthletes[this.Data.SportType])));
+      }
+      else {
+        foreach (var country in this.Data.MemberContries) {
+          results.Add(
+            new MatchResult(
+              match: this, country: country));
+        }
+      }
+      return (results);
+    }
+
+    void PrepareSport(SportType sportType)
+    {
+      #if UNITY_EDITOR
+      if (this.Data.IsSingleSport &&
+        sportType != this.Data.SportType) {
+        throw (new ArgumentException($"{nameof(PrepareSport)}: {sportType} is not selectable"));
+      } 
+      else if (this.EndedSports.Contains(sportType)) {
+        throw (new ArgumentException($"{nameof(PrepareSport)}: {sportType} is ended"));
+      }
+      #endif
+      var contenderCount = this.ContenderAthletesBySport[sportType].Count;
+      var athletes = new IContenderAthlete[contenderCount + 1];
+      athletes[0] = new ConvertedDomesticAthlete(this.UserAthletes[sportType]);
+      this.ContenderAthletesBySport[sportType].CopyTo(athletes, 1);
+      this.SportRecords.Add(
+        sportType, new MatchSportRecord (sportType, athletes));
+      this.CurrentSport.Value = sportType;
     }
 
     bool IsStartable()
