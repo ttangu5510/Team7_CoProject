@@ -206,11 +206,7 @@ namespace SHG
         recordWitAthlete.athlete is ConvertedDomesticAthlete converted &&
         converted.IsSameWith(athlete));
       if (index == -1) {
-        #if UNITY_EDITOR
         throw (new ApplicationException());
-        #else
-        return (0f);
-        #endif
       }
       return (this.RecordsByAthletes[index].record);
     }
@@ -221,11 +217,7 @@ namespace SHG
         this.RecordsByAthletes, 
         recordWitAthlete => recordWitAthlete.athlete == athlete);
       if (index == -1) {
-        #if UNITY_EDITOR
         throw (new ApplicationException());
-        #else
-        return (0f);
-        #endif
       }
       return (this.RecordsByAthletes[index].record);
     }
