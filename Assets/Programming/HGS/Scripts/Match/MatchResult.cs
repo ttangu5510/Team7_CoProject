@@ -103,11 +103,7 @@ namespace SHG
           pair.athlete.Country == country 
         );
       if (index == -1) {
-        #if UNITY_EDITOR
         throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {country} in {recordByAthletes}"));
-        #else
-        return 1;
-        #endif
       }
       return (recordByAthletes[index].record.Rank);
     }
@@ -119,11 +115,7 @@ namespace SHG
         recordByAthletes,
         pair => pair.athlete == athlete);
       if (index == -1) {
-        #if UNITY_EDITOR
         throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {athlete} in {recordByAthletes}"));
-        #else
-        return 1;
-        #endif
       }
       return (recordByAthletes[index].record.Rank);
     }
@@ -135,11 +127,7 @@ namespace SHG
         recordByAthletes,
         pair => athlete.IsSameWith(pair.athlete));
       if (index == -1) {
-        #if UNITY_EDITOR
         throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {athlete} in {recordByAthletes}"));
-        #else
-        return 1;
-        #endif
       }
       return (recordByAthletes[index].record.Rank);
     }
