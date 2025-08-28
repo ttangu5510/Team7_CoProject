@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 using JYL;
 
 namespace SHG
@@ -10,6 +11,19 @@ namespace SHG
   [Serializable]
   public class Match 
   {
+    public enum State
+    {
+      NotStartable,
+      BeforeStart,
+      BeforeSport,
+      InSport,
+      AfterSport,
+      Ended
+    }
+
+    public const int TOTAL_STAGE = 5;
+    public const float INTERVAL_BETWEEN_STAGE_IN_SECOND = 3f;
+    public const int DOMESTIC_CONTENDER_COUNT = 7;
     public MatchData Data 
     { 
       get => this.data;
@@ -21,10 +35,10 @@ namespace SHG
     public ReactiveProperty<Nullable<SportType>> CurrentSport { get; private set; } 
     [SerializeField]
     public ReactiveCollection<SportType> EndedSports;
-    [SerializeField]
     public ReactiveDictionary<SportType, DomAthEntity> UserAthletes { get; set; }
-    public ReactiveProperty<bool> IsMatchStartable { get; private set; }
+    public ReactiveProperty<State> CurrentState { get; private set; }
     public Dictionary<SportType, ReactiveCollection<IContenderAthlete>> ContenderAthletesBySport { get; private set; }
+    public ReactiveDictionary<SportType, MatchSportRecord> SportRecords;
     Dictionary<Country, List<IContenderAthlete>> contenderAthletesByContries;
     [SerializeField]
     MatchData data;
@@ -36,7 +50,8 @@ namespace SHG
       this.Data = data;
       this.EndedSports = new ();
       this.participatedAthletes = new ();
-      this.IsMatchStartable = new (false);
+      this.SportRecords = new ();
+      this.CurrentState = new (State.NotStartable);
       this.CurrentSport = new (null);
       this.UserAthletes = new ();
       this.FillCountryContenders(contenderGetter);
@@ -63,26 +78,82 @@ namespace SHG
         #endif
       }
       this.UserAthletes[sportType] = athlete;
-      this.IsMatchStartable.Value = this.IsStartable();
+      if (this.IsStartable()) {
+        this.CurrentState.Value = State.BeforeStart;
+      }
+      else {
+        this.CurrentState.Value = State.NotStartable;
+      }
     }
 
     public void UnSelectAthlete(SportType sportType)
     {
       this.UserAthletes.Remove(sportType);
-      this.IsMatchStartable.Value = false;
+      this.CurrentState.Value = State.NotStartable;
     }
 
-    public void StartSport(SportType sportType)
+    public void StartMatch()
+    {
+      var nextSport = this.GetNextSport();
+      this.PrepareSport(nextSport);
+      this.CurrentSport.Value = nextSport;
+      this.CurrentState.Value = State.BeforeSport;
+    }
+
+    public bool IsLastSport()
+    {
+      if (this.Data.IsSingleSport) {
+        return (!this.EndedSports.Contains(this.Data.SportType));
+      }
+      if (this.CurrentSport.Value == null) {
+        return (false);
+      }
+      int currentIndex = Array.IndexOf(
+        MatchData.DefaultSports, this.CurrentSport.Value);
+      if (currentIndex == -1 || currentIndex == MatchData.DefaultSports.Length - 1) {
+        return (true);
+      }
+      return (false);
+    }
+
+    async public void StartCurrentSport()
+    {
+      if (this.CurrentSport.Value == null) {
+      #if UNITY_EDITOR
+        throw (new ApplicationException($"{nameof(StartCurrentSport)}: {nameof(this.CurrentSport)} is null"));
+      #else
+        return ;
+      #endif
+      }
+      this.CurrentState.Value = State.InSport;
+      var sportType = this.CurrentSport.Value.Value;
+      int delay = (int)(INTERVAL_BETWEEN_STAGE_IN_SECOND * 1000f); 
+      while (this.SportRecords[sportType].CurrentStage 
+        < Match.TOTAL_STAGE) {
+        await UniTask.Delay(delay);  
+        this.SportRecords[sportType] = this.SportRecords[sportType].Progress();
+      }
+      await UniTask.Delay(delay);  
+      this.CurrentState.Value = State.AfterSport;
+    }
+
+    void PrepareSport(SportType sportType)
     {
       #if UNITY_EDITOR
       if (this.Data.IsSingleSport &&
         sportType != this.Data.SportType) {
-        throw (new ArgumentException($"{nameof(StartSport)}: {sportType} is not selectable"));
+        throw (new ArgumentException($"{nameof(PrepareSport)}: {sportType} is not selectable"));
       } 
       else if (this.EndedSports.Contains(sportType)) {
-        throw (new ArgumentException($"{nameof(StartSport)}: {sportType} is ended"));
+        throw (new ArgumentException($"{nameof(PrepareSport)}: {sportType} is ended"));
       }
       #endif
+      var contenderCount = this.ContenderAthletesBySport[sportType].Count;
+      var athletes = new IContenderAthlete[contenderCount + 1];
+      athletes[0] = new ConvertedDomesticAthlete(this.UserAthletes[sportType]);
+      this.ContenderAthletesBySport[sportType].CopyTo(athletes, 1);
+      this.SportRecords.Add(
+        sportType, new MatchSportRecord (sportType, athletes));
       this.CurrentSport.Value = sportType;
     }
 
@@ -97,7 +168,16 @@ namespace SHG
       if (sport != null) {
         this.EndedSports.Add(sport.Value);
       }
-      this.CurrentSport.Value = null;
+      if (!this.IsLastSport()) {
+        var nextSport = this.GetNextSport();
+        this.PrepareSport(nextSport);
+        this.CurrentSport.Value = nextSport;
+        this.CurrentState.Value = State.BeforeSport;
+      }
+      else {
+        this.CurrentState.Value = State.Ended;
+        this.CurrentSport.Value = null;
+      }
     }
 
     bool IsStartable()
@@ -132,7 +212,7 @@ namespace SHG
       }      
       else {
         foreach (var sport in MatchData.DefaultSports) {
-          this.FillContendersForSport(sport); 
+          this.FillContendersForSport(sport, this.Data.MatchType == MatchType.Domestic); 
         }
       }
     }
@@ -145,15 +225,28 @@ namespace SHG
           contenders.Add(this.SelectContender(sportType, country)); 
         }
       }
+      this.ContenderAthletesBySport[sportType] = new (contenders);
     }
 
-    void FillContendersForSport(SportType sportType)
+    void FillContendersForSport(SportType sportType, bool isDomestic)
     {
-      List<IContenderAthlete> contenders = new ();
-      foreach (var country in this.Data.MemberContries) {
-         contenders.Add(this.SelectContender(sportType, country));
+      if (isDomestic) {
+        var korea = this.Data.MemberContries[0];
+        List<IContenderAthlete> contenders = new ();
+        for (int i = 0; i < DOMESTIC_CONTENDER_COUNT; i++) {
+          contenders.Add(this.SelectContender(SportType.SpeedSkating, korea));
+        }  
+        foreach (var sport in MatchData.DefaultSports) {
+          this.ContenderAthletesBySport[sport] = new (contenders);
+        }
       }
-      this.ContenderAthletesBySport[sportType] = new (contenders);
+      else {
+        List<IContenderAthlete> contenders = new ();
+        foreach (var country in this.Data.MemberContries) {
+          contenders.Add(this.SelectContender(sportType, country));
+        }
+        this.ContenderAthletesBySport[sportType] = new (contenders);
+      }
     }
 
     // TODO: 상대 선수 선택 알고리즘
@@ -169,6 +262,27 @@ namespace SHG
       }
       this.participatedAthletes.Add(selected);
       return (selected);
+    }
+
+    SportType GetNextSport()
+    {
+      if (this.Data.IsSingleSport) {
+          return (this.Data.SportType);
+      }
+      if (this.CurrentSport.Value == null) {
+        return (MatchData.DefaultSports[0]);
+      }
+      int currentIndex = Array.IndexOf(
+        MatchData.DefaultSports, this.CurrentSport.Value);
+      if (currentIndex == -1 || 
+        currentIndex == MatchData.DefaultSports.Length - 1) {
+        #if UNITY_EDITOR
+        throw (new ApplicationException($"{nameof(GetNextSport)}: {nameof(this.CurrentSport)} index is {currentIndex}"));
+        #else
+        return (SportType.SkiJumping);
+        #endif
+      }
+      return (MatchData.DefaultSports[currentIndex + 1]);
     }
   }
 }

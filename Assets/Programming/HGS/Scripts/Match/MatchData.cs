@@ -22,7 +22,7 @@ namespace SHG
     };
 
     /// <summary> 단일 종목인 경우 해당 종목의 출전 선수 수 </summary>
-    public static int NumberOfAthletesInSingleSport = 8;
+    public static int NumberOfAthletesInSingleSport = 7;
 
     [SerializeField]
     public MatchType MatchType;

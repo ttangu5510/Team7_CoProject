@@ -35,5 +35,10 @@ namespace SHG
     public AthleteAffiliation Level => (this.athlete.affiliation);
     public Country Country => (KOREA);
     public string Name => (this.athlete.entityName);
+
+    public bool IsSameWith(DomAthEntity athlete)
+    {
+      return (this.athlete == athlete);
+    }
   }
 }

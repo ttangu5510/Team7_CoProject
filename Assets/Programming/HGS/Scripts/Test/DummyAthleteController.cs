@@ -9,6 +9,18 @@ using UniRx;
 namespace SHG
 {
   public class DummyAthleteController : IAthleteController {
+
+    public static IAthleteController Instance
+    {
+      get {
+        if (instance == null) {
+          instance = new DummyAthleteController();
+        }
+        return (instance);
+      }
+    }
+    static IAthleteController instance;
+
     [Serializable]
     public struct ParsedUserAthleteData : IContenderAthlete {
       public string Name;
@@ -20,9 +32,9 @@ namespace SHG
       public AthleteStats Stats => this.stats;
 
       public AthleteAffiliation Level => (this.Grade switch {
-        "일반 선수" => AthleteAffiliation.일반선수,
-        "국가대표 후보" => AthleteAffiliation.국가대표후보,
-        "국가대표" => AthleteAffiliation.국가대표,
+        "일반 선수" => (AthleteAffiliation)0,
+        "국가대표 후보" => (AthleteAffiliation)1,
+        "국가대표" => (AthleteAffiliation)2,
         _ => throw (new ApplicationException())
         });
 
@@ -52,14 +64,14 @@ namespace SHG
       int numberOfNationalAthleteCandidate = 0;
       int numberOfNationalAthlete = 0;
       foreach (var athlete in this.Athletes) {
-        switch (athlete.affiliation) {
-          case AthleteAffiliation.일반선수:
+        switch ((int)athlete.affiliation) {
+          case 0:
             numberOfGeneralAthlete++;
             break;
-          case AthleteAffiliation.국가대표후보:
+          case 1:
             numberOfNationalAthleteCandidate++;
             break;
-          case AthleteAffiliation.국가대표:
+          case 2:
             numberOfNationalAthlete++;
             break;
         } 
@@ -104,9 +116,9 @@ namespace SHG
     AthleteAffiliation GetAffliation(string grade)
     {
        return (grade switch {
-        "일반 선수" => AthleteAffiliation.일반선수,
-        "국가대표 후보" => AthleteAffiliation.국가대표후보,
-        "국가대표" => AthleteAffiliation.국가대표,
+        "일반 선수" => (AthleteAffiliation)0,
+        "국가대표 후보" => (AthleteAffiliation)1,
+        "국가대표" => (AthleteAffiliation)2,
         _ => throw (new ApplicationException())
         });
     }

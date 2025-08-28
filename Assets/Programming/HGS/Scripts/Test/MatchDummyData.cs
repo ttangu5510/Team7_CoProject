@@ -96,7 +96,7 @@ namespace SHG
       var matches = new MatchData[singleMatches.Length + 1];
       for (int i = 0; i < singleMatches.Length; i++) {
         matches[i] = new MatchData {
-          Name = MatchData.GetSportTypeString(singleMatches[i].type),
+          Name = $"전국{MatchData.GetSportTypeString(singleMatches[i].type)} 대회",
           MatchType = MatchType.SingleSport,
           SportType = singleMatches[i].type,
           MemberContries = DOMESTIC,
