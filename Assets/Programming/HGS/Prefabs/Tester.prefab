@@ -86,10 +86,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c48f3a91eb28e8d08b9bac463aa1722, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextMatchName: 
-  currentMatch: {}
-  isMatchWeek: 0
+  currentMatch:
+    data:
+      MatchType: 0
+      SportType: 0
+      MemberContries: []
+      Name: 
+      DateOfEvent:
+        Year: 0
+        Week: 0
+  currentMatchText: 
   scheduledMatches: []
+  registeredMatch: []
+  sports:
+  - SkiJumping
+  - Skeleton
+  - FigureSkating
+  - SpeedSkating
+  - SnowBoard
+  - AlpineSkiing
+  - Biathlon
+  - IceHockey
+  athletesNames: []
+  currentMatchAthleteText: 
+  isMatchStartable: 0
+  nextMatchName: 
 --- !u!114 &872819916359451712
 MonoBehaviour:
   m_ObjectHideFlags: 0
