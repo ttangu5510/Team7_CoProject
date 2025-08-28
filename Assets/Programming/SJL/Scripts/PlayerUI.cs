@@ -1,10 +1,12 @@
 ﻿using SJL;
 using System.Collections;
 using System.Collections.Generic;
+using JYL;
 using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject.SpaceFighter;
 
 namespace SJL
 {
@@ -23,14 +25,14 @@ namespace SJL
         [SerializeField] public GameObject NotificationWindow;  // 알림창 패널
         [SerializeField] public GameObject ConfirmPlayerRecruitment;    // 선수 영입 확인 패널
 
-        public Player playerData; // 현재 연동된 선수 정보
+        public DomAthEntity playerData; // 현재 연동된 선수 정보
 
-        public void SetPlayer(Player player)
+        public void SetPlayer(DomAthEntity player)
         {
-            nameText.text = player.name;
-            gradeText.text = player.grade;
-            ageText.text = player.age.ToString();
-            typeText.text = player.type;
+            nameText.text = player.entityName;
+            gradeText.text = player.affiliation.ToString();
+            ageText.text = player.recruitAge.ToString();
+            typeText.text = player.maxGrade.ToString();
             playerData = player;
         }
 
@@ -65,7 +67,8 @@ namespace SJL
 
         public void OnRecruitmentButtonClicked()
         {
-            // 선수 영입 버튼 클릭 시 동작
+            playerData.Recruit();
+            Destroy(gameObject);
             Debug.Log("선수 영입 버튼 클릭됨: " + nameText.text);
             
         }
