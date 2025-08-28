@@ -40,5 +40,13 @@ namespace SHG
     {
       return (this.athlete == athlete);
     }
+
+    public bool IsSameWith(IContenderAthlete athlete)
+    {
+      if (athlete is ConvertedDomesticAthlete converted) {
+        return (this.athlete == converted.athlete);
+      }
+      return (false);
+    }
   }
 }

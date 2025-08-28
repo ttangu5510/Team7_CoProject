@@ -53,10 +53,16 @@ namespace SHG
         parentState: this.currentState,
         view: this.view.GetItem<InnerComponentReference>(
           (int)InnerComponentRole.RecordScreen).InnerComponent);
+
       this.rankScreen = new MatchViewRankScreen(
         parentState: this.currentState, 
         view: this.view.GetItem<InnerComponentReference>(
           (int)InnerComponentRole.RankScreen).InnerComponent);
+
+      this.resultScreen = new MatchViewResultScreen(
+        parentState: this.currentState,
+        view: this.view.GetItem<InnerComponentReference>(
+          (int)InnerComponentRole.ResultScreen).InnerComponent);
     }
 
     void OnViewStateChanged(ViewState state)
@@ -127,10 +133,11 @@ namespace SHG
           break; 
         case Match.State.Ended:
           this.currentState.Value = ViewState.Result;
-          this.matchController.EndCurrentMatch();
-          this.resourceController.AddMoney(
-            1000, IncomeType.CompetitionGrant);
-          this.resourceController.AddFame(300);
+          this.resultScreen.UpdateView(match);
+          //this.matchController.EndCurrentMatch();
+          //this.resourceController.AddMoney(
+          //  1000, IncomeType.CompetitionGrant);
+          //this.resourceController.AddFame(300);
           break;
       }
     }

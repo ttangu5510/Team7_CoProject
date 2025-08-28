@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SHG
 {
-  public class MatchRecord
+  public class MatchReward 
   {
   }
 }
