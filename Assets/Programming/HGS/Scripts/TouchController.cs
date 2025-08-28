@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UniRx;
@@ -28,9 +29,11 @@ namespace SHG
     /// </summary>
     public Subject<Vector2> OnTouchMove;
     Vector2 lastTouchPosition;
+    int uiLayer;
 
     void Awake()
     {
+      this.uiLayer = LayerMask.NameToLayer("UI");
       this.OnTouchUp = new Subject<(int fingerId, Vector2 position)>();
       this.OnTouchDown = new Subject<(int fingerId, Vector2 position)>();
       this.OnTouchMove = new Subject<Vector2>();
@@ -38,11 +41,25 @@ namespace SHG
 
     void Update()
     {
-      if (Input.touchCount > 0 && !this.IsUiPresenting()) {
+      if (Input.touchCount > 0 && !this.IsUiPresenting() && 
+        !this.IsPointerOverUIObject()) {
         this.UpdateTouchDown();
         this.UpdateTouchUp();
         this.UpdateTouchMove();
       }
+    }
+
+    bool IsPointerOverUIObject() {
+      PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+      eventDataCurrentPosition.position = Input.touches[0].position;
+      List<RaycastResult> results = new List<RaycastResult>();
+      EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+      foreach (var raycastResult in results) {
+        if (raycastResult.gameObject.layer == this.uiLayer) {
+          return (true);
+        }
+      }
+      return (false);
     }
 
     void UpdateTouchDown()

@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UniRx;
 using Zenject;
+using JYL;
 
 namespace SHG
 {
@@ -15,25 +17,30 @@ namespace SHG
     public ReactiveProperty<Match> CurrentMatch { get; private set; }
     public ReactiveProperty<Nullable<MatchData>> NextMatch { get; private set; }
     public ReactiveCollection<MatchData> ScheduledMatches { get; private set; }
-    public Func<Country, List<IContenderAthlete>> ContenderGetter;
     public IList<MatchData> MatchData { get; private set; }
     public ReactiveCollection<MatchData> RegisteredMatches { get; private set; }
 
     MatchScheduler scheduler;
     IDisposable timeSubscribed;
+    AthleteDummyData athleteDummyData;
+    DomAthService domAthService;
 
     public MatchController(IList<MatchData> matchData)
     {
       this.MatchData = matchData;
       this.CurrentMatch = new (null);
       this.NextMatch = new (null);
+      this.athleteDummyData = new ();
     }
 
     //TODO: Load save data
     [Inject]
-    public void Init(ITimeFlowController timeFlowController)
+    public void Init(
+      ITimeFlowController timeFlowController, 
+      DomAthService domAthService)
     {
       this.timeFlowController = timeFlowController;
+      this.domAthService = domAthService;
       this.scheduler = new MatchScheduler(
         matchData: this.MatchData,
         startYear: this.timeFlowController.YearPassedAfterStart,
@@ -99,17 +106,58 @@ namespace SHG
       this.CurrentMatch.Value = this.CreateMatch(this.NextMatch.Value.Value);
     }
 
+    public void EndCurrentMatch()
+    {
+      if (this.CurrentMatch.Value == null) {
+      #if UNITY_EDITOR
+        throw (new ApplicationException($"{nameof(EndCurrentMatch)}: {nameof(CurrentMatch)} is null"));
+      #else
+        return ;
+      #endif
+      }
+      this.CurrentMatch.Value = null;
+      this.timeFlowController.ProgressWeeks(2);
+    }
+
     public bool TryGetMatchFor(in GameDate gameDate, out MatchData matchData)
     {
       return (this.scheduler.TryGetMatchFor(gameDate, out matchData));
+    }
+
+    public bool IsParticipatable(in MatchData match) {
+      return (true);
     }
 
     Match CreateMatch(MatchData data)
     {
       var match = new Match(
         data: data,
-        contenderGetter: this.ContenderGetter);
+        contenderGetter: this.GetContenders);
       return (match);
+    }
+
+    List<IContenderAthlete> GetContenders(Country country)
+    {
+      if (country.Name == "korea") {
+        var recuruitedAthletes = new HashSet<DomAthEntity>(
+          this.domAthService.GetRecruitedAthleteList());
+
+        var allAhteltes = this.domAthService.GetAllAthleteList();
+        var convertedAthletes = allAhteltes.Where(
+            athlete => !recuruitedAthletes.Contains(athlete)) 
+          .ToList()
+          .ConvertAll(athlete => 
+            new ConvertedDomesticAthlete(athlete) as IContenderAthlete);
+        if (convertedAthletes.Count < 10) {
+          return (this.athleteDummyData.Althetes[country]);
+        }
+        else {
+          return (convertedAthletes);
+        }
+      } 
+      else {
+        return (this.athleteDummyData.Althetes[country]);
+      }
     }
 
     List<MatchData> GetScheduledMatches()
@@ -167,6 +215,5 @@ namespace SHG
       #endif
       }
     }
-
   }
 }

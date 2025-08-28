@@ -9,5 +9,7 @@ public enum ObjectRole
     Popup = 889390096,
     ScrollView = -757283198,
     MatchListView = 1419307118,
+    Navigator = 891063211,
+    RecordScreen = -719548751,
 
 }

@@ -1,8 +1,10 @@
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
+using UniRx.Triggers;
 using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
 using Zenject;
@@ -13,18 +15,24 @@ namespace SHG
   [RequireComponent(typeof(StatefulComponent), typeof(ContainerView))]
   public class MatchListPresenter : MonoBehaviour
   {
+    const string MATCH_REGISTERED_NOTICE = "대회에 참가했습니다.\n대회 참가시 2주가 소요되며 선수들의 피로도가 증가합니다.";
+    const string MATCH_UNREGISTERED_NOTICE = "대회에 참가를 취소했습니다.\n 대회 시작 1주 전까지 다시 참가 신청을 할 수 있습니다";
+
+    public ReactiveProperty<bool> IsShowing { get; private set; }
+
     [Inject]
     IMatchController matchController;
     [Inject]
     ITimeFlowController timeFlowController;
+
     StatefulComponent view;
+    StatefulComponent popup;
     ContainerView containerView;
     Queue<MatchData> scheduledMatches;
     ScrollRect scrollView;
     Transform container;
     CompositeDisposable disposables;
     HashSet<Button> subscribedButtons;
-    public ReactiveProperty<bool> IsShowing { get; private set; }
 
     public void Show()
     {
@@ -51,6 +59,7 @@ namespace SHG
       this.IsShowing
         .Subscribe(show => {
           if (show) {
+          this.view.SetState((int)StateRole.PopupHidden);
             this.view.SetState((int)StateRole.Shown);
             this.container.transform     
             .DOLocalMoveY(
@@ -64,7 +73,9 @@ namespace SHG
               endValue: -600f,
               duration:0.5f)
             .SetEase(Ease.InSine)
-            .OnComplete(() => this.view.SetState((int)StateRole.Hidden));
+            .OnComplete(() => {
+              this.view.SetState((int)StateRole.Hidden);
+              });
           }
         })
         .AddTo(this.disposables);
@@ -75,8 +86,18 @@ namespace SHG
         .Subscribe(_ => this.IsShowing.Value = false)
         .AddTo(this.disposables);
 
+      this.popup = this.view.GetItem<InnerComponentReference>(
+        (int)InnerComponentRole.Popup).InnerComponent;
+      popup.GetItem<ButtonReference>(
+        (int)ButtonRole.ConfirmButton).Button
+        .OnClickAsObservable()
+        .Subscribe(_ => this.view.SetState((int)StateRole.PopupHidden))
+        .AddTo(this.disposables);
+
       this.SubscribeTimeFlow();
       this.SubscribeMatch();
+      this.OnDestroyAsObservable()
+        .Subscribe(_ => this.disposables?.Dispose());
     }
 
     void SubscribeTimeFlow()
@@ -133,15 +154,25 @@ namespace SHG
 
     void FillMatchRow(StatefulComponent view, MatchData match)
     {
+      var now = new GameDate { 
+        Year = this.timeFlowController.YearPassedAfterStart,
+        Week = this.timeFlowController.WeekInYear.Value };
+
       if (match.IsMandatory) {
         view.SetState((int)StateRole.MandatoryMatch);
       }
       else {
-        if (this.matchController.IsRegistered(match)) {
-          view.SetState((int)StateRole.Registered);
+        if (match.DateOfEvent - now < 1) {
+          view.SetState((int)StateRole.Fixed);
         }
         else {
-          view.SetState((int)StateRole.UnRegistered);
+          view.SetState((int)StateRole.Changable);
+          if (this.matchController.IsRegistered(match)) {
+            view.SetState((int)StateRole.Registered);
+          }
+          else {
+            view.SetState((int)StateRole.UnRegistered);
+          }
         }
         var button = view.GetItem<ButtonReference>(
           (int)ButtonRole.RegisterButton).Button;
@@ -166,10 +197,38 @@ namespace SHG
     {
       if (this.matchController.IsRegistered(match)) {
         this.matchController.UnRegister(match);
+        this.FillPopupContent(false);
       }
       else {
         this.matchController.Register(match);
+        this.FillPopupContent(true);
       }
+      this.view.SetState((int)StateRole.PopupShown);
+    }
+
+    void FillPopupContent(bool isRegistered)
+    {
+      if (this.matchController.NextMatch.Value == null) {
+      #if UNITY_EDITOR
+        throw (new ApplicationException($"{nameof(FillPopupContent)}: {nameof(this.matchController.NextMatch)} is null"));
+      #else
+        return;
+      #endif
+      }
+      var match = this.matchController.NextMatch.Value.Value;
+      this.popup.SetRawTextByRole(
+        (int)TextRole.Title,
+        isRegistered ? "대회 참가": "참가 취소"); 
+      this.popup.SetState(
+        (int)(isRegistered ? StateRole.Registered: StateRole.UnRegistered));
+      int year = this.timeFlowController.Year.Value % 100;
+
+      this.popup.SetRawTextByRole(
+        (int)TextRole.MatchTitle,
+        $"{year}년 {match.Name} ");
+      this.popup.SetRawTextByRole(
+        (int)TextRole.Description,
+        isRegistered ? MATCH_REGISTERED_NOTICE: MATCH_UNREGISTERED_NOTICE);
     }
 
     string GetMatchDateText(in GameDate date)
@@ -189,11 +248,25 @@ namespace SHG
       if (match.IsMandatory) {
         return ("강제 참여");
       }
-      if (this.matchController.IsRegistered(match)) {
-        return ("참가취소");
+      var now = new GameDate { 
+        Year = this.timeFlowController.YearPassedAfterStart,
+        Week = this.timeFlowController.WeekInYear.Value };
+      if (match.DateOfEvent - now < 1) {
+
+        if (this.matchController.IsRegistered(match)) {
+          return ("참가함");
+        }
+        else {
+          return ("참가하지 않음");
+        }
       }
       else {
-        return ("참가하기");
+        if (this.matchController.IsRegistered(match)) {
+          return ("참가취소");
+        }
+        else {
+          return ("참가하기");
+        }
       }
     }
   }
