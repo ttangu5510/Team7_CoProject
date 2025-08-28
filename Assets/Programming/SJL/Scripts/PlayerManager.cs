@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using JYL;
+using SHG;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -13,7 +14,9 @@ namespace SJL
     {
         [SerializeField] Button playerRecruitmentButton;
 
-        [Inject] private DomAthService athService; 
+        [Inject] private DomAthService athService;
+        [Inject] private IResourceController  resourceController;
+        
         private List<DomAthEntity> canRecruitList = new();
 
         [SerializeField] public GameObject playerUIPrefab;
@@ -27,8 +30,11 @@ namespace SJL
 
         private void DisplayPlayers()
         {
+            resourceController.SpendMoney(100, ExpensesType.Scout);
+            
             canRecruitList.Clear();
             canRecruitList = athService.GetAllCanRecruitAthleteList();
+            
             for (int i = 0; i < playerListPanel.transform.childCount; i++)
             {
                 Destroy(playerListPanel.transform.GetChild(i).gameObject);
@@ -47,8 +53,6 @@ namespace SJL
             // {
             //     // 확률 = 시설 수준이 0단계면, 65% (플로우 차트 참고)
             // }
-            
-            
             
             System.Random rng = new System.Random();
             int n = shuffledList.Count;
