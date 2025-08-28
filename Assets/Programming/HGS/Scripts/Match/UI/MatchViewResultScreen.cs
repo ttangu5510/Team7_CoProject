@@ -34,8 +34,18 @@ namespace SHG
 
     public void UpdateView(Match match)
     {
+      bool isDomestic = match.Data.IsSingleSport || 
+        match.Data.MatchType == MatchType.Domestic;
+
+      if (isDomestic) {
+        this.view.SetState((int)StateRole.Domestic);
+      }
+      else {
+        this.view.SetState((int)StateRole.International);
+      }
       List<MatchResult> results = match.GetResults();
-      Debug.Log($"results: {results.Count}");
+      this.container.Clear();
+      this.container.FillWithItems(results, this.UpdateRow);
       foreach (var result in results) {
         Debug.Log($"country: {result.Country.Name}, type: {result.Type}"); 
         if (result.Type == MatchResult.ResultType.Domestic) {
@@ -43,6 +53,18 @@ namespace SHG
         }
         var medals = result.GetMedalCounts();
         Debug.Log($"({medals[0]}, {medals[1]}, {medals[2]})");
+      }
+    }
+
+    void UpdateRow(StatefulComponent view, MatchResult result)
+    {
+      bool isDomestic = result.Type == MatchResult.ResultType.Domestic;
+
+      if (isDomestic) {
+        view.SetState((int)StateRole.Domestic);
+      }
+      else {
+        view.SetState((int)StateRole.International);
       }
     }
   }
