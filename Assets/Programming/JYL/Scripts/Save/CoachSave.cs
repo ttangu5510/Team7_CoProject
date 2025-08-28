@@ -14,13 +14,13 @@ namespace JYL
         public CoachSave(CoachEntity entity)
         {
             id = entity.id;
-            age = entity.curAge;
+            age = entity.curAge.Value;
             state = entity.curState;
         }
 
         public void UpdateStatus(CoachEntity entity)
         {
-            age =  entity.curAge;
+            age =  entity.curAge.Value;
             state = entity.curState;
         }
 

@@ -10,6 +10,10 @@ public enum ButtonRole
     CancelButton = 1874676936,
     RegisterButton = 2005020735,
     QuoteButton = 139962882,
+    UserAthleteButton = -166184056,
+    BackButton = 1984317533,
+    CellButton = 1565742530,
+    NextButton = -512366159,
     Training = 1468994080,
     Close = -1261564850,
 

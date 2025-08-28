@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UniRx;
 using Zenject;
+using JYL;
 
 namespace SHG
 {
@@ -13,7 +14,9 @@ namespace SHG
   {
     ITimeFlowController timeFlowController;
     IFacilitiesController facilitiesController;
-    IAthleteController athleteController;
+    //IAthleteController athleteController;
+    DomAthService domAthService;
+    CoachService coachService;
     
     public ReactiveProperty<int> Money { get; private set; }
     public ReactiveProperty<int> Fame { get; private set; }
@@ -54,11 +57,16 @@ namespace SHG
     public void Init(
       ITimeFlowController timeFlowController,
       IFacilitiesController facilitiesController,
-      IAthleteController athleteController)
+      DomAthService domAthService,
+      CoachService coachService
+     // IAthleteController athleteController
+      )
     {
       this.facilitiesController = facilitiesController;
       this.timeFlowController = timeFlowController;
-      this.athleteController = athleteController;
+      //this.athleteController = athleteController;
+      this.domAthService = domAthService;
+      this.coachService = coachService;
       this.timeFlowController.CurrentSeason
         .Subscribe(season => {
           int currentYear = this.timeFlowController.Year.Value;
@@ -159,11 +167,21 @@ namespace SHG
 
     int GetExpenses(Season season, int yearSpan)
     {
+      //FIXME: Avoid null references
+      if (season == Season.Spring && yearSpan == 0) {
+        return (0);
+      }
+      this.CountAthletes(
+        athletes: this.domAthService.GetRecruitedAthleteList(),
+        generalAthletes: out int general,
+        nationalAthleteCandidates: out int nationalCandidates,
+        nationalAthletes: out int national
+        );
       int personnelCost = this.Data.PersonnelCost.GetTotal(
-        generalAthlete: this.athleteController.NumberOfGeneralAthlete.Value,
-        nationalAthleteCandidate: this.athleteController.NumberOfNationalAthleteCandidate.Value,
-        nationalAthlete: this.athleteController.NumberOfNationalAthlete.Value,
-        coach: this.athleteController.NumberOfCoach.Value);
+        generalAthlete: general,
+        nationalAthleteCandidate: nationalCandidates,
+        nationalAthlete: national,
+        coach: this.coachService.GetRecruitedCoaches().Count);
 
       this.AddExpense(personnelCost, ExpensesType.PersonnelMaintainance);
       int facilitiesCost = 0;
@@ -174,6 +192,31 @@ namespace SHG
       this.AddExpense(facilitiesCost, ExpensesType.FacilityMaintainance);
       return (personnelCost + facilitiesCost);
     }
+
+    void CountAthletes(
+      IList<DomAthEntity> athletes, 
+      out int generalAthletes,
+      out int nationalAthleteCandidates, 
+      out int nationalAthletes)
+    {
+      generalAthletes = 0; 
+      nationalAthleteCandidates = 0;
+      nationalAthletes = 0;
+      foreach (var athlete in athletes) {
+        switch ((int)athlete.affiliation) {
+          case 0:
+            generalAthletes++;
+            break;
+          case 1:
+            nationalAthleteCandidates++;
+            break;
+          case 2:
+            nationalAthletes++;
+            break;
+        }
+      }
+    }
+
 
     void AddIncome(int amount, IncomeType type)
     {
