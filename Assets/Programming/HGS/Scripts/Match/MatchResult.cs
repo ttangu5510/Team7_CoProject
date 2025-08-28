@@ -106,7 +106,7 @@ namespace SHG
         #if UNITY_EDITOR
         throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {country} in {recordByAthletes}"));
         #else
-        continue;
+        return 1;
         #endif
       }
       return (recordByAthletes[index].record.Rank);
@@ -122,7 +122,7 @@ namespace SHG
         #if UNITY_EDITOR
         throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {athlete} in {recordByAthletes}"));
         #else
-        continue;
+        return 1;
         #endif
       }
       return (recordByAthletes[index].record.Rank);
@@ -138,7 +138,7 @@ namespace SHG
         #if UNITY_EDITOR
         throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {athlete} in {recordByAthletes}"));
         #else
-        continue;
+        return 1;
         #endif
       }
       return (recordByAthletes[index].record.Rank);
