@@ -45,5 +45,7 @@ public enum StateRole
     Result = 1624192333,
     Reward = 2027218411,
     Active = 720978296,
+    Domesitc = -563444860,
+    International = 422017762,
 
 }
