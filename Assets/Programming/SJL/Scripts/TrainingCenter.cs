@@ -23,6 +23,7 @@ namespace SJL
         [SerializeField] private GameObject FacilityInformationBox;
         [SerializeField] private GameObject TrainingBox;
         [SerializeField] private GameObject specialTrainingBox;
+        [SerializeField] private GameObject UnderBar;
 
         [SerializeField] private StatefulComponent statefulComponent;
 
@@ -46,6 +47,16 @@ namespace SJL
 
             specialTrainingButton.OnClickAsObservable()
                 .Subscribe(_ => ShowPanel(PanelType.SpecialTraining)).AddTo(this); 
+        }
+
+        private void OnEnable()
+        {
+            UnderBar.SetActive(false);
+        }
+
+        private void OnDisable()
+        {
+            UnderBar.SetActive(true);
         }
 
         private enum PanelType { FacilityInformation, Training, SpecialTraining }
