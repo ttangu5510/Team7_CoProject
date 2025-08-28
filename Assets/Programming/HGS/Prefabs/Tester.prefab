@@ -1,0 +1,129 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3425666687522128389
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8550218137144049962}
+  - component: {fileID: 4371305814317217664}
+  - component: {fileID: 8014153875717810464}
+  - component: {fileID: 2420291371551590946}
+  - component: {fileID: 872819916359451712}
+  m_Layer: 0
+  m_Name: Tester
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8550218137144049962
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3425666687522128389}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4371305814317217664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3425666687522128389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9a72a8d772eb9e78a4eacd96dc19551, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  facilityToSelect: 0
+  Name: 
+  CurrentGrade: 0
+  IsUpgradable: 0
+  resourcesString: 
+--- !u!114 &8014153875717810464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3425666687522128389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6578d50e910b2e4f91f57faa879f343, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lastReportTimeText: 
+  total: 0
+  income: 0
+  incomeDetail: 
+  expenses: 0
+  expensesDetail: 
+  currentMoney: 0
+  currentFame: 0
+  currentCoin: 0
+  param: 0
+--- !u!114 &2420291371551590946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3425666687522128389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c48f3a91eb28e8d08b9bac463aa1722, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentMatch:
+    data:
+      MatchType: 0
+      SportType: 0
+      MemberContries: []
+      Name: 
+      DateOfEvent:
+        Year: 0
+        Week: 0
+  currentMatchText: 
+  scheduledMatches: []
+  registeredMatch: []
+  sports:
+  - SkiJumping
+  - Skeleton
+  - FigureSkating
+  - SpeedSkating
+  - SnowBoard
+  - AlpineSkiing
+  - Biathlon
+  - IceHockey
+  athletesNames: []
+  currentMatchAthleteText: 
+  isMatchStartable: 0
+  nextMatchName: 
+--- !u!114 &872819916359451712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3425666687522128389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22a0b5abb90d352a7a776ac27238b47f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  year: 0
+  week: 0
+  season: 0
+  text: 
