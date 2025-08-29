@@ -17,16 +17,17 @@ public class ScoutCenter : MonoBehaviour
     [SerializeField] private TextMeshProUGUI explanatoryText;
 
     [Header("GameObject")] 
-    [SerializeField] private GameObject scoutCenterCanvas;
-    [SerializeField] private GameObject underBar;
-    [SerializeField] private GameObject progressCanvas;
+    [SerializeField] private GameObject scoutCenterCanvas; [SerializeField] private GameObject underBar; [SerializeField] private GameObject progressCanvas;
     
     [SerializeField] private StatefulComponent statefulComponent;
 
     private void Awake()
     {
         closeButton.OnClickAsObservable()
-            .Subscribe(_ => scoutCenterCanvas.SetActive(false)).AddTo(this);
+          .Subscribe(_ => {
+            Debug.Log("closebutton clicked");
+            scoutCenterCanvas.SetActive(false);
+              }).AddTo(this);
 
     }
 
