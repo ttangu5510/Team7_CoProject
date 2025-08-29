@@ -47,5 +47,8 @@ public enum StateRole
     Active = 720978296,
     Domesitc = -563444860,
     International = 422017762,
+    Demestic = -542968624,
+    Domestic = -690794258,
+    NationalityLabel = 523188770,
 
 }

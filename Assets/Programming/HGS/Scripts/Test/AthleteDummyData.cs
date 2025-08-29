@@ -43,7 +43,6 @@ namespace SHG
       foreach (var countryName in COUNTRY_NAMES) {
         List<IContenderAthlete> countryAthletes = new();
         string json = Resources.Load<TextAsset>($"{dir}/{countryName}").text;
-        Debug.Log(json);
         var jsonObject = new JSONObject(json);
         foreach (var athlete in jsonObject.list) {
           countryAthletes.Add(
