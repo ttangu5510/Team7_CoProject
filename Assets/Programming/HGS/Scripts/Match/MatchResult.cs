@@ -16,9 +16,9 @@ namespace SHG
 
     public enum MedalType 
     {
-      Gold,
-      Silver,
-      Bronze
+      Gold = 5, // 5 point
+      Silver = 3, // 3 point
+      Bronze = 1 // 1 point
     }
 
     public readonly ResultType Type;
@@ -82,7 +82,7 @@ namespace SHG
         throw (new ApplicationException($"{nameof(GetDomesticRank)}: {nameof(ResultType)} is not {ResultType.Domestic}"));
       }
       #endif
-      return (this.domesticRank + 1);
+      return (this.domesticRank);
     }
 
     public IContenderAthlete GetDomesticAthlete()
@@ -93,6 +93,41 @@ namespace SHG
       }
       #endif
       return (this.domesticAthlete);
+    }
+
+    public int CalcPoint()
+    {
+      if (this.Type == ResultType.Domestic) {
+        switch (this.domesticRank) {
+          case (1):
+            return ((int)MedalType.Gold);
+          case (2):
+            return ((int)MedalType.Silver);
+          case (3):
+            return ((int)MedalType.Bronze);
+          default: 
+            return (0);
+        } 
+      }
+      int point = 0;
+      var medals = this.GetMedalCounts();
+      point += medals[0] * (int)MedalType.Gold;
+      point += medals[1] * (int)MedalType.Silver;
+      point += medals[2] * (int)MedalType.Bronze;
+      return (point);
+    }
+
+    public int GetHighestRank()
+    {
+      if (this.Type == ResultType.Domestic) {
+        return (this.domesticRank);
+      }
+      for (int i = 0; i < this.RankCount.Length; i++) {
+        if (this.RankCount[i] != 0) {
+          return (i + 1);
+        } 
+      }
+      return (int.MaxValue);
     }
 
     int GetRankIn((IContenderAthlete athlete, 
