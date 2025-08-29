@@ -20,7 +20,7 @@ namespace JYL
             Init();
         }
 
-        public void Init()
+        public void Init() // 국내 선수 초기화 작업 . 이벤트 구독에 사용
         {
             List<DomAthEntity> athleteList = GetAllRecruitedAthleteList();
             foreach (DomAthEntity athlete in athleteList)
@@ -33,6 +33,7 @@ namespace JYL
                     .AddTo(this); // 객체 파괴 시 이벤트 구독 해제
             }
             
+            // TODO : 에디터 상에서 보기 위한 테스트 리스트
             testList = GetAllAthleteList();
         }
 
