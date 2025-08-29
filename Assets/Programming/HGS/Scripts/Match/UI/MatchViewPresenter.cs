@@ -134,10 +134,10 @@ namespace SHG
         case Match.State.Ended:
           this.currentState.Value = ViewState.Result;
           this.resultScreen.UpdateView(match);
-          this.matchController.EndCurrentMatch();
-          this.resourceController.AddMoney(
-            1000, IncomeType.CompetitionGrant);
-          this.resourceController.AddFame(300);
+//          this.matchController.EndCurrentMatch();
+//          this.resourceController.AddMoney(
+//            1000, IncomeType.CompetitionGrant);
+//          this.resourceController.AddFame(300);
           break;
       }
     }
