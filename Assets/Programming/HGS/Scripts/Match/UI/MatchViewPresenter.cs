@@ -3,6 +3,7 @@ using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
 using UniRx;
 using Zenject;
+using DG.Tweening;
 
 namespace SHG
 {
@@ -26,15 +27,19 @@ namespace SHG
     MatchViewRecordScreen recordScreen;
     MatchViewRankScreen rankScreen;
     MatchViewResultScreen resultScreen;
+    MatchViewRewardScreen rewardScreen;
 
     StatefulComponent view;
     ReactiveProperty<ViewState> currentState;
     CompositeDisposable matchSubscription;
+    Transform contanier;
 
     void Awake()
     {
       this.currentState = new (ViewState.None);
       this.view = this.GetComponent<StatefulComponent>();
+      this.contanier = this.view.GetItem<ObjectReference>(
+        (int)ObjectRole.Container).Object.transform;
     }
 
     // Start is called before the first frame update
@@ -63,6 +68,11 @@ namespace SHG
         parentState: this.currentState,
         view: this.view.GetItem<InnerComponentReference>(
           (int)InnerComponentRole.ResultScreen).InnerComponent);
+
+      this.rewardScreen = new MatchViewRewardScreen(
+        parentState: this.currentState,
+        view: this.view.GetItem<InnerComponentReference>(
+        (int)InnerComponentRole.RewardScreen).InnerComponent);
     }
 
     void OnViewStateChanged(ViewState state)
@@ -73,6 +83,22 @@ namespace SHG
       }
       else {
         this.view.SetState((int)StateRole.Hidden);
+      }
+      switch (state) {
+        case (ViewState.Record):
+          this.contanier.DOLocalMoveY(
+            endValue: -400f,
+            duration: 0.5f)
+            .SetEase(Ease.InSine);
+          break;
+        case (ViewState.Rank):
+          this.contanier.DOLocalMoveY(
+            endValue: 0f,
+            duration: 0.5f)
+            .SetEase(Ease.InSine);
+          break;
+        default: 
+          break;
       }
     }
 
