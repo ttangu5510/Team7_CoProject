@@ -78,6 +78,13 @@ namespace JYL
                 .To<MatchController>()
                 .AsSingle()
                 .WithArguments(MatchDummyData.DummyData);
+            
+            // UI Manager 컨테이너에 주입
+            Container.Bind<UIManager>()
+                .To<UIManager>()
+                .FromComponentInHierarchy()
+                .AsSingle()
+                .NonLazy();
         }
     }
 }
