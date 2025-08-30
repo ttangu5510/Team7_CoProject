@@ -1,18 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
+using JWS;
 using UnityEngine;
 
-public class ForAthFactory : MonoBehaviour
+namespace JYL
 {
-    // Start is called before the first frame update
-    void Start()
+    public class ForAthFactory : MonoBehaviour
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public static ForAthEntity CreateEntityFromCSV(ForAthleteCsvData data)
+        {
+            var entity = new ForAthEntity();
+            
+            var stats = new AthleteStats(
+                data.Health, data.Quickness, data.Flexibility, 
+                data.Technic, data.Speed, data.Balance);
+            
+            entity.Init(data.ID,data.Name,data.Affiliation, stats);
+            
+            return entity;
+        }
     }
 }
+
