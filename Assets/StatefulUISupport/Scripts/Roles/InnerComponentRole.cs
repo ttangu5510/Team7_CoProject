@@ -10,5 +10,6 @@ public enum InnerComponentRole
     RecordScreen = -719548751,
     RankScreen = 1760291168,
     ResultScreen = 470027097,
+    RewardScreen = -96959049,
 
 }

@@ -1,17 +1,22 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
 using UniRx;
-using UnityEngine;
+
 namespace SHG
 {
   public class MatchViewResultScreen 
   {
+    const string GOLD_MEDAL_ICON = "<sprite index=0>";
+    const string SILVER_MEDAL_ICON = "<sprite index=1>";
+    const string BRONZE_MEDAL_ICON = "<sprite index=2>";
 
     ReactiveProperty<MatchViewPresenter.ViewState> parentState;
     StatefulComponent view;
     ContainerView container;
+    ScrollRect scrollView;
 
     public MatchViewResultScreen(
       ReactiveProperty<MatchViewPresenter.ViewState> parentState,
@@ -21,6 +26,9 @@ namespace SHG
       this.view = view;
       this.container = this.view.GetItem<ContainerReference>(
         (int)ContainerRole.RankingContainer).Container;
+
+      this.scrollView = this.view.GetItem<ObjectReference>(
+        (int)ObjectRole.ScrollView).Object.GetComponent<ScrollRect>();
 
       this.view.GetItem<ButtonReference>(
         (int)ButtonRole.NextButton).Button
@@ -50,6 +58,7 @@ namespace SHG
         results,
         (view, result) => this.UpdateRow(
           view, result, results.IndexOf(result) + 1));
+      this.scrollView.verticalNormalizedPosition = 1f;
     }
 
     void UpdateRow(StatefulComponent view, MatchResult result, int rank)
@@ -62,20 +71,20 @@ namespace SHG
           (int)TextRole.AthleteNameLabel,
           $"{result.GetDomesticAthlete().Name}");
         string rankText = rank switch {
-          1 => "Gold",
-          2 => "Silver",
-          3 => "Bronze",
+          1 => GOLD_MEDAL_ICON,
+          2 => SILVER_MEDAL_ICON,
+          3 => BRONZE_MEDAL_ICON,
           _ => string.Empty
         };
         view.SetRawTextByRole(
-          (int)TextRole.MedalLabel, rankText);;
+          (int)TextRole.MedalLabel, rankText);
       }
       else {
         view.SetState((int)StateRole.International);
         var medals = result.GetMedalCounts();
         view.SetRawTextByRole(
           (int)TextRole.MedalLabel,
-          $"G: {medals[0]} S: {medals[1]} B: {medals[2]}");
+          $"{GOLD_MEDAL_ICON} {medals[0]} {SILVER_MEDAL_ICON} {medals[1]} {BRONZE_MEDAL_ICON} {medals[2]}");
         view.SetRawTextByRole(
           (int)TextRole.NationalityLabel, result.Country.Name);
       }
