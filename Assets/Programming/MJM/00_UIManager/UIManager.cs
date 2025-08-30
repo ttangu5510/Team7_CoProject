@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JYL;
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
@@ -9,7 +10,7 @@ using UnityEngine.InputSystem;
 
 public class UIPopupOptions : MonoBehaviour { public bool IsModal = true; }
 
-public class UIManager : MonoBehaviour
+public class UIManager : MonoBehaviour, IUiManager
 {
     public static bool IsUIOpen { get; set; }   // 유아이 켜짐 꺼짐 상태변수 (rx 사용하지 않는 사람들을 위해 남겨둠)
 
@@ -514,12 +515,6 @@ public class UIManager : MonoBehaviour
         if (string.IsNullOrEmpty(key)) return;
         panels.Remove(key);
     }
-
-    public void TestCode()
-    {
-        ShowPopup("Test");
-    }
-
    
 
     // ===== 버그 해결을 위한 임시 안전제거 코드 =====
