@@ -4,11 +4,15 @@ using System.Collections.Generic;
 namespace SHG
 {
 
-  public static class MatchDummyData 
+  public static class MatchTable 
   {
     static System.Random RAND = new ();
-    public static Country[] DEFAULT_COUNTRIES = new Country[] {
-      new Country { Name = "korea" },
+    public static IGroup[] ASIAN_COUNTRIES = new IGroup[] {
+      new Country { Name = "china" },
+      new Country { Name = "japan" },
+    };
+
+    public static IGroup[] DEFAULT_COUNTRIES = new IGroup[] {
       new Country { Name = "norway" },
       new Country { Name = "germany" },
       new Country { Name = "america" },
@@ -16,9 +20,6 @@ namespace SHG
       new Country { Name = "japan" },
       new Country { Name = "greece" },
       new Country { Name = "hungary" },
-    };
-    static Country[] DOMESTIC = new Country[] {
-      new Country { Name = "korea" }
     };
 
     public static string[] AUTONOMY_MATCH_NAMES = new string[] {
@@ -51,36 +52,40 @@ namespace SHG
       return (AUTONOMY_MATCH_NAMES[index]);
     }
     
-    static (ResourceType type, int amount)[] EMPTY_REWARDS = new (ResourceType, int)[0];
+    static (ResourceType type, int amount)[] EMPTY_REWARDS = new (ResourceType, int)[] {
+      (ResourceType.Money, 0),
+      (ResourceType.Fame, 0),
+      (ResourceType.Coin, 0)
+    };
 
-    public static MatchData[] DummyData { get; private set; }
+    public static MatchData[] Data { get; private set; }
 
-    static MatchDummyData()
+    static MatchTable()
     {
       HashSet<string> usedAutonomyNames = new ();  
       MatchData[] firstYear = GetFirstYear();
       MatchData[] secondYear = GetSecondYear(usedAutonomyNames);
       MatchData[] thirdYear = GetThirdYear(usedAutonomyNames);
       MatchData[] forthYear = GetForthYear(usedAutonomyNames);
-      DummyData = new MatchData[firstYear.Length + secondYear.Length + thirdYear.Length + forthYear.Length];
+      Data = new MatchData[firstYear.Length + secondYear.Length + thirdYear.Length + forthYear.Length];
       Array.Copy(sourceArray: firstYear,
         sourceIndex: 0,
-        destinationArray: DummyData,
+        destinationArray: Data,
         destinationIndex: 0,
         length: firstYear.Length);  
       Array.Copy(sourceArray: secondYear,
         sourceIndex: 0,
-        destinationArray: DummyData,
+        destinationArray: Data,
         destinationIndex: firstYear.Length, 
         length: secondYear.Length);
       Array.Copy(sourceArray: thirdYear,
         sourceIndex: 0,
-        destinationArray: DummyData, 
+        destinationArray: Data, 
         destinationIndex: firstYear.Length + secondYear.Length,
         length: thirdYear.Length);
       Array.Copy(sourceArray: forthYear,
         sourceIndex: 0,
-        destinationArray: DummyData,
+        destinationArray: Data,
         destinationIndex: firstYear.Length + secondYear.Length + thirdYear.Length,
         length: forthYear.Length);
     }
@@ -99,7 +104,6 @@ namespace SHG
           Name = $"전국{MatchData.GetSportTypeString(singleMatches[i].type)} 대회",
           MatchType = MatchType.SingleSport,
           SportType = singleMatches[i].type,
-          MemberContries = DOMESTIC,
           Rewards = EMPTY_REWARDS,
           DateOfEvent = new GameDate {
             Year = 1, Week = singleMatches[i].week }
@@ -108,7 +112,6 @@ namespace SHG
       matches[matches.Length - 1] = new MatchData {
         Name = DOMESTIC_WINTER_CUP,
         MatchType = MatchType.Domestic,
-        MemberContries = DOMESTIC,
         Rewards = EMPTY_REWARDS,
         DateOfEvent = new GameDate{ Year = 1, Week = 39 }
       };
@@ -152,7 +155,6 @@ namespace SHG
     {
       matches[matches.Length - 2] = new MatchData {
         Name = PRESIDENT_CUP,
-        MemberContries = DOMESTIC,
         MatchType = MatchType.Domestic,
         Rewards = EMPTY_REWARDS,
         DateOfEvent = new GameDate { Year = year, Week = 19 }
@@ -160,11 +162,10 @@ namespace SHG
       matches[matches.Length - 1] = new MatchData {
         Name = lastMatch,
         MatchType = MatchType.International,
-        MemberContries = DEFAULT_COUNTRIES,
+        MemberGroups = DEFAULT_COUNTRIES,
         Rewards = EMPTY_REWARDS,
         DateOfEvent = new GameDate { Year = year, Week = 39 }
       };
-
     }
 
     static void FillAutnomyCups(MatchData[] matches, int year, int[] autonomyWeeks, HashSet<string> usedNames)
@@ -177,7 +178,6 @@ namespace SHG
         matches[i] = new MatchData {
           Name = name,
           MatchType = MatchType.Friendly,
-          MemberContries = DOMESTIC,
           Rewards = EMPTY_REWARDS,
           DateOfEvent = new GameDate { 
             Year = year, Week =  autonomyWeeks[i] }

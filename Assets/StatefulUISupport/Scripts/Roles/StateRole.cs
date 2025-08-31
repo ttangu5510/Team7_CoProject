@@ -50,5 +50,8 @@ public enum StateRole
     Demestic = -542968624,
     Domestic = -690794258,
     NationalityLabel = 523188770,
+    Gold = -151838028,
+    Silver = -1906091609,
+    Bronze = -630222754,
 
 }

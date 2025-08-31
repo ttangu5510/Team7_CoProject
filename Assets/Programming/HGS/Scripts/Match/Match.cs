@@ -37,16 +37,18 @@ namespace SHG
     public ReactiveCollection<SportType> EndedSports;
     public ReactiveDictionary<SportType, DomAthEntity> UserAthletes { get; set; }
     public ReactiveProperty<State> CurrentState { get; private set; }
-    public Dictionary<SportType, ReactiveCollection<IContenderAthlete>> ContenderAthletesBySport { get; private set; }
+    public Dictionary<SportType, ReactiveCollection<IContender>> ContenderAthletesBySport { get; private set; }
     public ReactiveDictionary<SportType, MatchSportRecord> SportRecords;
-    Dictionary<Country, List<IContenderAthlete>> contenderAthletesByContries;
+    Dictionary<IGroup, List<IContender>> contenderAthletesByGroups;
+    public List<MatchResult> Results { get; private set; }
+    public MatchResult UserResult { get; private set; }
   
     [SerializeField]
     MatchData data;
-    HashSet<IContenderAthlete> participatedAthletes;
+    HashSet<IContender> participatedAthletes;
 
     public Match(MatchData data, 
-      Func<Country, List<IContenderAthlete>> contenderGetter)
+      Func<IGroup, List<IContender>> contenderGetter)
     {
       this.Data = data;
       this.EndedSports = new ();
@@ -55,7 +57,7 @@ namespace SHG
       this.CurrentState = new (State.NotStartable);
       this.CurrentSport = new (null);
       this.UserAthletes = new ();
-      this.FillCountryContenders(contenderGetter);
+      this.FillGroupContenders(contenderGetter);
       this.FillSportContenders();
     }
 
@@ -156,12 +158,15 @@ namespace SHG
         this.CurrentState.Value = State.BeforeSport;
       }
       else {
+        var results = this.GetResults();
+        results.Sort(MatchResult.CompareMatchResult);
+        this.Results = results;
         this.CurrentState.Value = State.Ended;
         this.CurrentSport.Value = null;
       }
     }
 
-    public List<MatchResult> GetResults()
+    List<MatchResult> GetResults()
     {
       var results = new List<MatchResult>();
       if (this.Data.IsSingleSport) {
@@ -171,18 +176,22 @@ namespace SHG
             new MatchResult(
               match: this, athlete: athlete));
         }
-        results.Add(
-          new MatchResult(
+        this.UserResult = new MatchResult (
             match: this, 
             athlete: new ConvertedDomesticAthlete(
-              this.UserAthletes[this.Data.SportType])));
+              this.UserAthletes[this.Data.SportType]));
+        results.Add(this.UserResult);
       }
       else {
-        foreach (var country in this.Data.MemberContries) {
+        foreach (var country in this.Data.MemberGroups) {
           results.Add(
             new MatchResult(
-              match: this, country: country));
+              match: this, group: country));
         }
+        this.UserResult = new MatchResult(
+          match: this, 
+          group: ConvertedDomesticAthlete.USER_TEAM);
+        results.Add(this.UserResult);
       }
       return (results);
     }
@@ -199,7 +208,7 @@ namespace SHG
       }
       #endif
       var contenderCount = this.ContenderAthletesBySport[sportType].Count;
-      var athletes = new IContenderAthlete[contenderCount + 1];
+      var athletes = new IContender[contenderCount + 1];
       athletes[0] = new ConvertedDomesticAthlete(this.UserAthletes[sportType]);
       this.ContenderAthletesBySport[sportType].CopyTo(athletes, 1);
       this.SportRecords.Add(
@@ -221,13 +230,13 @@ namespace SHG
       }
     }
 
-    void FillCountryContenders(
-      Func<Country, List<IContenderAthlete>> contenderGetter)
+    void FillGroupContenders(
+      Func<IGroup, List<IContender>> contenderGetter)
     {
-      this.contenderAthletesByContries = new ();
-      foreach (var country in this.Data.MemberContries) {
-        this.contenderAthletesByContries.Add(
-          country, contenderGetter(country)); 
+      this.contenderAthletesByGroups = new ();
+      foreach (var group in this.Data.MemberGroups) {
+        this.contenderAthletesByGroups.Add(
+          group, contenderGetter(group)); 
       }
     }
 
@@ -235,54 +244,31 @@ namespace SHG
     {
       this.ContenderAthletesBySport = new ();
       if (this.Data.IsSingleSport) {
-        this.FillSingleSportContenders(this.Data.SportType);
-      }      
+        this.FillContenders(this.Data.SportType);
+      }
       else {
         foreach (var sport in MatchData.DefaultSports) {
-          this.FillContendersForSport(sport, this.Data.MatchType == MatchType.Domestic); 
+          this.FillContenders(sport); 
         }
       }
     }
 
-    void FillSingleSportContenders(SportType sportType)
+    void FillContenders(SportType sportType)
     {
-      List<IContenderAthlete> contenders = new ();
-      foreach (var country in this.Data.MemberContries) {
-        for (int i = 0; i < MatchData.NumberOfAthletesInSingleSport; i++) {
-          contenders.Add(this.SelectContender(sportType, country)); 
-        }
+      List<IContender> contenders = new ();
+      foreach (var group in this.Data.MemberGroups) {
+        contenders.Add(this.SelectContender(sportType, group));
       }
       this.ContenderAthletesBySport[sportType] = new (contenders);
     }
 
-    void FillContendersForSport(SportType sportType, bool isDomestic)
-    {
-      if (isDomestic) {
-        var korea = this.Data.MemberContries[0];
-        List<IContenderAthlete> contenders = new ();
-        for (int i = 0; i < DOMESTIC_CONTENDER_COUNT; i++) {
-          contenders.Add(this.SelectContender(SportType.SpeedSkating, korea));
-        }  
-        foreach (var sport in MatchData.DefaultSports) {
-          this.ContenderAthletesBySport[sport] = new (contenders);
-        }
-      }
-      else {
-        List<IContenderAthlete> contenders = new ();
-        foreach (var country in this.Data.MemberContries) {
-          contenders.Add(this.SelectContender(sportType, country));
-        }
-        this.ContenderAthletesBySport[sportType] = new (contenders);
-      }
-    }
-
     // TODO: 상대 선수 선택 알고리즘
-    IContenderAthlete SelectContender(SportType sportType, Country country)
+    IContender SelectContender(SportType sportType, IGroup group)
     {
       var rand = new System.Random();
-      var contenders = this.contenderAthletesByContries[country];
+      var contenders = this.contenderAthletesByGroups[group];
       int index = rand.Next(0, contenders.Count);
-      IContenderAthlete selected = contenders[index];
+      IContender selected = contenders[index];
       while (this.participatedAthletes.Contains(selected)) {
         index = rand.Next(0, contenders.Count);
         selected = contenders[index];

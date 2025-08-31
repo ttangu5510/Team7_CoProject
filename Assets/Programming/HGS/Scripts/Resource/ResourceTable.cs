@@ -1,7 +1,7 @@
 
 namespace SHG
 {
-  public static class ResourceDummyData 
+  public static class ResourceTable 
   {
     public static IncomeForSeason TrainingGrants1
       = new IncomeForSeason { Incomes = new int[] {

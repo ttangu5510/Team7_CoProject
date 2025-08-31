@@ -1,7 +1,7 @@
 
 namespace SHG
 {
-  public static class FacilityDummyData 
+  public static class FacilityTable 
   {
     public static IFacilityData[] AllData => new IFacilityData[] {
       Accomodation, Lounge, MedicalCenter, TrainingCenter, ScoutCenter

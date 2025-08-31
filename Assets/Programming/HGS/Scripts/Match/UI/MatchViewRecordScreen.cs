@@ -26,6 +26,14 @@ namespace SHG
     {
       this.view.SetRawTextByRole(
         (int)TextRole.MatchTitle, match.Data.Name);
+      bool isDomestic = match.Data.IsDomestic;
+
+      if (isDomestic) {
+        this.view.SetState((int)StateRole.Domestic);
+      }
+      else {
+        this.view.SetState((int)StateRole.International);
+      }
     }
 
     public void OnSportChanged(SportType sportType, in Match match)
@@ -36,7 +44,7 @@ namespace SHG
 
       if (match.SportRecords.TryGetValue(
           sportType, out MatchSportRecord record)) {
-        this.UpdateScoreBoard(record);
+        this.UpdateScoreBoard(record, match);
       }
 #if UNITY_EDITOR
       else {
@@ -45,22 +53,28 @@ namespace SHG
 #endif
     }
 
-    public void UpdateScoreBoard(MatchSportRecord record)
+    public void UpdateScoreBoard(MatchSportRecord record, Match match)
     {
       this.rankingContainer.Clear(); 
       // TODO: Sort records 
       this.rankingContainer.FillWithItems(
         record.RecordsByAthletes,
         (view, recordWithAthlete) => {
-
+      
           int rank = recordWithAthlete.record.Rank;
+          if (match.Data.IsDomestic) {
+            view.SetState((int)StateRole.Domestic);
+          }
+          else {
+            view.SetState((int)StateRole.International);
+          }
           view.SetRawTextByRole(
             (int)TextRole.RankLabel, rank > 0 ?
             $"{recordWithAthlete.record.Rank}위": string.Empty);
 
           view.SetRawTextByRole(
-            (int)TextRole.NationalityLabel, 
-            recordWithAthlete.athlete.Country.Name);
+            (int)TextRole.GroupLabel, 
+            recordWithAthlete.athlete.Group.Name);
 
           view.SetRawTextByRole(
             (int)TextRole.AthleteNameLabel,

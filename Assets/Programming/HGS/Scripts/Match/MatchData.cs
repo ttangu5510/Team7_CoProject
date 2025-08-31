@@ -31,7 +31,7 @@ namespace SHG
     [SerializeField]
     public SportType SportType; 
     [SerializeField]
-    public Country[] MemberContries;
+    public IGroup[] MemberGroups;
     [SerializeField]
     public (ResourceType type, int amount)[] Rewards;
     [SerializeField]
@@ -40,6 +40,7 @@ namespace SHG
     public GameDate DateOfEvent;
     public bool IsMandatory => (this.MatchType != MatchType.Friendly);
     public bool IsSingleSport => (this.MatchType == MatchType.SingleSport);
+    public bool IsDomestic => (this.MatchType != MatchType.International);
 
     public static string GetSportTypeString(SportType sportType)
     {
@@ -117,36 +118,4 @@ namespace SHG
     IceHockey
   }
 
-  /// <summary>
-  /// 경기에 출전하는 국가
-  /// </summary>
-  [Serializable]
-  public struct Country
-  {
-    [SerializeField]
-    public string Name;
-
-    public override bool Equals(object obj) {
-      if (obj is Country other) {
-        return (this == other);
-      }
-      return (false);
-    }
-
-    public static bool operator== (Country countryA, Country countryB) {
-      return (countryA.Name == countryB.Name);
-    }
-
-    public static bool operator!= (Country countryA, Country countryB) {
-      return (!(countryA == countryB));
-    }
-
-    public override int GetHashCode() {
-      return (this.Name.GetHashCode());
-    }
-
-    public override string ToString() {
-      return ($"[{nameof(Country)}; {nameof(Name)}: {this.Name};]");
-    }
-  }
 }

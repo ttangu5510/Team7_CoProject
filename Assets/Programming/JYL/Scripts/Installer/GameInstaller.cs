@@ -37,47 +37,47 @@ namespace JYL
                 .NonLazy();
     
             
-            this.Container.Bind<ITimeFlowController>()
-                .To<TimeFlowController>()
-                .AsSingle()
-                .NonLazy();
-    
-            /***************************************************/
-            //    TODO: Load facilities data
-            /***************************************************/
-    
-            this.Container.Bind<IFacilitiesController>()
-                .To<FacilitiesController>()
-                .AsSingle()
-                .WithArguments(FacilityDummyData.AllData)
-                .NonLazy();
-    
-            /***************************************************/
-            //    TODO: Load resources data
-            /***************************************************/
-    
-            this.Container.Bind<IResourceController>()
-                .To<ResourceController>()
-                .AsSingle()
-                .WithArguments(ResourceDummyData.Data);
-    
-            var touchControllerObject = this.Container.InstantiatePrefab(
-                Resources.Load("TouchController"));
-            DontDestroyOnLoad(touchControllerObject);
-            TouchController touchController = touchControllerObject.GetComponent<TouchController>();
-    
-            this.Container.Bind<TouchController>()
-                .FromInstance(touchController)
-                .AsSingle();
-    
-            /***************************************************/
-            //    TODO: Load match data
-            /***************************************************/
-    
-            this.Container.Bind<IMatchController>()
-                .To<MatchController>()
-                .AsSingle()
-                .WithArguments(MatchDummyData.DummyData);
+//            this.Container.Bind<ITimeFlowController>()
+//                .To<TimeFlowController>()
+//                .AsSingle()
+//                .NonLazy();
+//    
+//            /***************************************************/
+//            //    TODO: Load facilities data
+//            /***************************************************/
+//    
+//            this.Container.Bind<IFacilitiesController>()
+//                .To<FacilitiesController>()
+//                .AsSingle()
+//                .WithArguments(FacilityDummyData.AllData)
+//                .NonLazy();
+//    
+//            /***************************************************/
+//            //    TODO: Load resources data
+//            /***************************************************/
+//    
+//            this.Container.Bind<IResourceController>()
+//                .To<ResourceController>()
+//                .AsSingle()
+//                .WithArguments(ResourceDummyData.Data);
+//    
+//            var touchControllerObject = this.Container.InstantiatePrefab(
+//                Resources.Load("TouchController"));
+//            DontDestroyOnLoad(touchControllerObject);
+//            TouchController touchController = touchControllerObject.GetComponent<TouchController>();
+//    
+//            this.Container.Bind<TouchController>()
+//                .FromInstance(touchController)
+//                .AsSingle();
+//    
+//            /***************************************************/
+//            //    TODO: Load match data
+//            /***************************************************/
+//    
+//            this.Container.Bind<IMatchController>()
+//                .To<MatchController>()
+//                .AsSingle()
+//                .WithArguments(MatchDummyData.DummyData);
         }
     }
 }

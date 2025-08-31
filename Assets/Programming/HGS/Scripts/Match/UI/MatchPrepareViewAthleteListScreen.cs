@@ -82,7 +82,7 @@ namespace SHG
             contender.Name); 
           view.SetRawTextByRole(
             (int)TextRole.NationalityLabel,
-            contender.Country.Name);
+            contender.Group.Name);
           view.SetRawTextByRole(
             (int)TextRole.StatLabel,
             IAthleteController.GetAverageStatTextOf(contender.Stats));

@@ -19,16 +19,16 @@ namespace SHG
     [SerializeField]
     public SportType SportType;
     [SerializeField]
-    public (IContenderAthlete athlete, Record record)[] RecordsByAthletes;  
+    public (IContender athlete, Record record)[] RecordsByAthletes;  
     [SerializeField]
     public int CurrentStage;
 
     public MatchSportRecord(
       SportType sportType,
-      in IContenderAthlete[] athletes)
+      in IContender[] athletes)
     {
       this.SportType = sportType;
-      this.RecordsByAthletes = new (IContenderAthlete athlete, Record record)[athletes.Length];
+      this.RecordsByAthletes = new (IContender athlete, Record record)[athletes.Length];
       for (int i = 0; i < athletes.Length; i++) {
         this.RecordsByAthletes[i] = (athletes[i], new Record {}); 
       }
@@ -37,7 +37,7 @@ namespace SHG
 
     public MatchSportRecord Progress()
     {
-      var athletes = new IContenderAthlete[this.RecordsByAthletes.Length];
+      var athletes = new IContender[this.RecordsByAthletes.Length];
       for (int i = 0; i < this.RecordsByAthletes.Length; i++) {
         var currentValue = this.RecordsByAthletes[i].record.Value;
         var stats = this.RecordsByAthletes[i].athlete.Stats;
@@ -64,7 +64,7 @@ namespace SHG
       this.CurrentStage = oldRecord.CurrentStage + 1;
     }
 
-    int CompareAthleteByRecord(IContenderAthlete lhs, IContenderAthlete rhs)
+    int CompareAthleteByRecord(IContender lhs, IContender rhs)
     {
       var lhsRecord = this.GetRecordOf(lhs).Value;
       var rhsRecord = this.GetRecordOf(rhs).Value;
@@ -211,7 +211,7 @@ namespace SHG
       return (this.RecordsByAthletes[index].record);
     }
 
-    Record GetRecordOf(IContenderAthlete athlete)
+    Record GetRecordOf(IContender athlete)
     {
       int index = Array.FindIndex(
         this.RecordsByAthletes, 
@@ -241,7 +241,7 @@ namespace SHG
       };
     }
 
-    void SetRecord(IContenderAthlete athlete, float record)
+    void SetRecord(IContender athlete, float record)
     {
       int index = Array.FindIndex(
         this.RecordsByAthletes, 
