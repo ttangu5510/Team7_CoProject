@@ -56,12 +56,14 @@ namespace SHG
     public void UpdateScoreBoard(MatchSportRecord record, Match match)
     {
       this.rankingContainer.Clear(); 
-      // TODO: Sort records 
+
       this.rankingContainer.FillWithItems(
         record.RecordsByAthletes,
         (view, recordWithAthlete) => {
       
-          int rank = recordWithAthlete.record.Rank;
+          int rank = record.Type == 
+          MatchSportRecord.ProgressType.AllAtOnce ? recordWithAthlete.record.Rank: this.GetRankOf(recordWithAthlete.athlete, record);
+
           if (match.Data.IsDomestic) {
             view.SetState((int)StateRole.Domestic);
           }
@@ -70,7 +72,7 @@ namespace SHG
           }
           view.SetRawTextByRole(
             (int)TextRole.RankLabel, rank > 0 ?
-            $"{recordWithAthlete.record.Rank}위": string.Empty);
+            $"{rank}위": string.Empty);
 
           view.SetRawTextByRole(
             (int)TextRole.GroupLabel, 
@@ -81,11 +83,18 @@ namespace SHG
             recordWithAthlete.athlete.Name);
 
           string recordText = record.CurrentStage > 1 ? 
-            string.Format("{0:N}", record.GetNormalizedRecordValueOf(
-                recordWithAthlete.record)): string.Empty;
+            string.Format("{0:N}", 
+              recordWithAthlete.record.NormalizedValue): string.Empty;
           view.SetRawTextByRole(
             (int)TextRole.RecordLabel, recordText);
         });
+    }
+
+    int GetRankOf(IContender athlete, MatchSportRecord record)
+    {
+      return (record.RecordsByAthletes.FindIndex(
+        recordsByAthlete => recordsByAthlete.athlete == athlete
+        ) + 1);
     }
   }
 }

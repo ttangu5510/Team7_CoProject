@@ -131,8 +131,7 @@ namespace SHG
       this.CurrentState.Value = State.InSport;
       var sportType = this.CurrentSport.Value.Value;
       int delay = (int)(INTERVAL_BETWEEN_STAGE_IN_SECOND * 1000f); 
-      while (this.SportRecords[sportType].CurrentStage 
-        < Match.TOTAL_STAGE) {
+      while (!this.SportRecords[sportType].IsEnded()) {
         await UniTask.Delay(delay);  
         this.SportRecords[sportType] = this.SportRecords[sportType].Progress();
       }

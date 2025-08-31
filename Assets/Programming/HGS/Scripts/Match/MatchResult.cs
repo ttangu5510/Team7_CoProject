@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SHG
@@ -133,12 +134,11 @@ namespace SHG
       return (int.MaxValue);
     }
 
-    int GetRankIn((IContender athlete, 
-        MatchSportRecord.Record record)[] recordByAthletes)
+    int GetRankIn(List<(IContender athlete, 
+        MatchSportRecord.Record record)> recordByAthletes)
     {
-      int index = Array.FindIndex(
-        recordByAthletes, (pair) => 
-          pair.athlete.Group.Equals(group));
+      int index = recordByAthletes.FindIndex( 
+        (pair) => pair.athlete.Group.Equals(group));
       if (index == -1) {
         throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {group} in {recordByAthletes}"));
       }
@@ -148,8 +148,7 @@ namespace SHG
     int GetRankIn(Match match, IContender athlete)
     {
       var recordByAthletes = match.SportRecords[match.Data.SportType].RecordsByAthletes;
-      var index = Array.FindIndex(
-        recordByAthletes,
+      var index = recordByAthletes.FindIndex(
         pair => pair.athlete.Equals(athlete));
       if (index == -1) {
         throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {athlete} in {recordByAthletes}"));
@@ -160,8 +159,7 @@ namespace SHG
     int GetRankIn(Match match, ConvertedDomesticAthlete athlete)
     {
       var recordByAthletes = match.SportRecords[match.Data.SportType].RecordsByAthletes;
-      var index = Array.FindIndex(
-        recordByAthletes,
+      var index = recordByAthletes.FindIndex(
         pair => athlete.IsSameWith(pair.athlete));
       if (index == -1) {
         throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {athlete} in {recordByAthletes}"));
