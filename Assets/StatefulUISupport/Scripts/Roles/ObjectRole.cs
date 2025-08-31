@@ -11,5 +11,6 @@ public enum ObjectRole
     MatchListView = 1419307118,
     Navigator = 891063211,
     RecordScreen = -719548751,
+    Effecter = 477104992,
 
 }

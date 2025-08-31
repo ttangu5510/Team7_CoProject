@@ -11,7 +11,7 @@ namespace SHG
   public struct MatchSportRecord 
   {
     [Serializable]
-    public struct Record {
+    public struct AthleteRecord {
 
       public float CalcedValue;
       public int Rank;
@@ -41,7 +41,7 @@ namespace SHG
     [SerializeField]
     public SportType SportType;
     [SerializeField]
-    public List<(IContender athlete, Record record)> RecordsByAthletes;  
+    public List<(IContender athlete, AthleteRecord record)> RecordsByAthletes;  
     List<(IContender athlete, float value)> preCalcedRecordValues;
     [SerializeField]
     public int CurrentStage;
@@ -64,7 +64,7 @@ namespace SHG
       if (this.type == ProgressType.AllAtOnce) {
         this.RecordsByAthletes = new (athletes.Length);
         for (int i = 0; i < athletes.Length; i++) {
-          this.RecordsByAthletes.Add((athletes[i], new Record {})); 
+          this.RecordsByAthletes.Add((athletes[i], new AthleteRecord {})); 
         }
         this.preCalcedRecordValues = null;
       }
@@ -112,7 +112,7 @@ namespace SHG
         return (new MatchSportRecord{});
         #endif
       }
-      var newRecord =  new Record {
+      var newRecord =  new AthleteRecord {
          CalcedValue = this.preCalcedRecordValues[index].value,
          Rank = index + 1
          };
@@ -241,7 +241,7 @@ namespace SHG
       }
     }
 
-    float GetNormalizedRecordValueOf(in Record record)
+    float GetNormalizedRecordValueOf(in AthleteRecord record)
     {
       var (min, max) = this.GetRecordRangeOf(this.SportType);
       int athleteCount = this.athletes.Length;
@@ -330,7 +330,7 @@ namespace SHG
       return (total / count);
     }
 
-    public Record GetRecordOf(DomAthEntity athlete)
+    public AthleteRecord GetRecordOf(DomAthEntity athlete)
     {
       int index = this.RecordsByAthletes.FindIndex(
         recordWitAthlete => 
@@ -342,7 +342,7 @@ namespace SHG
       return (this.RecordsByAthletes[index].record);
     }
 
-    Record GetRecordOf(IContender athlete)
+    AthleteRecord GetRecordOf(IContender athlete)
     {
       int index = this.RecordsByAthletes.FindIndex(
         recordWitAthlete => recordWitAthlete.athlete == athlete);
@@ -366,7 +366,7 @@ namespace SHG
         #endif
       }
       var (recordAthlete, _) = this.RecordsByAthletes[index];
-      this.RecordsByAthletes[index] = (recordAthlete,  new Record {
+      this.RecordsByAthletes[index] = (recordAthlete,  new AthleteRecord {
         CalcedValue = record,
       });
     }
@@ -382,7 +382,7 @@ namespace SHG
         return ;
         #endif
       }
-      this.RecordsByAthletes[index]= (athlete,  new Record {
+      this.RecordsByAthletes[index]= (athlete,  new AthleteRecord {
         CalcedValue = record
       });
     }

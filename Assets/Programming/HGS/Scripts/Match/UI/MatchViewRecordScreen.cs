@@ -68,58 +68,84 @@ namespace SHG
       this.rankingContainerLayout.enabled = true;
       this.rankingContainer.FillWithItems(
         record.RecordsByAthletes,
-        (view, recordWithAthlete) => {
-          int index = this.GetIndexOf(recordWithAthlete.athlete, record);
-          int rank = record.Type == 
-          MatchSportRecord.ProgressType.AllAtOnce ? recordWithAthlete.record.Rank: index;
-
-          if (match.Data.IsDomestic) {
-            view.SetState((int)StateRole.Domestic);
-          }
-          else {
-            view.SetState((int)StateRole.International);
-          }
-          view.SetRawTextByRole(
-            (int)TextRole.RankLabel, rank > 0 ?
-            $"{rank}위": string.Empty);
-
-          view.SetRawTextByRole(
-            (int)TextRole.GroupLabel, 
-            recordWithAthlete.athlete.Group.Name);
-
-          view.SetRawTextByRole(
-            (int)TextRole.AthleteNameLabel,
-            recordWithAthlete.athlete.Name);
-
-          string recordText = record.CurrentStage > 1 ? 
-            string.Format("{0:N}", 
-              recordWithAthlete.record.NormalizedValue): string.Empty;
-          view.SetRawTextByRole(
-            (int)TextRole.RecordLabel, recordText);
-
-          if (record.Type == MatchSportRecord.ProgressType.AllAtOnce) {
-            if (this.previousPositions.TryGetValue(
-                recordWithAthlete.athlete, out int previousIndex)) {
-              int indexOffset = index - previousIndex;
-              if (indexOffset != 0) {
-                float posY = view.transform.localPosition.y;
-                this.MoveToPreviousPosition(
-                  transform: view.transform as RectTransform,
-                  currentIndex: index,
-                  indexOffset: indexOffset);
-                this.AnimateScoreCell(
-                  transform: view.transform as RectTransform,
-                  localPosY: posY);
-                this.previousPositions[recordWithAthlete.athlete] = index;
-              }
-            }
-            else {
-              this.previousPositions.Add(recordWithAthlete.athlete, index);
-            }
-          }
-        });
+        (view, recordWithAthlete) => this.UpdateScoreCell(
+          view: view,
+          athlete: recordWithAthlete.athlete,
+          record: record,
+          athleteRecord: recordWithAthlete.record,
+          match: match));
       if (record.Type == MatchSportRecord.ProgressType.AllAtOnce) {
         this.DisableLayout();
+      }
+    }
+
+    void UpdateScoreCell(
+      StatefulComponent view,
+      IContender athlete,
+      MatchSportRecord record,
+      MatchSportRecord.AthleteRecord athleteRecord, 
+      Match match)
+    {
+      int index = this.GetIndexOf(athlete, record);
+      int rank = record.Type == 
+        MatchSportRecord.ProgressType.AllAtOnce ? athleteRecord.Rank: index + 1;
+
+      if (match.Data.IsDomestic) {
+        view.SetState((int)StateRole.Domestic);
+      }
+      else {
+        view.SetState((int)StateRole.International);
+      }
+      view.SetRawTextByRole(
+        (int)TextRole.RankLabel, rank > 0 ?
+        $"{rank}위": string.Empty);
+
+      view.SetRawTextByRole(
+        (int)TextRole.GroupLabel, 
+        athlete.Group.Name);
+
+      view.SetRawTextByRole(
+        (int)TextRole.AthleteNameLabel,
+        athlete.Name);
+
+      string recordText = record.CurrentStage > 1 ? 
+        string.Format("{0:N}", 
+          athleteRecord.NormalizedValue): string.Empty;
+      view.SetRawTextByRole(
+        (int)TextRole.RecordLabel, recordText);
+
+      if (record.Type == MatchSportRecord.ProgressType.AllAtOnce) {
+        if (this.previousPositions.TryGetValue(
+            athlete, out int previousIndex)) {
+          int indexOffset = index - previousIndex;
+          if (indexOffset != 0) {
+            float posY = view.transform.localPosition.y;
+            this.MoveToPreviousPosition(
+              transform: view.transform as RectTransform,
+              currentIndex: index,
+              indexOffset: indexOffset);
+            this.AnimateScoreCell(
+              transform: view.transform as RectTransform,
+              localPosY: posY);
+            this.previousPositions[athlete] = index;
+          }
+        }
+        else {
+          this.previousPositions.Add(athlete, index);
+        }
+      }
+
+      var flagIcon = view.GetItem<ImageReference>(
+        (int)ImageRole.NationalFlagIcon).Image;
+      if (match.Data.IsDomestic) {
+        flagIcon.sprite = ContendersController.FLAG_ICONS["korea"];
+      }
+      else if (ContendersController.FLAG_ICONS.TryGetValue(
+          athlete.Group.Name, out Sprite sprite)){
+        flagIcon.sprite = sprite;
+      }
+      else if (athlete.Group == ConvertedDomesticAthlete.USER_TEAM) {
+        flagIcon.sprite = ContendersController.FLAG_ICONS["korea"];
       }
     }
 

@@ -135,7 +135,7 @@ namespace SHG
     }
 
     int GetRankIn(List<(IContender athlete, 
-        MatchSportRecord.Record record)> recordByAthletes)
+        MatchSportRecord.AthleteRecord record)> recordByAthletes)
     {
       int index = recordByAthletes.FindIndex( 
         (pair) => pair.athlete.Group.Equals(group));

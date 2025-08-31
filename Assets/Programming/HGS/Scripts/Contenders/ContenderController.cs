@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Defective.JSON;
 using UnityEngine;
 using JYL;
@@ -10,13 +9,26 @@ namespace SHG
   public class ContendersController : IContenderController
   {
     const int MIN_ATHLETE_COUNT_FOR_TEAM = 4;
-    static string[] COUNTRY_NAMES = new string[]{
+    static readonly string[] COUNTRY_NAMES = new string[]{
       "america", "china", "germany", "greece", "hungary", "japan", "norway"
     };
 
     static string[] TEAM_NAMES = new string[] {
       "서울시청", "강원 루지", " 전남체육회", "춘천시청", "강릉시청", "횡성군청", "평창군청"
     };
+    public static Dictionary<string, Sprite> FLAG_ICONS { get; private set; }
+    const string FLAG_ICON_DIR = "Flags";
+
+    static ContendersController()
+    {
+      FLAG_ICONS = new ();
+      foreach (var countryName in ContendersController.COUNTRY_NAMES) {
+        FLAG_ICONS.Add(countryName, Resources.Load<Sprite>(
+            $"{FLAG_ICON_DIR}/{countryName}"));
+      }
+      FLAG_ICONS.Add("korea", Resources.Load<Sprite>($"{FLAG_ICON_DIR}/korea"));
+    }
+
 
     public Dictionary<IGroup, List<IContender>> Althetes { get; private set; }
 

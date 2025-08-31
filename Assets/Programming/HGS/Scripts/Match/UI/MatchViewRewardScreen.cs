@@ -1,8 +1,10 @@
 using System;
+using UnityEngine;
 using UnityEngine.UI;
 using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
 using UniRx;
+using Coffee.UIEffects;
 
 namespace SHG
 {
@@ -36,6 +38,12 @@ namespace SHG
       var medalCounts = match.UserResult.GetMedalCounts();
       var point = match.UserResult.CalcPoint();
       var rank = match.Results.IndexOf(match.UserResult) + 1;
+      if (rank <= 3) {
+        this.view.SetState((int)StateRole.HighRank);
+      }
+      else {
+        this.view.SetState((int)StateRole.LowRank);
+      }
       view.SetRawTextByRole(
         (int)TextRole.MatchTitle, match.Data.Name);
       view.SetRawTextByRole(
@@ -88,12 +96,18 @@ namespace SHG
           view.SetState((int)StateRole.Bronze);
           break;
       }
+      
       var point = (int)medalType * count;
-
       view.SetRawTextByRole(
         (int)TextRole.CountLabel, $"{count}개");
       view.SetRawTextByRole(
         (int)TextRole.PointLabel, $"{point}점");
+      if (count > 0) {
+        view.SetState((int)StateRole.Win);
+      }
+      else {
+        view.SetState((int)StateRole.Fail);
+      }
     }
   }
 }

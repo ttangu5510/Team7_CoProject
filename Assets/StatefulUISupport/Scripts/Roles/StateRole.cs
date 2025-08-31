@@ -53,5 +53,9 @@ public enum StateRole
     Gold = -151838028,
     Silver = -1906091609,
     Bronze = -630222754,
+    HighRank = -1710802020,
+    LowRank = 662059170,
+    Win = 339800536,
+    Fail = 405905394,
 
 }
