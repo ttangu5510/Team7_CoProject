@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
-using Defective.JSON;
 using UnityEngine;
+using Defective.JSON;
+using Zenject;
 using JYL;
 
 namespace SHG
@@ -126,6 +127,19 @@ namespace SHG
         this.Althetes.Add(
           new Team { Name = TEAM_NAMES[teamCount - 1]}, lastTeamAthletes);
     }
+
+    //FIXME: Fail to get athlete data
+//    [Inject]
+//    public void Init(ForAthService forAthService)
+//    {
+//      var dict = forAthService.GetOpponentDict();
+//      foreach (var athletes in dict.Values) {
+//        foreach (var athlete in athletes) {
+//          Debug.Log(athlete); 
+//        }
+//      }
+//    
+//    }
 
     void ShuffleAhtletes<T>(List<T> list) where T: IContender
     {
