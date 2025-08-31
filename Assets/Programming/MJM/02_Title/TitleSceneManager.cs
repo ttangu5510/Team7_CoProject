@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Zenject;
 
 public class TitleSceneManager : MonoBehaviour
 {
@@ -8,12 +9,15 @@ public class TitleSceneManager : MonoBehaviour
     [SerializeField] private GameObject openingPanel;
     [SerializeField] private GameObject nameInputPopup;
 
+    [Inject] private UIManager uiManager; // 이거만 추가하면 UI매니저 쓸 수 있음
+    
     private GameObject currentPanel;
 
     private void Start()
     {
         // 시작 시 Title 패널만 켜두기
         ShowPanel(titlePanel);
+        
     }
 
     public void ShowPanel(GameObject target)
