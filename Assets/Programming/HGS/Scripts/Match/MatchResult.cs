@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace SHG
@@ -21,26 +22,40 @@ namespace SHG
       Bronze = 1 // 1 point
     }
 
-    public readonly ResultType Type;
-    public Country Country 
-    { 
-      get => this.country;
-      set => this.country = value;
+    public static int CompareMatchResult(
+      MatchResult lhs, MatchResult rhs)     
+    {       
+      var lhsPoint = lhs.CalcPoint();
+      var rhsPoint = rhs.CalcPoint();
+      if (lhsPoint != rhsPoint) {
+        return (lhsPoint > rhsPoint ? -1: 1);
+      }       
+      var lhsRank = lhs.GetHighestRank();
+      var rhsRank = rhs.GetHighestRank();
+      return (lhsRank < rhsRank ? - 1: 1);     
     }
-    Country country;
+
+    public readonly ResultType Type;
+    public IGroup Group 
+    { 
+      get => this.group;
+      set => this.group = value;
+    }
+    IGroup group;
     public int[] RankCount => this.rankCount;
     [SerializeField]
     int[] rankCount;
     public bool IsUser => this.isUser;
     bool isUser;
     [SerializeField]
-    int domesticRank;
-    IContenderAthlete domesticAthlete;
+    int singleSportRank;
+    IContender singleSportAthlete;
 
-    public MatchResult(Match match, Country country)
+    public MatchResult(Match match, IGroup group)
     {
-      this.Type = ResultType.International;
-      this.country = country;
+      this.Type = group.Type == IGroup.GroupType.Country ?
+        ResultType.International: ResultType.Domestic;
+      this.group = group;
       this.rankCount = new int[MAX_RANK];
       foreach (var (sportType, record) in match.SportRecords) {
         int rank = this.GetRankIn(record.RecordsByAthletes);
@@ -48,29 +63,30 @@ namespace SHG
       }
     }
 
-    public MatchResult(Match match, IContenderAthlete athlete)
+    public MatchResult(Match match, IContender athlete)
     {
       this.Type = ResultType.Domestic;
-      this.country = athlete.Country;
+      this.group = athlete.Group;
       if (athlete is ConvertedDomesticAthlete userAthlete) {
         this.isUser = true;
-        this.domesticRank = this.GetRankIn(match, userAthlete);
+        this.singleSportRank = this.GetRankIn(match, userAthlete);
       }
       else {
         this.isUser = false;
-        this.domesticRank = this.GetRankIn(match, athlete);
+        var record = match.SportRecords[match.Data.SportType];
+        this.singleSportRank = this.GetRankIn(record.RecordsByAthletes);
       }
-      this.domesticAthlete = athlete;
+      this.singleSportAthlete = athlete;
     }
 
     public int[] GetMedalCounts()
     {
       var medals = new int[Enum.GetValues(typeof(MedalType)).Length];
-      if (this.Type != ResultType.Domestic) {
+      if (this.rankCount != null) {
         Array.Copy(this.rankCount, medals, 3);
       }
-      else if (this.domesticRank < 3) {
-        medals[this.domesticRank] = 1;
+      else if (this.singleSportRank <= 3) {
+        medals[this.singleSportRank - 1] = 1;
       }
       return (medals);
     }
@@ -82,33 +98,21 @@ namespace SHG
         throw (new ApplicationException($"{nameof(GetDomesticRank)}: {nameof(ResultType)} is not {ResultType.Domestic}"));
       }
       #endif
-      return (this.domesticRank);
+      return (this.singleSportRank);
     }
 
-    public IContenderAthlete GetDomesticAthlete()
+    public IContender GetDomesticAthlete()
     {
       #if UNITY_EDITOR
       if (this.Type != ResultType.Domestic) {
         throw (new ApplicationException($"{nameof(GetDomesticAthlete)}: {nameof(ResultType)} is not {ResultType.Domestic}"));
       }
       #endif
-      return (this.domesticAthlete);
+      return (this.singleSportAthlete);
     }
 
     public int CalcPoint()
     {
-      if (this.Type == ResultType.Domestic) {
-        switch (this.domesticRank) {
-          case (1):
-            return ((int)MedalType.Gold);
-          case (2):
-            return ((int)MedalType.Silver);
-          case (3):
-            return ((int)MedalType.Bronze);
-          default: 
-            return (0);
-        } 
-      }
       int point = 0;
       var medals = this.GetMedalCounts();
       point += medals[0] * (int)MedalType.Gold;
@@ -120,7 +124,7 @@ namespace SHG
     public int GetHighestRank()
     {
       if (this.Type == ResultType.Domestic) {
-        return (this.domesticRank);
+        return (this.singleSportRank);
       }
       for (int i = 0; i < this.RankCount.Length; i++) {
         if (this.RankCount[i] != 0) {
@@ -130,25 +134,22 @@ namespace SHG
       return (int.MaxValue);
     }
 
-    int GetRankIn((IContenderAthlete athlete, 
-        MatchSportRecord.Record record)[] recordByAthletes)
+    int GetRankIn(List<(IContender athlete, 
+        MatchSportRecord.AthleteRecord record)> recordByAthletes)
     {
-      int index = Array.FindIndex(
-        recordByAthletes, (pair) => 
-          pair.athlete.Country == country 
-        );
+      int index = recordByAthletes.FindIndex( 
+        (pair) => pair.athlete.Group.Equals(group));
       if (index == -1) {
-        throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {country} in {recordByAthletes}"));
+        throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {group} in {recordByAthletes}"));
       }
       return (recordByAthletes[index].record.Rank);
     }
 
-    int GetRankIn(Match match, IContenderAthlete athlete)
+    int GetRankIn(Match match, IContender athlete)
     {
       var recordByAthletes = match.SportRecords[match.Data.SportType].RecordsByAthletes;
-      var index = Array.FindIndex(
-        recordByAthletes,
-        pair => pair.athlete == athlete);
+      var index = recordByAthletes.FindIndex(
+        pair => pair.athlete.Equals(athlete));
       if (index == -1) {
         throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {athlete} in {recordByAthletes}"));
       }
@@ -158,8 +159,7 @@ namespace SHG
     int GetRankIn(Match match, ConvertedDomesticAthlete athlete)
     {
       var recordByAthletes = match.SportRecords[match.Data.SportType].RecordsByAthletes;
-      var index = Array.FindIndex(
-        recordByAthletes,
+      var index = recordByAthletes.FindIndex(
         pair => athlete.IsSameWith(pair.athlete));
       if (index == -1) {
         throw (new ApplicationException($"{nameof(GetRankIn)}: Fail to find {athlete} in {recordByAthletes}"));

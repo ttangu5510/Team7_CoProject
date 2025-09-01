@@ -37,8 +37,8 @@ namespace SHG
           }
           this.GetReport(report.Value);
           this.view.SetState((int)StateRole.Shown);
-          this.container.DOMoveY(
-            endValue: 1500f,
+          this.container.DOLocalMoveY(
+            endValue: -100f,
             duration:0.5f)
           .SetEase(Ease.InOutSine);
           }});
@@ -46,12 +46,13 @@ namespace SHG
         (int)ButtonRole.ConfirmButton).Button
         .OnClickAsObservable()
         .Subscribe(_ => {
-          this.container.DOMoveY(
-            endValue: -500f,
+          this.container.DOLocalMoveY(
+            endValue: -300f,
             duration: 0.5f)
           .SetEase(Ease.InOutSine)
           .OnComplete(() => this.view.SetState((int)StateRole.Hidden));
           });
+      this.view.SetState((int)StateRole.Hidden);
     }
 
     void GetReport(SeasonFinanceData report) {
