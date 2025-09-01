@@ -57,8 +57,7 @@ namespace JWS
             time.yearCycle = 1;
             time.season = Season.Spring;
             time.week = 1;
-            time.playTick = DateTime.UtcNow.Ticks;
-            time.realPlayMinutesTotal = 0;
+            time.playTick = 0;
             time.lastSaveUtcIso = DateTime.UtcNow.ToString("YYYY-MM-dd HH-MM-ss"); // ISO 8601
 
             // 재화 초기화
@@ -110,11 +109,18 @@ namespace JWS
         public int week; // 주차(1-based)
 
         // 현실 플레이 타임 - XX시간 XX분 (분 단위로 저장하고 표시할 때 변환 추천)
-        public int realPlayMinutesTotal; // 누적 플레이 분
-        public long playTick = 0;
+        public long playTick;
 
         // 선택: 마지막 저장 UTC ISO (로그/백업용)
         public string lastSaveUtcIso;
+        
+        // 현재 플레이 시간 시간, 분단위로 반환하기
+        public void GetPlayTime(out int hours, out int minutes)
+        {
+            TimeSpan elapsedSpan = new TimeSpan(playTick);
+            hours = (int)elapsedSpan.TotalHours;
+            minutes = elapsedSpan.Minutes;
+        }
     }
 
     public enum Season

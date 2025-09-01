@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using UnityEngine;
 using JWS;
@@ -13,7 +14,6 @@ namespace JYL
         #else
         private static string savePath = Application.persistentDataPath + "/Save";
         #endif
-
         
         public List<SaveData> saves = new();
         public SaveData curSave;
@@ -21,6 +21,7 @@ namespace JYL
         public readonly Dictionary<string, DateTime> savedTime = new(); // 세이브 파일이 저장된 시간 딕셔너리
         public readonly Dictionary<string, SaveData> saveDataByName = new(); //세이브 객체를 이름으로 찾는 딕셔너리
 
+        private readonly int slotIndex = -1; // 현재 선택중인 세이브데이터의 인덱스
         private long PlayTimeTick = 0; // 실제 플레이 타임 재는 타이머
             
         #region 초기화
@@ -55,28 +56,39 @@ namespace JYL
             }
         }
         #endregion
-        
-        #region 타이머 갱신
-
-        public void UpdatePlayTime()
-        {
-            if (curSave == null) return;
-            
-            long playTick = DateTime.UtcNow.Ticks - curSave.time.playTick;
-        }
-        #endregion
 
         #region 세이브
-        public void CreateSaveData(string playerName, string clanName, string uid) // 게임을 새로 시작할 때 사용함. UI에서 사용할 함수
+        // public void CreateSaveData(string playerName, string clanName, string uid) // 게임을 새로 시작할 때 사용함. UI에서 사용할 함수.
+        // {
+        //     SaveData save = new SaveData();
+        //     save.Init(uid,playerName,clanName);
+        //     saves.Add(save);
+        //     curSave = save;
+        //     AutoSave(); // 게임 맨 처음 시작한 것은 오토세이브로 넘어감
+        // }
+
+        public void CreateSaveData(string playerName, string clanName, string uid, int slotNumber) // 슬롯 넘버 기반 세이브파일 생성. 인게임 UI에서 사용함
         {
             SaveData save = new SaveData();
             save.Init(uid,playerName,clanName);
             saves.Add(save);
             curSave = save;
-            SaveProgress(save);
+            SaveProgress(save,slotNumber);
         }
 
-        public void AutoSave() // 자동 저장에 사용되는 함수. 턴 넘길 때마다 사용. 이벤트 순서에서 로직부분 맨 마지막에 추가
+        public void CreateAutoSaveData(string playerName, string clanName, string uid) // 게임 맨 처음 시작할 때, 이름 입력한 것으로 세이브파일 생성.
+        {
+            SaveData save = new SaveData();
+            save.Init(uid,playerName,clanName);
+            saves.Add(save);
+            curSave = save;
+            AutoSave();
+        }
+
+        public void AutoSave() // 자동 저장에 사용되는 함수.
+                               // 턴 넘길 때마다 사용.
+                               // 이벤트 순서에서 로직부분 맨 마지막에 추가.
+                               // 이름 입력하면 맨 처음에 오토세이브 한 번 함
         {
             if (!Directory.Exists(savePath))
             {
@@ -85,9 +97,20 @@ namespace JYL
 
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
             string fileName = "AutoSave.json"; // 자동저장에 사용되는 파일은 하나 뿐
-            savedTime[fileName] =  DateTime.Now;
+            
+            // 딕셔너리 최신화
+            savedTime[fileName] =  DateTime.UtcNow;
             saveDataByName[fileName] = curSave;
-
+            
+            // 현재까지의 플레이 시간 저장
+            DateTime lastSavedTime = DateTime.TryParse(curSave.time.lastSaveUtcIso, out DateTime lastSaved) ? lastSaved : DateTime.Now;
+            PlayTimeTick = DateTime.UtcNow.Ticks - lastSavedTime.Ticks;
+            curSave.time.playTick =  PlayTimeTick;
+            
+            // 마지막으로 저장된 시간 갱신
+            curSave.time.lastSaveUtcIso = timestamp;
+           
+            // 현재 상태 저장
             string path = Path.Combine(savePath, fileName);
             string json = JsonUtility.ToJson(curSave);
             File.WriteAllText(path, json);
@@ -95,19 +118,56 @@ namespace JYL
             Debug.Log($"자동 저장됨{path}");
         }
         
-        public void SaveProgress(SaveData save) // 현재 사용중인 세이브 객체를 세이브 파일로 저장함.
+        // public void SaveProgress(SaveData save) // 현재 사용중인 세이브 객체를 세이브 파일로 저장함.
+        // {
+        //     if (!Directory.Exists(savePath))
+        //     {
+        //         Directory.CreateDirectory(savePath);
+        //     }
+        //     string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+        //     string fileName = $"Save_{save.playerName}_{timestamp}.json";
+        //     
+        //     savedTime[fileName] = DateTime.UtcNow;
+        //     saveDataByName[fileName] = save;
+        //     
+        //     // 현재까지의 플레이 시간 저장
+        //     DateTime lastSavedTime = DateTime.TryParse(save.time.lastSaveUtcIso, out DateTime lastSaved) ? lastSaved : DateTime.Now;
+        //     PlayTimeTick = DateTime.UtcNow.Ticks - lastSavedTime.Ticks;
+        //     save.time.playTick =  PlayTimeTick;
+        //     
+        //     // 마지막 저장시간 최신화
+        //     save.time.lastSaveUtcIso = timestamp;
+        //     
+        //     string path = Path.Combine(savePath, fileName);
+        //     string json = JsonUtility.ToJson(save,true);
+        //     File.WriteAllText(path,json);
+        //     
+        //     Debug.Log($"세이브 파일 저장됨{path}");
+        // }
+        
+        public void SaveProgress(SaveData save, int slotNumber) // 현재 사용중인 세이브 객체를 세이브 파일로 저장함. 슬롯번호 기준
         {
             if (!Directory.Exists(savePath))
             {
                 Directory.CreateDirectory(savePath);
             }
-            string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
-            string fileName = $"Save_{save.playerName}_{timestamp}.json";
+            string fileName = $"Save_{slotNumber}.json";
             
+            // 딕셔너리 최신화
             savedTime[fileName] = DateTime.UtcNow;
             saveDataByName[fileName] = save;
+            
+            // 현재까지의 플레이 시간 저장
+            DateTime lastSavedTime = DateTime.TryParse(save.time.lastSaveUtcIso, out DateTime lastSaved) ? lastSaved : DateTime.Now;
+            PlayTimeTick = DateTime.UtcNow.Ticks - lastSavedTime.Ticks;
+            save.time.playTick =  PlayTimeTick;
+            
+            // 현재시간 받아오기
+            string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH-mm-ss");
+            // 마지막으로 저장된 시간 갱신
             save.time.lastSaveUtcIso = timestamp;
             
+            // 세이브 파일 저장
             string path = Path.Combine(savePath, fileName);
             string json = JsonUtility.ToJson(save,true);
             File.WriteAllText(path,json);
@@ -120,17 +180,17 @@ namespace JYL
         
         #region 로드
 
-        public void AutoLoad() // 자동 저장 된 파일들 중에서 자동 불러오기에 사용됨
-        {
-            if (saveDataByName.TryGetValue("AutoSave.json", out var value))
-            {
-                curSave = value; // 전체 파일을 불러오는 과정이 선행되기 때문에 가능함
-            }
-            else
-            {
-                Debug.LogWarning("저장된 세이브 파일이 없음_AutoSave.json");
-            }
-        }
+        // public void AutoLoad() // 자동 저장 된 파일들 중에서 자동 불러오기에 사용됨
+        // {
+        //     if (saveDataByName.TryGetValue("AutoSave.json", out var value))
+        //     {
+        //         curSave = value; // 전체 파일을 불러오는 과정이 선행되기 때문에 가능함
+        //     }
+        //     else
+        //     {
+        //         Debug.LogWarning("저장된 세이브 파일이 없음_AutoSave.json");
+        //     }
+        // }
 
         public void LoadProgress(SaveData save) // 현재 선택중인 세이브 파일을 변경함
         {

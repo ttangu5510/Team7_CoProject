@@ -7,13 +7,15 @@ namespace JYL
 {
     public interface ISaveManager : IInitializable
     {
-        // 세이브
-        void CreateSaveData(string playerName, string clanName, string userId = "testPlayer123");
+        
+        // 세이브 
+        void CreateSaveData(string playerName, string clanName, string userId = "testPlayer123", int slotNumber = 0);
+        void CreateAutoSaveData(string playerName, string clanName, string uid = "TestAutoSave123");
         void AutoSave();
-        void SaveProgress(SaveData save);
+        void SaveProgress(SaveData save, int slotNumber);
 
         // 로드
-        void AutoLoad();
+        // void AutoLoad();
         void LoadProgress(SaveData save);
         void LoadProgress(string fileName);
         SaveData GetCurrentSave();
