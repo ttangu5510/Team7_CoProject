@@ -23,19 +23,32 @@ namespace JYL
                 .AsSingle()
                 .NonLazy();
             
+            // 상대 선수 레포지토리
+            Container.Bind<IForAthRepository>()
+                .To<ForAthRepository>()
+                .AsSingle()
+                .NonLazy();
+            
             // 선수 서비스
             Container.Bind<DomAthService>()
                 .To<DomAthService>()
-                .FromComponentsInHierarchy()
+                .FromComponentInHierarchy()
                 .AsSingle()
                 .NonLazy();
+            
             // 코치 서비스
             Container.Bind<CoachService>()
                 .To<CoachService>()
-                .FromComponentsInHierarchy()
+                .FromComponentInHierarchy()
                 .AsSingle()
                 .NonLazy();
     
+            // 상대 선수 서비스
+            Container.Bind<ForAthService>()
+                .To<ForAthService>()
+                .FromComponentInHierarchy()
+                .AsSingle()
+                .NonLazy();
             
             this.Container.Bind<ITimeFlowController>()
                 .To<TimeFlowController>()

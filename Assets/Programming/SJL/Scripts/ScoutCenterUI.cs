@@ -10,7 +10,7 @@ using Zenject;
 
 namespace SJL
 {
-    public class PlayerManager : MonoBehaviour
+    public class ScoutCenterUI : MonoBehaviour
     {
         [SerializeField] Button playerRecruitmentButton;
 
