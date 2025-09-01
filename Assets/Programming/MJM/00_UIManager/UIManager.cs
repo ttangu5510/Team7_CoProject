@@ -29,7 +29,8 @@ public class UIManager : MonoBehaviour, IUiManager
 
     [Header("Popup")]
     [SerializeField] private GameObject popupBlocker;   // 팝업시 다른 터치를 막는 용도의 오브젝트
-
+    private Canvas _blockerCanvas;                  // 캐싱
+    private GraphicRaycaster _blockerRaycaster;
     // ===== 문자열 키 기반 패널 관리 =====
     private readonly Dictionary<string, GameObject> panels = new(); // key: normalized name
     private string currentPanelKey; // null = 아무 패널도 안 열림
@@ -66,6 +67,9 @@ public class UIManager : MonoBehaviour, IUiManager
         if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
         else { Destroy(gameObject); return; }
 
+        // 먼저 블로커 준비 보장
+        EnsureBlockerReady();
+
         // ===== 초기 바인딩 =====
         AutoBindPanels();   // Panels 하위의 Panel.* 오브젝트를 사전에 등록
         AutoBindButtons();  // BottomBar 하위의 Btn.* 버튼 클릭을 OpenPanel에 연결
@@ -98,6 +102,9 @@ public class UIManager : MonoBehaviour, IUiManager
         UpdateUIState();
 
     }
+
+
+
 
     private void Update()
     {
@@ -266,7 +273,7 @@ public class UIManager : MonoBehaviour, IUiManager
     
     
     // TODO : private 안되길래 public으로 변경함 
-    public void ShowPopup(GameObject popup)
+    private void ShowPopup(GameObject popup)
     {
         if (!popup) return;
         if (popupStack.Contains(popup)) return;
@@ -378,28 +385,22 @@ public class UIManager : MonoBehaviour, IUiManager
 
         if (!popupBlocker) return;
 
-        // 블로커 표시/숨김
-        popupBlocker.SetActive(anyPopup);
-
         // 블로커 Canvas 보장
         var blockerCanvas = popupBlocker.GetComponent<Canvas>() ?? popupBlocker.AddComponent<Canvas>();
         blockerCanvas.overrideSorting = true;
 
         if (anyPopup)
         {
-            // 최상단 팝업의 sortingOrder를 계산하려면, 정렬 직후의 값을 사용해야 함
-            // UpdatePopupSorting()이 방금 호출되었다고 가정하고 계산
-            int topIndex = popupStack.Count - 1;                  // 최상단 팝업의 "orderIndex"
+            int topIndex = popupStack.Count - 1;
             int topOrder = popupBaseOrder + topIndex * popupOrderStep;
-
-            // 블로커는 최상단 팝업 바로 뒤(-1)
             blockerCanvas.sortingOrder = topOrder - 1;
         }
         else
         {
-            // 팝업이 없을 때는 굳이 높을 필요 없음
             blockerCanvas.sortingOrder = popupBaseOrder - 1;
         }
+
+        popupBlocker.SetActive(anyPopup);
     }
     
     // ============ 프리팹 로딩 ============
@@ -583,8 +584,28 @@ public class UIManager : MonoBehaviour, IUiManager
 
         UIManager.IsUIOpen = IsUIOpenRx.Value; // 기존의 불값또한 같이 동기화
     }
-    #endregion
 
+    // 블로커의 캔버스를 먼저 보장해주는 함수
+    private void EnsureBlockerReady()
+    {
+        if (!popupBlocker) return;
+
+        // Canvas 보장 + 캐싱
+        if (!popupBlocker.TryGetComponent(out _blockerCanvas))
+            _blockerCanvas = popupBlocker.AddComponent<Canvas>();
+        _blockerCanvas.overrideSorting = true;
+
+        // (선택) 클릭 차단을 원하면 Raycaster & 투명 Image
+        if (!popupBlocker.TryGetComponent(out _blockerRaycaster))
+            _blockerRaycaster = popupBlocker.AddComponent<GraphicRaycaster>();
+        if (!popupBlocker.TryGetComponent(out UnityEngine.UI.Image img))
+        {
+            img = popupBlocker.AddComponent<UnityEngine.UI.Image>();
+            img.raycastTarget = true;
+            img.color = new Color(0, 0, 0, 0f); // 완전 투명
+        }
+    }
+    #endregion
 
 
 

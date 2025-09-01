@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +13,7 @@ namespace JYL
         public void UnregisterPanel(string rawKey);
 
         // 팝업
-        public void ShowPopup(GameObject popup);
+        public GameObject ShowPopup(string rawKey, object initData = null);
         //public GameObject ShowPopup(string rawKey, bool modal = true, object initData = null);
         public void CloseTopPopup();
         public void CloseSpecificPopup(GameObject popup);
