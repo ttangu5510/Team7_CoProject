@@ -18,7 +18,6 @@ public class UIManager : MonoBehaviour
     public static readonly BoolReactiveProperty IsUIOpenRx = new BoolReactiveProperty(false);
 
 
-
     private static UIManager instance;
     public static UIManager Instance => instance;
 
@@ -58,18 +57,6 @@ public class UIManager : MonoBehaviour
     // ===== 팝업프리펩 리소스 폴더에서 찾아주는 역할 =====
     const string POPUP_PREFIX = "Popup.";
     const string POPUP_FOLDER = "Popups/"; // Resources/Popups/Popup.<Key>.prefab
-
-
-
-
-    // 공백제거, 소문자로 변경해주는 함수
-    private static string NormalizeKey(string raw)
-    {
-        if (string.IsNullOrWhiteSpace(raw)) return string.Empty;
-        return raw.Trim().ToLowerInvariant().Replace(" ", ""); // 내부 공백까지 제거 원치 않으면 Replace 제거
-    }
-
-
 
 
     private void Awake()
@@ -117,6 +104,10 @@ public class UIManager : MonoBehaviour
             HandleBack();
     }
 
+
+
+
+    #region 자동바인딩_AutoBinding
     // ===================== 자동 바인딩 =====================
     private void AutoBindPanels()
     {
@@ -190,9 +181,14 @@ public class UIManager : MonoBehaviour
             btn.onClick.AddListener(() => OpenPanel(key)); // Btn.X → Panel.X
         }
     }
+    #endregion
 
 
+
+
+    #region 패널제어_PanelControll
     // ===================== 패널 제어 =====================
+
     // OpenPanel("Info") → "Panel.Info"를 찾음
     public void OpenPanel(string rawKey, bool toggleIfSame = true)
     {
@@ -245,12 +241,13 @@ public class UIManager : MonoBehaviour
         // isuiopen 상태변수 제어용
         UpdateUIState();
     }
+    #endregion
 
+
+
+
+    #region 팝업제어_PopupControll
     // ===================== 팝업 =====================
-
-
-
-    // ============ 팝업 열기(키 기반) ============
     public GameObject ShowPopup(string rawKey, object initData = null)
     {
         var prefab = LoadPopupPrefab(rawKey);
@@ -326,6 +323,7 @@ public class UIManager : MonoBehaviour
         UpdateUIState();
     }
 
+    #region 팝업의유틸기능_PopupUtility
     // 스택 안에 파괴된(GameObject == null) 항목들을 제거
     private void PruneDeadPopups()
     {
@@ -362,7 +360,6 @@ public class UIManager : MonoBehaviour
             c.sortingOrder = popupBaseOrder + orderIndex * popupOrderStep;
         }
     }
-
 
     private void UpdateBlockerByStack()
     {
@@ -401,8 +398,7 @@ public class UIManager : MonoBehaviour
             blockerCanvas.sortingOrder = popupBaseOrder - 1;
         }
     }
-
-
+    
     // ============ 프리팹 로딩 ============
     // 1) 캐시 → 2) Resources.Load("Popups/Popup.<Key>")
     private GameObject LoadPopupPrefab(string rawKey)
@@ -427,10 +423,13 @@ public class UIManager : MonoBehaviour
         popupPrefabCache[key] = prefab;
         return prefab;
     }
+    #endregion
+    #endregion
 
 
 
 
+    #region 토스트제어_ToastControll
     // ===================== 토스트 =====================
     public void ShowToast(string msg)
     {
@@ -493,6 +492,18 @@ public class UIManager : MonoBehaviour
         // isuiopen 상태변수 제어 현재 주석처리로 토스트는 처리 안함
         // UpdateUIOpenFlag();
     }
+    #endregion
+
+
+
+
+    #region 유틸리티_Utility
+    // 공백제거, 소문자로 변경해주는 함수
+    private static string NormalizeKey(string raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw)) return string.Empty;
+        return raw.Trim().ToLowerInvariant().Replace(" ", ""); // 내부 공백까지 제거 원치 않으면 Replace 제거
+    }
 
     // ===================== Back 처리 =====================
     private void HandleBack()
@@ -527,9 +538,6 @@ public class UIManager : MonoBehaviour
         panels.Remove(key);
     }
 
-
-   
-
     // ===== 버그 해결을 위한 임시 안전제거 코드 =====
     private System.Collections.IEnumerator _DestroyNextFrame(GameObject go)
     {
@@ -559,7 +567,6 @@ public class UIManager : MonoBehaviour
                    || activeToasts.Count > 0;
     }
 
-
     // UI 상태(패널/팝업/토스트 중 하나라도 켜져 있으면 true)를 한 번에 갱신
     // 생각해보니 토스트 있을때도 막는게 괜찮을 거 같아서 토스트도 적용을 해봄
     private void UpdateUIState()
@@ -573,12 +580,14 @@ public class UIManager : MonoBehaviour
 
         UIManager.IsUIOpen = IsUIOpenRx.Value; // 기존의 불값또한 같이 동기화
     }
+    #endregion
+
+
+
 
 
     public void TestPopup()
     {
         ShowPopup("Test");
     }
-
-    
 }
