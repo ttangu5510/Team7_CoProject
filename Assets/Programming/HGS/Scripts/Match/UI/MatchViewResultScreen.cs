@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine.UI;
 using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
@@ -36,37 +34,46 @@ namespace SHG
         .Subscribe(_ => {
           if (this.parentState.Value == 
             MatchViewPresenter.ViewState.Result) {
-          this.parentState.Value = MatchViewPresenter.ViewState.None;
+          this.parentState.Value = MatchViewPresenter.ViewState.Reward;
           }});
     }
 
     public void UpdateView(Match match)
     {
-      bool isDomestic = match.Data.IsSingleSport || 
-        match.Data.MatchType == MatchType.Domestic;
-
-      if (isDomestic) {
+      bool isDomestic = match.Data.IsDomestic;
+      if (match.Data.IsSingleSport) {
+        this.view.SetState((int)StateRole.SingleSportMatch);
+      }
+      else if (match.Data.IsDomestic) {
         this.view.SetState((int)StateRole.Domestic);
       }
       else {
         this.view.SetState((int)StateRole.International);
       }
-      List<MatchResult> results = match.GetResults();
-      results.Sort(this.CompareMatchResult);
       this.container.Clear();
       this.container.FillWithItems(
-        results,
+        match.Results,
         (view, result) => this.UpdateRow(
-          view, result, results.IndexOf(result) + 1));
+          view: view, 
+          result: result, 
+          match: match,
+          rank: match.Results.IndexOf(result) + 1));
       this.scrollView.verticalNormalizedPosition = 1f;
     }
 
-    void UpdateRow(StatefulComponent view, MatchResult result, int rank)
+    void UpdateRow(StatefulComponent view, MatchResult result, Match match, int rank)
     {
-      bool isDomestic = result.Type == MatchResult.ResultType.Domestic;
-
-      if (isDomestic) {
+      if (match.Data.IsSingleSport) {
+        view.SetState((int)StateRole.SingleSportMatch);
+      }
+      else if (match.Data.IsDomestic) {
         view.SetState((int)StateRole.Domestic);
+      }
+      else {
+        view.SetState((int)StateRole.International);
+      }
+
+      if (match.Data.IsSingleSport) {
         view.SetRawTextByRole(
           (int)TextRole.AthleteNameLabel,
           $"{result.GetDomesticAthlete().Name}");
@@ -80,31 +87,18 @@ namespace SHG
           (int)TextRole.MedalLabel, rankText);
       }
       else {
-        view.SetState((int)StateRole.International);
         var medals = result.GetMedalCounts();
         view.SetRawTextByRole(
           (int)TextRole.MedalLabel,
           $"{GOLD_MEDAL_ICON} {medals[0]} {SILVER_MEDAL_ICON} {medals[1]} {BRONZE_MEDAL_ICON} {medals[2]}");
-        view.SetRawTextByRole(
-          (int)TextRole.NationalityLabel, result.Country.Name);
       }
+      view.SetRawTextByRole(
+        (int)TextRole.GroupLabel, result.Group.Name);
       view.SetRawTextByRole(
         (int)TextRole.RankLabel, $"{rank}위");
       int point = result.CalcPoint();
       view.SetRawTextByRole(
         (int)TextRole.TotalLabel, $"{point}");
-    }
-
-    int CompareMatchResult(MatchResult lhs, MatchResult rhs)
-    {
-      var lhsPoint = lhs.CalcPoint();
-      var rhsPoint = rhs.CalcPoint();
-      if (lhsPoint != rhsPoint) {
-        return (lhsPoint > rhsPoint ? -1: 1);
-      }
-      var lhsRank = lhs.GetHighestRank();
-      var rhsRank = rhs.GetHighestRank();
-      return (lhsRank > rhsRank ? - 1: 1);
     }
   }
 }

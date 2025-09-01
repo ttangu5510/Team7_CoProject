@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using UniRx;
 using Zenject;
@@ -13,6 +12,8 @@ namespace SHG
   public class MatchController: IMatchController
   {
     ITimeFlowController timeFlowController;
+    IContenderController contenderController;
+    IResourceController resourceController;
 
     public ReactiveProperty<Match> CurrentMatch { get; private set; }
     public ReactiveProperty<Nullable<MatchData>> NextMatch { get; private set; }
@@ -22,7 +23,6 @@ namespace SHG
 
     MatchScheduler scheduler;
     IDisposable timeSubscribed;
-    AthleteDummyData athleteDummyData;
     DomAthService domAthService;
 
     public MatchController(IList<MatchData> matchData)
@@ -30,16 +30,19 @@ namespace SHG
       this.MatchData = matchData;
       this.CurrentMatch = new (null);
       this.NextMatch = new (null);
-      this.athleteDummyData = new ();
     }
 
     //TODO: Load save data
     [Inject]
     public void Init(
       ITimeFlowController timeFlowController, 
+      IContenderController contenderController,
+      IResourceController resourceController,
       DomAthService domAthService)
     {
       this.timeFlowController = timeFlowController;
+      this.contenderController = contenderController;
+      this.resourceController = resourceController;
       this.domAthService = domAthService;
       this.scheduler = new MatchScheduler(
         matchData: this.MatchData,
@@ -102,8 +105,13 @@ namespace SHG
         return ;
       #endif
       }
-
-      this.CurrentMatch.Value = this.CreateMatch(this.NextMatch.Value.Value);
+      var matchData = this.NextMatch.Value.Value;
+      if (matchData.IsDomestic) {
+        matchData.MemberGroups = Array.ConvertAll(
+          this.contenderController.Teams,
+          (team => team as IGroup));
+      }
+      this.CurrentMatch.Value = this.CreateMatch(matchData);
     }
 
     public void EndCurrentMatch()
@@ -115,6 +123,25 @@ namespace SHG
         return ;
       #endif
       }
+      var match = this.CurrentMatch.Value;
+      foreach (var reward in match.Data.Rewards) {
+        if (reward.amount <= 0) {
+          continue;
+        }
+        switch (reward.type) {
+          case ResourceType.Money:
+            this.resourceController.AddMoney(
+              reward.amount, IncomeType.MatchPrizes);
+              break;
+          case ResourceType.Fame:
+            this.resourceController.AddFame(reward.amount);
+            break;
+          case ResourceType.Coin:
+            this.resourceController.AddCoin(reward.amount);
+            break;
+        }
+      }
+
       this.CurrentMatch.Value = null;
       this.timeFlowController.ProgressWeeks(2);
     }
@@ -136,28 +163,29 @@ namespace SHG
       return (match);
     }
 
-    List<IContenderAthlete> GetContenders(Country country)
+    List<IContender> GetContenders(IGroup group)
     {
-      if (country.Name == "korea") {
-        var recuruitedAthletes = new HashSet<DomAthEntity>(
-          this.domAthService.GetAllRecruitedAthleteList());
+      return (this.contenderController.Althetes[group]);
+      //if (group.Name == "korea") {
+      //  var recuruitedAthletes = new HashSet<DomAthEntity>(
+      //    this.domAthService.GetAllRecruitedAthleteList());
 
-        var allAhteltes = this.domAthService.GetAllAthleteList();
-        var convertedAthletes = allAhteltes.Where(
-            athlete => !recuruitedAthletes.Contains(athlete)) 
-          .ToList()
-          .ConvertAll(athlete => 
-            new ConvertedDomesticAthlete(athlete) as IContenderAthlete);
-        if (convertedAthletes.Count < 10) {
-          return (this.athleteDummyData.Althetes[country]);
-        }
-        else {
-          return (convertedAthletes);
-        }
-      } 
-      else {
-        return (this.athleteDummyData.Althetes[country]);
-      }
+      //  var allAhteltes = this.domAthService.GetAllAthleteList();
+      //  var convertedAthletes = allAhteltes.Where(
+      //      athlete => !recuruitedAthletes.Contains(athlete)) 
+      //    .ToList()
+      //    .ConvertAll(athlete => 
+      //      new ConvertedDomesticAthlete(athlete) as IContender);
+      //  if (convertedAthletes.Count < 10) {
+      //    return (this.contenderController.Althetes[group]);
+      //  }
+      //  else {
+      //    return (convertedAthletes);
+      //  }
+      //} 
+      //else {
+      //  return (this.contenderController.Althetes[group]);
+      //}
     }
 
     List<MatchData> GetScheduledMatches()
