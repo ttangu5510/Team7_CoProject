@@ -57,7 +57,7 @@ public class NameEntryController : MonoBehaviour
         saveManager.CreateSaveData(protagonistName,teamName);
 
         nameInputPopup.SetActive(false);
-        SceneManager.LoadSceneAsync("JYL_MainScene");
+        SceneManager.LoadSceneAsync("MMJ_MainScene");
     }
 
     void ShowError(string message)

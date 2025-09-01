@@ -11,7 +11,8 @@ namespace SHG
   {
     TrainingGrant,
     CompetitionGrant,
-    QuestPrizes
+    QuestPrizes,
+    MatchPrizes
   }
 
   /// <summary>
