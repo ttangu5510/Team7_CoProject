@@ -151,6 +151,8 @@ namespace SHG
             .Select(_ => UniRx.Unit.Default)
             .Merge(match.UserAthletes.ObserveRemove()
               .Select(_ => UniRx.Unit.Default))
+            .Merge(match.UserAthletes.ObserveReplace()
+              .Select(_ => UniRx.Unit.Default))
             .Subscribe(_ => this.OnUserAthleteChanged(match))
             .AddTo(this.matchSubscription);
 
