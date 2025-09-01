@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JYL;
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
@@ -8,7 +9,7 @@ using UnityEngine.InputSystem;
 #endif
 
 
-public class UIManager : MonoBehaviour
+public class UIManager : MonoBehaviour, IUiManager
 {
     public static bool IsUIOpen { get; set; }   // 유아이 켜짐 꺼짐 상태변수 (rx 사용하지 않는 사람들을 위해 남겨둠)
 
@@ -262,8 +263,10 @@ public class UIManager : MonoBehaviour
         ShowPopup(go); // 아래 GO 기반 오버로드 재사용
         return go;
     }
-
-    private void ShowPopup(GameObject popup)
+    
+    
+    // TODO : private 안되길래 public으로 변경함 
+    public void ShowPopup(GameObject popup)
     {
         if (!popup) return;
         if (popupStack.Contains(popup)) return;
