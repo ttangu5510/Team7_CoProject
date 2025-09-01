@@ -685,9 +685,15 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4824044609246053910, guid: 4d0f4c3f1a87996499bff60d72246086, type: 3}
+    - {fileID: 8541371258675971115, guid: 4d0f4c3f1a87996499bff60d72246086, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8652041918969524990, guid: 4d0f4c3f1a87996499bff60d72246086,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1740003791}
   m_SourcePrefab: {fileID: 100100000, guid: 4d0f4c3f1a87996499bff60d72246086, type: 3}
 --- !u!224 &1740003788 stripped
 RectTransform:
@@ -695,6 +701,65 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1740003787}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1740003789 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3938685765667920573, guid: 4d0f4c3f1a87996499bff60d72246086,
+    type: 3}
+  m_PrefabInstance: {fileID: 1740003787}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1740003790 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8652041918969524990, guid: 4d0f4c3f1a87996499bff60d72246086,
+    type: 3}
+  m_PrefabInstance: {fileID: 1740003787}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1740003791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1740003790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4555e006608b44b06b593d420ba1547a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Buttons: []
+  Texts:
+  - Comment: 
+    Role: 0
+    Identificator: AutoSavePanel_AutoSaveTitle_00
+    IsTextMeshPro: 1
+    Text: {fileID: 0}
+    TMP: {fileID: 1740003789}
+    Localize: 1
+  Animators: []
+  Containers: []
+  Sliders: []
+  Toggles: []
+  InnerComponents: []
+  Images: []
+  VideoPlayers: []
+  Dropdowns: []
+  TextsInputs: []
+  Objects: []
+  States: []
+  LocalizeOnEnable: 1
+  ApplyInitialStateOnEnable: 0
+  _initialState:
+    Comment: 
+    Role: -1
+    NodeData:
+      Position: {x: 0, y: 0}
+      ParentRoles: 
+    Description: []
 --- !u!1 &1948885043
 GameObject:
   m_ObjectHideFlags: 0

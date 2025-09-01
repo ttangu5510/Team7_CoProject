@@ -14,7 +14,7 @@ namespace JYL
 
         // 팝업
         public void ShowPopup(GameObject popup);
-        public GameObject ShowPopup(string rawKey, bool modal = true, object initData = null);
+        //public GameObject ShowPopup(string rawKey, bool modal = true, object initData = null);
         public void CloseTopPopup();
         public void CloseSpecificPopup(GameObject popup);
     

@@ -263,8 +263,10 @@ public class UIManager : MonoBehaviour, IUiManager
         ShowPopup(go); // 아래 GO 기반 오버로드 재사용
         return go;
     }
-
-    private void ShowPopup(GameObject popup)
+    
+    
+    // TODO : private 안되길래 public으로 변경함 
+    public void ShowPopup(GameObject popup)
     {
         if (!popup) return;
         if (popupStack.Contains(popup)) return;
