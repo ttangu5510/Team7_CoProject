@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using Defective.JSON;
@@ -22,26 +21,28 @@ namespace SHG
     static IAthleteController instance;
 
     [Serializable]
-    public struct ParsedUserAthleteData : IContenderAthlete {
+    public struct ParsedUserAthleteData : IContender {
       public string Name;
       public string Grade;
       public float Fatigue;
-      public string Id;
+      public int Id;
       public string CountryName;
       public AthleteStats stats;
       public AthleteStats Stats => this.stats;
 
-      public AthleteAffiliation Level => (this.Grade switch {
+      AthleteAffiliation IContender.Grade => (this.Grade switch {
         "일반 선수" => (AthleteAffiliation)0,
         "국가대표 후보" => (AthleteAffiliation)1,
         "국가대표" => (AthleteAffiliation)2,
         _ => throw (new ApplicationException())
         });
 
-      public Country Country => (new Country { Name = this.CountryName });
-      string IContenderAthlete.Name => (this.Name);
+      public IGroup Group => (new Country { Name = this.CountryName });
+      string IContender.Name => (this.Name);
+      int IContender.Id =>  this.Id;
+
     }
-    const string DATA_PATH = "Programming/HGS/Scripts/Test/AthleteData/korea.json";
+    const string DATA_PATH = "AthleteData/korea";
 
     public ReactiveProperty<int> NumberOfGeneralAthlete { get; private set; }
     public ReactiveProperty<int> NumberOfNationalAthleteCandidate { get; private set; }
@@ -85,7 +86,7 @@ namespace SHG
     {
       var path = $"{Application.dataPath}/{DATA_PATH}";
       List<DomAthEntity> athletes = new ();
-      string json = File.ReadAllText(path);
+      string json = Resources.Load<TextAsset>(DATA_PATH).text;
       var jsonObject = new JSONObject(json);
       foreach (var athleteData in jsonObject.list) {
         DomAthEntity athlete = new DomAthEntity();

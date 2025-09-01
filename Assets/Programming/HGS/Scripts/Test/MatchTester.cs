@@ -21,7 +21,7 @@ namespace SHG
     ITimeFlowController timeFlowController;
     CompositeDisposable subscribeMatch;
 
-    AthleteDummyData athleteDummyData;
+    ContendersController athleteDummyData;
     Match CurrentMatch 
     {
       get => this.currentMatch;
@@ -43,7 +43,7 @@ namespace SHG
     List<MatchData> scheduledMatches;
     [SerializeField]
     List<MatchData> registeredMatch;
-    List<IContenderAthlete> koreaContenders;
+    List<IContender> koreaContenders;
     [SerializeField] [ReadOnly]
     string[] sports = Enum.GetNames(typeof(SportType));
 
@@ -153,7 +153,7 @@ namespace SHG
       return (builder.ToString());
     }
 
-    List<IContenderAthlete> GetContenderAthletes(Country country)
+    List<IContender> GetContenderAthletes(IGroup country)
     {
       if (country.Name != "korea") {
         return (this.athleteDummyData.Althetes[country]);

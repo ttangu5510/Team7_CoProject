@@ -15,5 +15,6 @@ public enum ImageRole
     FirstFlag = -1618121434,
     SecondFlag = -2067292772,
     ThirdFlag = 215228975,
+    MedalIcon = -749899216,
 
 }

@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uAE30\uB85D"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: bb5ac3e3729a12a7ca0711b55fa81b2c, type: 2}
-  m_sharedMaterial: {fileID: 3767718567204531551, guid: bb5ac3e3729a12a7ca0711b55fa81b2c,
+  m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
+  m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -277,8 +277,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC120\uC218 \uC774\uB984"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: bb5ac3e3729a12a7ca0711b55fa81b2c, type: 2}
-  m_sharedMaterial: {fileID: 3767718567204531551, guid: bb5ac3e3729a12a7ca0711b55fa81b2c,
+  m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
+  m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -303,11 +303,11 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
+  m_fontSize: 41.9
   m_fontSizeBase: 50
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 32
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
@@ -321,7 +321,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 1
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
@@ -357,7 +357,7 @@ GameObject:
   - component: {fileID: 4288676936273192625}
   - component: {fileID: 1354941595140948833}
   m_Layer: 5
-  m_Name: NationLabel
+  m_Name: GroupLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -380,7 +380,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 120, y: 50}
+  m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4288676936273192625
 CanvasRenderer:
@@ -412,8 +412,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uAD6D\uAC00"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: bb5ac3e3729a12a7ca0711b55fa81b2c, type: 2}
-  m_sharedMaterial: {fileID: 3767718567204531551, guid: bb5ac3e3729a12a7ca0711b55fa81b2c,
+  m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
+  m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -438,11 +438,11 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
+  m_fontSize: 41.9
   m_fontSizeBase: 50
   m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 30
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
@@ -454,9 +454,9 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 1
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
@@ -522,7 +522,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 140}
+  m_SizeDelta: {x: 0, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4079907708904054237
 CanvasRenderer:
@@ -609,7 +609,7 @@ MonoBehaviour:
     TMP: {fileID: 2140522700764581717}
     Localize: 0
   - Comment: 
-    Role: 523188770
+    Role: -25006791
     Identificator: RankingBoardCell_NationLabel_01
     IsTextMeshPro: 1
     Text: {fileID: 0}
@@ -650,80 +650,7 @@ MonoBehaviour:
       ParentRoles: 
     Description:
     - Type: 0
-      GameObject: {fileID: 0}
-      GameObjectIsActive: 0
-      RectTransform: {fileID: 0}
-      RectTransformImpactType: 0
-      RectTransformPosition: {x: 0, y: 0}
-      RectTransformSize: {x: 0, y: 0}
-      RectTransformRotation: {x: 0, y: 0, z: 0}
-      RectTransformScale: {x: 0, y: 0, z: 0}
-      RectTransformWidth: 0
-      RectTransformHeight: 0
-      RectTransformTop: 0
-      RectTransformBottom: 0
-      RectTransformLeft: 0
-      RectTransformRight: 0
-      RectTransformAnchorMin: {x: 0, y: 0}
-      RectTransformAnchorMax: {x: 0, y: 0}
-      RectTransformPivot: {x: 0, y: 0}
-      LayoutElement: {fileID: 0}
-      LayoutElementImpactType: 0
-      LayoutElementPreferredWidth: 0
-      LayoutElementPreferredHeight: 0
-      LayoutElementMinWidth: 0
-      LayoutElementMinHeight: 0
-      LayoutElementFlexibleWidth: 0
-      LayoutElementFlexibleHeight: 0
-      CanvasGroup: {fileID: 0}
-      CanvasGroupImpactType: 0
-      CanvasGroupAlpha: 0
-      CanvasGroupInteractable: 0
-      Image: {fileID: 0}
-      ImageImpact: 0
-      ImageEnabled: 0
-      ImageSetSprite: {fileID: 0}
-      ImageSetColor: {r: 0, g: 0, b: 0, a: 0}
-      ImageSetMaterialFloatParam: 
-      ImageSetMaterialFloatValue: 0
-      TextMeshPro: {fileID: 0}
-      TextMeshProImpact: 0
-      TextMeshProColor: {r: 0, g: 0, b: 0, a: 0}
-      TextMeshProPhraseCode: 
-      TextMeshProFontSize: 0
-      TextMeshProMaxFontSize: 0
-      TextMeshProFont: {fileID: 0}
-      TextMeshProTextHorizontalAlignment: 0
-      Button: {fileID: 0}
-      ButtonInteractable: 0
-      Animator: {fileID: 0}
-      AnimImpact: 0
-      AnimParamSetBoolTrue: 
-      AnimParamSetBoolFalse: 
-      AnimParamSetTrigger: 
-      AnimParamResetTrigger: 
-      AnimParamSetInteger: 
-      AnimParamSetIntegerValue: 0
-      AnimParamSetFloat: 
-      AnimParamSetFloatValue: 0
-      AnimationImpactType: 0
-      AnimationClip: {fileID: 0}
-      AnimationTarget: {fileID: 0}
-      IsStartTimeRandomized: 0
-      LayoutGroup: {fileID: 0}
-      LayoutGroupImpactType: 0
-      IsLayoutGroupReversed: 0
-      PaddingValue: 0
-      InnerStatefulComponent: {fileID: 0}
-      StateRole: 0
-      Component: {fileID: 0}
-      ComponentIsEnabled: 0
-      Graphic: {fileID: 0}
-      GraphicMaterial: {fileID: 0}
-      TextMeshProInputField: {fileID: 0}
-      TextMeshProInputFieldInteractable: 0
-    - Type: 0
-      GameObject: {fileID: 6440516880543314203}
+      GameObject: {fileID: 2502211439356604047}
       GameObjectIsActive: 0
       RectTransform: {fileID: 0}
       RectTransformImpactType: 0
@@ -948,81 +875,8 @@ MonoBehaviour:
       TextMeshProInputField: {fileID: 0}
       TextMeshProInputFieldInteractable: 0
     - Type: 0
-      GameObject: {fileID: 6440516880543314203}
-      GameObjectIsActive: 1
-      RectTransform: {fileID: 0}
-      RectTransformImpactType: 0
-      RectTransformPosition: {x: 0, y: 0}
-      RectTransformSize: {x: 0, y: 0}
-      RectTransformRotation: {x: 0, y: 0, z: 0}
-      RectTransformScale: {x: 0, y: 0, z: 0}
-      RectTransformWidth: 0
-      RectTransformHeight: 0
-      RectTransformTop: 0
-      RectTransformBottom: 0
-      RectTransformLeft: 0
-      RectTransformRight: 0
-      RectTransformAnchorMin: {x: 0, y: 0}
-      RectTransformAnchorMax: {x: 0, y: 0}
-      RectTransformPivot: {x: 0, y: 0}
-      LayoutElement: {fileID: 0}
-      LayoutElementImpactType: 0
-      LayoutElementPreferredWidth: 0
-      LayoutElementPreferredHeight: 0
-      LayoutElementMinWidth: 0
-      LayoutElementMinHeight: 0
-      LayoutElementFlexibleWidth: 0
-      LayoutElementFlexibleHeight: 0
-      CanvasGroup: {fileID: 0}
-      CanvasGroupImpactType: 0
-      CanvasGroupAlpha: 0
-      CanvasGroupInteractable: 0
-      Image: {fileID: 0}
-      ImageImpact: 0
-      ImageEnabled: 0
-      ImageSetSprite: {fileID: 0}
-      ImageSetColor: {r: 0, g: 0, b: 0, a: 0}
-      ImageSetMaterialFloatParam: 
-      ImageSetMaterialFloatValue: 0
-      TextMeshPro: {fileID: 0}
-      TextMeshProImpact: 0
-      TextMeshProColor: {r: 0, g: 0, b: 0, a: 0}
-      TextMeshProPhraseCode: 
-      TextMeshProFontSize: 0
-      TextMeshProMaxFontSize: 0
-      TextMeshProFont: {fileID: 0}
-      TextMeshProTextHorizontalAlignment: 0
-      Button: {fileID: 0}
-      ButtonInteractable: 0
-      Animator: {fileID: 0}
-      AnimImpact: 0
-      AnimParamSetBoolTrue: 
-      AnimParamSetBoolFalse: 
-      AnimParamSetTrigger: 
-      AnimParamResetTrigger: 
-      AnimParamSetInteger: 
-      AnimParamSetIntegerValue: 0
-      AnimParamSetFloat: 
-      AnimParamSetFloatValue: 0
-      AnimationImpactType: 0
-      AnimationClip: {fileID: 0}
-      AnimationTarget: {fileID: 0}
-      IsStartTimeRandomized: 0
-      LayoutGroup: {fileID: 0}
-      LayoutGroupImpactType: 0
-      IsLayoutGroupReversed: 0
-      PaddingValue: 0
-      InnerStatefulComponent: {fileID: 0}
-      StateRole: 0
-      Component: {fileID: 0}
-      ComponentIsEnabled: 0
-      Graphic: {fileID: 0}
-      GraphicMaterial: {fileID: 0}
-      TextMeshProInputField: {fileID: 0}
-      TextMeshProInputFieldInteractable: 0
-    - Type: 0
       GameObject: {fileID: 3304796336173730086}
-      GameObjectIsActive: 0
+      GameObjectIsActive: 1
       RectTransform: {fileID: 0}
       RectTransformImpactType: 0
       RectTransformPosition: {x: 0, y: 0}
@@ -1169,8 +1023,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC21C\uC704"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: bb5ac3e3729a12a7ca0711b55fa81b2c, type: 2}
-  m_sharedMaterial: {fileID: 3767718567204531551, guid: bb5ac3e3729a12a7ca0711b55fa81b2c,
+  m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
+  m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}

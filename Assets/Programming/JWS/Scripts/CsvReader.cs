@@ -28,6 +28,17 @@ public static class CsvReader
         return list;
     }
 
+    public static List<ForAthleteCsvData> ReadOpponents(string fileName)
+    {
+        var rows = Read(fileName);
+        if (rows == null) return null;
+        
+        List<ForAthleteCsvData> list = new();
+        foreach(var row in rows.Skip(1)) // 헤더 스킵
+            list.Add(new ForAthleteCsvData(row));
+        return list;
+    }
+
     private static List<string[]> Read(string fileName)
     {
         TextAsset csvFile = Resources.Load<TextAsset>($"CSV/{fileName}");
