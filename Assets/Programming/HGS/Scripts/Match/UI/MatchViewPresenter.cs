@@ -73,6 +73,17 @@ namespace SHG
         parentState: this.currentState,
         view: this.view.GetItem<InnerComponentReference>(
         (int)InnerComponentRole.RewardScreen).InnerComponent);
+
+      this.rewardScreen.ConfirmButton.OnClickAsObservable()
+        .Subscribe(_ => {
+            if (this.matchController.CurrentMatch.Value != null) {
+              this.matchController.EndCurrentMatch();
+            }
+            if (this.currentState.Value == ViewState.Reward) {
+              this.currentState.Value = ViewState.None;
+            }
+          })
+        .AddTo(this);
     }
 
     void OnViewStateChanged(ViewState state)
@@ -128,12 +139,12 @@ namespace SHG
       match.SportRecords
         .ObserveReplace()
         .Subscribe(replacedEvent => 
-          this.recordScreen.UpdateScoreBoard(replacedEvent.NewValue))
+          this.recordScreen.UpdateScoreBoard(replacedEvent.NewValue, match))
         .AddTo(this.matchSubscription);
 
       match.SportRecords
         .ObserveAdd()
-        .Subscribe(addedEvent => this.recordScreen.UpdateScoreBoard(addedEvent.Value))
+        .Subscribe(addedEvent => this.recordScreen.UpdateScoreBoard(addedEvent.Value, match))
         .AddTo(this.matchSubscription);
     }
 
@@ -160,6 +171,7 @@ namespace SHG
         case Match.State.Ended:
           this.currentState.Value = ViewState.Result;
           this.resultScreen.UpdateView(match);
+          this.rewardScreen.UpdateView(match);
 //          this.matchController.EndCurrentMatch();
 //          this.resourceController.AddMoney(
 //            1000, IncomeType.CompetitionGrant);

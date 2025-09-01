@@ -1,6 +1,5 @@
 using UnityEngine;
 using Zenject;
-using JYL;
 
 namespace SHG
 {
@@ -8,17 +7,6 @@ namespace SHG
   {
     public override void InstallBindings() {
 
-      /***************************************************/
-      //   FIXME: Remove dummy data
-      /*
-        this.Container.Bind<DomAthService>()
-        .AsSingle()
-        .WithArguments(
-          this.CreateDomesticAthleteService())
-        .NonLazy();
-      */
-
-      /***************************************************/
       this.Container.Bind<IAthleteController>()
         .To<DummyAthleteController>()
         .AsSingle()
@@ -29,6 +17,11 @@ namespace SHG
         .AsSingle()
         .NonLazy();
 
+      this.Container.Bind<IContenderController>()
+        .To<ContendersController>()
+        .AsSingle()
+        .NonLazy();
+
       /***************************************************/
       //    TODO: Load facilities data
       /***************************************************/
@@ -36,7 +29,7 @@ namespace SHG
       this.Container.Bind<IFacilitiesController>()
         .To<FacilitiesController>()
         .AsSingle()
-        .WithArguments(FacilityDummyData.AllData)
+        .WithArguments(FacilityTable.AllData)
         .NonLazy();
 
       /***************************************************/
@@ -46,11 +39,10 @@ namespace SHG
       this.Container.Bind<IResourceController>()
         .To<ResourceController>()
         .AsSingle()
-        .WithArguments(ResourceDummyData.Data);
+        .WithArguments(ResourceTable.Data);
 
       var touchControllerObject = this.Container.InstantiatePrefab(
         Resources.Load("TouchController"));
-      DontDestroyOnLoad(touchControllerObject);
       TouchController touchController = touchControllerObject.GetComponent<TouchController>();
 
       this.Container.Bind<TouchController>()
@@ -64,19 +56,7 @@ namespace SHG
       this.Container.Bind<IMatchController>()
         .To<MatchController>()
         .AsSingle()
-        .WithArguments(MatchDummyData.DummyData);
+        .WithArguments(MatchTable.Data);
     }
-
-    
-    // DomAthService CreateDomesticAthleteService()
-    // {
-    //   var saveObject = new GameObject(nameof(SaveManager));
-    //   DontDestroyOnLoad(saveObject);
-    //   var saveManager = saveObject.AddComponent<SaveManager>();
-    //   saveManager.Initialize();
-    //   var repository = new DomAthRepository(saveManager);
-    //   return (new DomAthService(repository));
-    //   return null;
-    // }
   }
 }
