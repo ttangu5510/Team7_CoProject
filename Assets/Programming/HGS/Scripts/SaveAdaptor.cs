@@ -24,28 +24,22 @@ namespace SHG
       this.OnDestroyAsObservable()
         .Subscribe(_ => this.timeFlowController.BeforeProgress -= this.SaveProgress);
       this.resourceController.Money
-        .Skip(1)
         .Subscribe(money => 
-          this.saveManager.GetCurrentSave().currencies.gold = money
-          )
+            this.saveManager.GetCurrentSave().currencies.gold = money)
         .AddTo(this);
       this.resourceController.Fame
-        .Skip(1)
         .Subscribe(fame => 
           this.saveManager.GetCurrentSave().currencies.fame = fame)
         .AddTo(this);
       this.resourceController.Coin
-        .Skip(1)
         .Subscribe(coin => 
           this.saveManager.GetCurrentSave().currencies.trainingCoin = coin)
         .AddTo(this);
       this.timeFlowController.WeekInYear
-        .Skip(1)
         .Subscribe(week =>
           this.saveManager.GetCurrentSave().time.week = week)
         .AddTo(this);
       this.timeFlowController.Year
-        .Skip(1)
         .Subscribe(year =>
           this.saveManager.GetCurrentSave().time.yearCycle = year)
         .AddTo(this);
