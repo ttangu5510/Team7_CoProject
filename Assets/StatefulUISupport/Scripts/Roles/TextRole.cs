@@ -50,5 +50,6 @@ public enum TextRole
     CountLabel = 870194081,
     PointLabel = 889921322,
     GroupLabel = -25006791,
+    ButtonLabel = -1212388188,
 
 }
