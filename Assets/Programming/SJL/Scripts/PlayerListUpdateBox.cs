@@ -1,9 +1,11 @@
 ﻿using JYL;
+using SHG;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 using Zenject.SpaceFighter;
 
 namespace SJL
@@ -12,10 +14,14 @@ namespace SJL
     {
         [SerializeField] Button playerRecruitmentButton;
 
+        [Inject] private DomAthService athService;
+        [Inject] private IResourceController resourceController;
+
         [SerializeField] public GameObject playerUIPrefab;
         [SerializeField] public Transform playerListPanel; // 선수들을 담을 부모 오브젝트
+        [SerializeField] public GameObject playerInformationPanel;
 
-        public List<DomAthEntity> playerDataList = new List<DomAthEntity>();    // 모든 선수 데이터 리스트
+        public List<DomAthEntity> playerDataList = new();    // 모든 선수 데이터 리스트
 
         private void Start()
         {
@@ -24,21 +30,51 @@ namespace SJL
 
         private void DisplayPlayers()
         {
-            // 기존 UI 오브젝트 모두 제거
-            foreach (Transform child in playerListPanel)
+            resourceController.SpendMoney(100, ExpensesType.Scout);
+            Debug.Log($"남은 돈: {resourceController.Money}");
+            playerDataList.Clear();
+            playerDataList = athService.GetAllCanRecruitAthleteList();
+
+            for (int i = 0; i < playerListPanel.transform.childCount; i++)
             {
-                Destroy(child.gameObject);
+                Destroy(playerListPanel.transform.GetChild(i).gameObject);
             }
 
-            // 선수 리스트를 랜덤 셔플, 5명만 선택
-            var randomList = playerDataList.OrderBy(x => Random.value).Take(5).ToList();
+            // 다른 방법
+            // foreach (Transform item in playerInformationPanel.transform)
+            // {
+            //     Destroy(item.gameObject);
+            // }
 
-            foreach (var player in randomList)
+            // 플레이어 리스트를 복제 및 섞기 // todo : 시설 수준과 선수의 등급별 확률 조정
+            List<DomAthEntity> shuffledList = new(playerDataList);
+
+            // if (shuffledList[0].affiliation == AthleteAffiliation.일반선수)
+            // {
+            //     // 확률 = 시설 수준이 0단계면, 65% (플로우 차트 참고)
+            // }
+
+            System.Random rng = new System.Random();
+            int n = shuffledList.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = rng.Next(n + 1);
+                (shuffledList[k], shuffledList[n]) = (shuffledList[n], shuffledList[k]);
+            }
+
+            // 앞에서부터 5명만 표시
+            int displayCount = Mathf.Min(5, shuffledList.Count);
+            for (int i = 0; i < displayCount; i++)
             {
                 GameObject go = Instantiate(playerUIPrefab, playerListPanel);
                 PlayerUI ui = go.GetComponent<PlayerUI>();
-                ui.SetPlayer(player);
+                ui.SetPlayer(shuffledList[i]);
+                ui.playerInormationPanel = playerInformationPanel;
+
+                ui.playerData = shuffledList[i];
             }
+
         }
 
     }
