@@ -57,5 +57,10 @@ public enum StateRole
     LowRank = 662059170,
     Win = 339800536,
     Fail = 405905394,
+    Infomation = -662986938,
+    FirstTab = -388534543,
+    SecondTab = 1026595839,
+    ThirdTab = 1424546666,
+    InActive = 1846072803,
 
 }

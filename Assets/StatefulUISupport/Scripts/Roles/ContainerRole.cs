@@ -10,5 +10,6 @@ public enum ContainerRole
     StatContainer = -998873919,
     RankingContainer = -124509451,
     MedalContainer = 1130531564,
+    TabButtonContainer = -1227044756,
 
 }

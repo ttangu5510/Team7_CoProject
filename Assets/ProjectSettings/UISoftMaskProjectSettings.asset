@@ -35,6 +35,8 @@ ShaderVariantCollection:
       variants:
       - keywords: COLOR_FILTER GRADATION_GRADIENT SOFTMASKABLE
         passType: 0
+      - keywords: COLOR_FILTER SOFTMASKABLE
+        passType: 0
       - keywords: EDGE_SHINY SOFTMASKABLE
         passType: 0
   - first: {fileID: 4800000, guid: 935b7be1c88464d2eb87204fdfab5a38, type: 3}
@@ -44,7 +46,22 @@ ShaderVariantCollection:
         passType: 0
       - keywords: SOFTMASKABLE TRANSITION_SHINY
         passType: 0
+  - first: {fileID: 4800000, guid: e65241fa80a374114b3f55ed746c04d9, type: 3}
+    second:
+      variants:
+      - keywords: COLOR_FILTER GRADATION_GRADIENT SOFTMASKABLE
+        passType: 0
   - first: {fileID: 4800000, guid: 5795604f1c83eb053a1009ea1ecf9201, type: 3}
+    second:
+      variants:
+      - keywords: SOFTMASKABLE
+        passType: 0
+  - first: {fileID: 4800000, guid: 24e9dc4085e991b9e9f92806335d40e0, type: 3}
+    second:
+      variants:
+      - keywords: SOFTMASKABLE
+        passType: 0
+  - first: {fileID: 4800000, guid: 99b6648b8cb0517379ac23d63963c5f8, type: 3}
     second:
       variants:
       - keywords: SOFTMASKABLE

@@ -24,7 +24,7 @@ namespace SJL
         [SerializeField] private GameObject TrainingBox;
         [SerializeField] private GameObject specialTrainingBox;
         [SerializeField] private GameObject underBar;
-        [SerializeField] private GameObject progressCanvas;
+        //[SerializeField] private GameObject progressCanvas;
 
         [SerializeField] private StatefulComponent statefulComponent;
 
