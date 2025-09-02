@@ -609,7 +609,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5688046426596646479
 RectTransform:
   m_ObjectHideFlags: 0
@@ -681,12 +681,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5951b9425290b8d41851e73f1b343ba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  titleScreen: {fileID: 0}
   item: {fileID: 8015985087447760223, guid: 1b4a4a8fca428c94e90b864815a57d74, type: 3}
-  changeTogle: {fileID: 2632736631809983075}
-  returnButton: {fileID: 2090247082511793981}
-  deleteImage: {fileID: 2350858255532339175}
   uiContent: {fileID: 5845992440092831735}
   autoSaveContent: {fileID: 1116433258124220600}
+  returnButton: {fileID: 2090247082511793981}
+  changeTogle: {fileID: 2632736631809983075}
+  deleteImage: {fileID: 2350858255532339175}
 --- !u!1 &3236031719975263276
 GameObject:
   m_ObjectHideFlags: 0
@@ -1518,7 +1519,6 @@ GameObject:
   - component: {fileID: 1116433258124220600}
   - component: {fileID: 1516044948806833366}
   - component: {fileID: 4673278594968922724}
-  - component: {fileID: 8671236699510361774}
   m_Layer: 5
   m_Name: AutoSave Panel
   m_TagString: Untagged
@@ -1584,47 +1584,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8671236699510361774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8313213026597539488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4555e006608b44b06b593d420ba1547a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Buttons: []
-  Texts:
-  - Comment: 
-    Role: 0
-    Identificator: AutoSavePanel_AutoSaveTitle_00
-    IsTextMeshPro: 1
-    Text: {fileID: 0}
-    TMP: {fileID: 4383762155890043571}
-    Localize: 1
-  Animators: []
-  Containers: []
-  Sliders: []
-  Toggles: []
-  InnerComponents: []
-  Images: []
-  VideoPlayers: []
-  Dropdowns: []
-  TextsInputs: []
-  Objects: []
-  States: []
-  LocalizeOnEnable: 1
-  ApplyInitialStateOnEnable: 0
-  _initialState:
-    Comment: 
-    Role: -1
-    NodeData:
-      Position: {x: 0, y: 0}
-      ParentRoles: 
-    Description: []
 --- !u!1 &8398229864782312348
 GameObject:
   m_ObjectHideFlags: 0

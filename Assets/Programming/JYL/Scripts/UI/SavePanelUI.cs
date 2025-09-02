@@ -28,14 +28,15 @@ namespace JYL
 
         [Inject] private IUiManager uiManager;
         [Inject] private ISaveManager saveManager;
+        [Inject] readonly DiContainer container;
 
         private List<SaveData> allSave = new(11);
         private SaveData autoSave;
         private Dictionary<int, SaveFileItem> items = new();
-
+        
+        private RectTransform rectTransform;
         private SaveMode mode;
 
-        private RectTransform rectTransform;
         
         private void Awake()
         {
@@ -49,22 +50,21 @@ namespace JYL
             allSave = saveManager.GetAllSave();
             autoSave = saveManager.GetAutoSaveData();
             
+            SaveFileItem autoTmp = container.InstantiatePrefabForComponent<SaveFileItem>(item, autoSaveContent);
             // 오토 세이브 있을 경우 세팅
             if (autoSave != null)
             {
                 allSave.Remove(autoSave);
-                SaveFileItem tmp = Instantiate(item, autoSaveContent);
-                items[0] = tmp;
-                tmp.Init(autoSave,0, rectTransform);
-                tmp.loadButton.interactable = true;
-                tmp.deleteButton.interactable = true;
+                items[0] = autoTmp;
+                autoTmp.Init(autoSave,0, rectTransform);
+                autoTmp.loadButton.interactable = true;
+                autoTmp.deleteButton.interactable = true;
             }
             // 없을 경우 세팅
             else
             {
-                SaveFileItem tmp = Instantiate(item, autoSaveContent);
-                items[0] = tmp;
-                tmp.Init(0, rectTransform);
+                items[0] = autoTmp;
+                autoTmp.Init(0, rectTransform);
             }
             
             // 슬롯 인덱스 순으로 정렬
@@ -72,7 +72,7 @@ namespace JYL
 
             for (int i = 1; i <= 10; i++)
             {
-                SaveFileItem tmp = Instantiate(item,uiContent);
+                SaveFileItem tmp = container.InstantiatePrefabForComponent<SaveFileItem>(item,uiContent);
                 items[i] = tmp;
                 
                 if (!allSave.HasIndex(i)) // 세이브파일이 비어있을 경우
@@ -96,6 +96,10 @@ namespace JYL
                 .AddTo(this);
         }
 
+        private void OnEnable()
+        {
+            if(mode ==  SaveMode.Delete) OnClickTogle();
+        }
         
         private void OnClickExit() // X 버튼 누를 시
         {

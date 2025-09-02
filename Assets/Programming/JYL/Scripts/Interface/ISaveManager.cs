@@ -13,6 +13,7 @@ namespace JYL
         void CreateAutoSaveData(string playerName, string clanName, string uid = "TestAutoSave123");
         void AutoSave();
         void SaveProgress(SaveData save, int slotNumber);
+        void SaveProgress(int slotNumber);
 
         // 로드
         // void AutoLoad();

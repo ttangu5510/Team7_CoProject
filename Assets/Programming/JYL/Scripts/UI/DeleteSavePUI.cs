@@ -38,6 +38,8 @@ namespace JYL
                     confirmSubject.OnCompleted();
                     confirmPanel.SetActive(true);
                     confirmButton.gameObject.SetActive(true);
+                    yesButton.gameObject.SetActive(false);
+                    cancelButton.gameObject.SetActive(false);
                 })
                 .AddTo(this);
             

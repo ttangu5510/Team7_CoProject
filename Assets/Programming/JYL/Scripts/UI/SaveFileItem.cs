@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using JWS;
+using Newtonsoft.Json.Converters;
 using TMPro;
 using UniRx;
 using UnityEngine;
@@ -32,6 +35,8 @@ namespace JYL
         private RectTransform parent; 
         private IDisposable subscription;
 
+        
+        
         public void Init(SaveData save, int saveSlotIndex, RectTransform parent) // 세이브 있는 슬롯
         {
             this.parent = parent;
@@ -40,8 +45,11 @@ namespace JYL
             string season = save.time.season.ToString();
             string week = (save.time.week % 40).ToString();
 
+            // 현재 플레이 중인 인게임 시간
             progressedYearText.text = $"{year}년차 {season} {week}주차";
-            savedTimeText.text = save.time.lastSaveUtcIso;
+
+            // 마지막 저장 시간
+            savedTimeText.text = Util.UtcToKst(save.time.lastSaveUtcIso);
         
             // 버튼 이벤트 연결
             loadButton.OnClickAsObservable()
@@ -50,6 +58,9 @@ namespace JYL
             deleteButton.OnClickAsObservable()
                 .Subscribe(_ => OnClickDeleteButton(save))
                 .AddTo(this);
+            
+            // 처음에는 불러오는 상태이니 deleteButton 꺼둠
+            deleteButton.gameObject.SetActive(false);
         }
 
         public void Init(int saveSlotIndex, RectTransform parent) // 빈 슬롯
@@ -77,6 +88,10 @@ namespace JYL
 
         private void OnClickLoadButton(SaveData save)
         {
+            if (saveManager == null)
+            {
+                Debug.Log("이거 널임");
+            }
             saveManager.LoadProgress(save);
             SceneManager.LoadSceneAsync("JYL_MainScene");
         }
@@ -101,6 +116,7 @@ namespace JYL
         {
             saveManager.DeleteSaveFile(save, saveSlotIndex);
             Init(saveSlotIndex, parent); // 빈 데이터로 처리
+            SetDeleteButton(); // 삭제 버튼 활성화로 변경
         }
     }
 }
