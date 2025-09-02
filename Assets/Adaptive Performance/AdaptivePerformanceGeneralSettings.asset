@@ -88,7 +88,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Keys: 0100000007000000
   Values:
-  - {fileID: -5227063591503475039}
+  - {fileID: 6022817625375606176}
   - {fileID: 5074463045551437882}
 --- !u!114 &590267514127511318
 MonoBehaviour:
@@ -139,6 +139,21 @@ MonoBehaviour:
   m_AutomaticRunning: 0
   m_Loaders:
   - {fileID: 11400000, guid: fb4fd9bba74626943a8e745769dd7d40, type: 2}
+--- !u!114 &2120446980861526051
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Standalone Providers
+  m_EditorClassIdentifier: Unity.AdaptivePerformance:UnityEngine.AdaptivePerformance:AdaptivePerformanceManagerSettings
+  m_AutomaticLoading: 0
+  m_AutomaticRunning: 0
+  m_Loaders: []
 --- !u!114 &5074463045551437882
 MonoBehaviour:
   m_ObjectHideFlags: 2
@@ -153,6 +168,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.AdaptivePerformance:UnityEngine.AdaptivePerformance:AdaptivePerformanceGeneralSettings
   m_LoaderManagerInstance: {fileID: 1656546385805716715}
   m_InitManagerOnStart: 1
+--- !u!114 &6022817625375606176
+MonoBehaviour:
+  m_ObjectHideFlags: 2
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: Standalone Settings
+  m_EditorClassIdentifier: Unity.AdaptivePerformance:UnityEngine.AdaptivePerformance:AdaptivePerformanceGeneralSettings
+  m_LoaderManagerInstance: {fileID: 2120446980861526051}
+  m_InitManagerOnStart: 0
 --- !u!114 &6357841032262422084
 MonoBehaviour:
   m_ObjectHideFlags: 2
