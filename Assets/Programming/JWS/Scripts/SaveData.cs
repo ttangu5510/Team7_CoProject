@@ -17,6 +17,9 @@ namespace JWS
         
         // 선수단 이름
         public string clanName;
+        
+        // 세이브 슬롯
+        public int saveSlotIndex = -1;
 
         // 시간
         public TimeStamp time = new(); // 인게임 시간 + 현실 플레이 타임
@@ -94,7 +97,7 @@ namespace JWS
 
         public CoachSave FindCoach(int id)
         {
-            return coachSaves.Find(coach => coach.id == id); // CoachState.id가 string이므로 변환
+            return coachSaves.Find(coach => coach.id == id);
         }
     }
 

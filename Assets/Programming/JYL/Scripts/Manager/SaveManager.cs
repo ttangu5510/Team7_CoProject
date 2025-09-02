@@ -14,14 +14,14 @@ namespace JYL
         #else
         private static string savePath = Application.persistentDataPath + "/Save";
         #endif
-        
-        public List<SaveData> saves = new();
-        public SaveData curSave;
-        
-        public readonly Dictionary<string, DateTime> savedTime = new(); // 세이브 파일이 저장된 시간 딕셔너리
-        public readonly Dictionary<string, SaveData> saveDataByName = new(); //세이브 객체를 이름으로 찾는 딕셔너리
 
-        private readonly int slotIndex = -1; // 현재 선택중인 세이브데이터의 인덱스
+        private List<SaveData> saves = new();
+        private SaveData curSave;
+
+        private readonly Dictionary<string, DateTime> savedTime = new(); // 세이브 파일이 저장된 시간 딕셔너리
+        private readonly Dictionary<string, SaveData> saveDataByName = new(); //세이브 객체를 이름으로 찾는 딕셔너리
+
+        private int slotIndex = -1; // 현재 선택중인 세이브데이터의 인덱스
         private long PlayTimeTick = 0; // 실제 플레이 타임 재는 타이머
             
         #region 초기화
@@ -67,13 +67,14 @@ namespace JYL
         //     AutoSave(); // 게임 맨 처음 시작한 것은 오토세이브로 넘어감
         // }
 
-        public void CreateSaveData(string playerName, string clanName, string uid, int slotNumber) // 슬롯 넘버 기반 세이브파일 생성. 인게임 UI에서 사용함
+        public void CreateSaveData(int slotNumber) // 슬롯 넘버 기반 세이브파일 생성. 인게임 UI에서 사용함
         {
-            SaveData save = new SaveData();
-            save.Init(uid,playerName,clanName);
-            saves.Add(save);
-            curSave = save;
-            SaveProgress(save,slotNumber);
+            if (slotNumber == 0)
+            {
+                Debug.LogWarning("세이브에 들어온 인덱스가 잘못됨. 0 이상이어야 함");
+                return;
+            }
+            SaveProgress(curSave,slotNumber);
         }
 
         public void CreateAutoSaveData(string playerName, string clanName, string uid) // 게임 맨 처음 시작할 때, 이름 입력한 것으로 세이브파일 생성.
@@ -97,6 +98,9 @@ namespace JYL
 
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
             string fileName = "AutoSave.json"; // 자동저장에 사용되는 파일은 하나 뿐
+            
+            // 세이브 데이터의 인덱스 최신화
+            curSave.saveSlotIndex = 0; // 오토세이브 슬롯번호. 수동은 1부터 시작
             
             // 딕셔너리 최신화
             savedTime[fileName] =  DateTime.UtcNow;
@@ -151,7 +155,12 @@ namespace JYL
             {
                 Directory.CreateDirectory(savePath);
             }
+            
+            // 저장될 파일 이름 설정
             string fileName = $"Save_{slotNumber}.json";
+            
+            // 세이브 슬롯 인덱스 저장
+            save.saveSlotIndex = slotNumber;
             
             // 딕셔너리 최신화
             savedTime[fileName] = DateTime.UtcNow;
@@ -176,8 +185,6 @@ namespace JYL
         }
         #endregion
         
-        
-        
         #region 로드
 
         // public void AutoLoad() // 자동 저장 된 파일들 중에서 자동 불러오기에 사용됨
@@ -201,10 +208,24 @@ namespace JYL
         {
             curSave = saveDataByName[fileName];
         }
+        
+        #endregion
+        
+        #region 삭제
 
-        public SaveData GetCurrentSave()
+        public void DeleteSaveFile(SaveData save, int inputIndex) // 파일을 삭제. 세이브 데이터 객체도 삭제 (로비화면이라 가능)
         {
-            return curSave;
+            string filePath;
+            if (inputIndex == 0)
+            {
+                filePath = Path.Combine(savePath, $"AutoSave.json");
+            }
+            else
+            {
+                filePath = Path.Combine(savePath, $"Save_{inputIndex}.json");
+            }
+            File.Delete(filePath);
+            saves.Remove(save);
         }
         #endregion
         
@@ -242,8 +263,6 @@ namespace JYL
             }
         }
         #endregion
-
-
 
         #region 코치 영입, 은퇴, 방출, 업데이트
 
@@ -317,6 +336,38 @@ namespace JYL
         }
         #endregion
         
+        #region 리스트 추출
+        // 세이브 데이터 리스트 반환
+        public List<SaveData> GetAllSave()
+        {
+            return saves;
+        }
+        
+        public SaveData GetCurrentSave()
+        {
+            return curSave;
+        }
+
+        public void SetSlotIndex(int index)
+        {
+            slotIndex = index;
+        }
+
+        public int GetCurrentSlotIndex()
+        {
+            return slotIndex;
+        }
+
+        public SaveData GetAutoSaveData()
+        {
+            if (!saveDataByName.TryGetValue("AutoSave.json", out SaveData autoSave))
+            {
+                Debug.Log("오토세이브 없음");
+                return null;
+            }
+            return autoSave;
+        }
+        #endregion
     }
 }
 

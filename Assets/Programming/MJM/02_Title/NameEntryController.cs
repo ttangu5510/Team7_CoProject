@@ -54,7 +54,7 @@ public class NameEntryController : MonoBehaviour
         string protagonistName = nameField.text.Trim();
         string teamName = teamNameField.text.Trim();
         if (saveManager == null) Debug.Log("세이브매니저 널");
-        saveManager.CreateSaveData(protagonistName,teamName);
+        saveManager.CreateAutoSaveData(protagonistName,teamName,"testUid123"); 
 
         nameInputPopup.SetActive(false);
         SceneManager.LoadSceneAsync("MMJ_MainScene");
