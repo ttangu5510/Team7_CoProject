@@ -27,7 +27,6 @@ namespace SJL
         [SerializeField] private Slider speedSlider;
         [SerializeField] private Slider balanceSlider;
         [SerializeField] private Slider fatigueSlider;
-        [SerializeField] private Slider mentalSlider;
 
 
         public void SetPlayer(DomAthEntity player)
@@ -47,7 +46,6 @@ namespace SJL
             speedSlider.value = player.stats.speed;
             balanceSlider.value = player.stats.balance;
             fatigueSlider.value = player.stats.fatigue;
-            mentalSlider.value = 100; // TODO : 이거 있는건지 확인필요
 
         }
 
