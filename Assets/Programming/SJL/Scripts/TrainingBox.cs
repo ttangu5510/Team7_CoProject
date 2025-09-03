@@ -52,8 +52,6 @@ namespace SJL
         
         private void Awake()
         {
-            // 실제 프로젝트에서는 배치 UI에서 선택한 선수 객체를 받아서 배치합니다.
-            // 아래는 예시로 더미 선수 할당
             athleteList.Clear();
             assignDict.Clear();
             

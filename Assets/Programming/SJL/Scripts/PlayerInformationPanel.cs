@@ -27,7 +27,14 @@ namespace SJL
         [SerializeField] private Slider speedSlider;
         [SerializeField] private Slider balanceSlider;
         [SerializeField] private Slider fatigueSlider;
-        [SerializeField] private Slider mentalSlider;
+        [Header("Player Rating")]
+        [SerializeField] private TextMeshProUGUI staminaRatingText;
+        [SerializeField] private TextMeshProUGUI agilityRatingText;
+        [SerializeField] private TextMeshProUGUI flexibilityRatingText;
+        [SerializeField] private TextMeshProUGUI techniqueRatingText;
+        [SerializeField] private TextMeshProUGUI speedRatingText;
+        [SerializeField] private TextMeshProUGUI balanceRatingText;
+        [SerializeField] private TextMeshProUGUI fatigueRatingText;
 
 
         public void SetPlayer(DomAthEntity player)
@@ -47,8 +54,14 @@ namespace SJL
             speedSlider.value = player.stats.speed;
             balanceSlider.value = player.stats.balance;
             fatigueSlider.value = player.stats.fatigue;
-            mentalSlider.value = 100; // TODO : 이거 있는건지 확인필요
-
+            // 등급 텍스트 설정
+            staminaRatingText.text = GetRating(player.stats.health);
+            agilityRatingText.text = GetRating(player.stats.quickness);
+            flexibilityRatingText.text = GetRating(player.stats.flexibility);
+            techniqueRatingText.text = GetRating(player.stats.technic);
+            speedRatingText.text = GetRating(player.stats.speed);
+            balanceRatingText.text = GetRating(player.stats.balance);
+            fatigueRatingText.text = GetRating(player.stats.fatigue);
         }
 
         private void Start()
@@ -61,6 +74,14 @@ namespace SJL
             // 정보 패널 닫기
             Debug.Log("정보 패널 닫힘");
             gameObject.SetActive(false);
+        }
+
+        private string GetRating(int value) // 등급 계산
+        {
+            if (value >= 85) return "A";
+            if (value >= 70) return "B";
+            if (value >= 50) return "C";
+            return "D";
         }
 
     }
