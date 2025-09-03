@@ -11,5 +11,8 @@ public enum InnerComponentRole
     RankScreen = 1760291168,
     ResultScreen = 470027097,
     RewardScreen = -96959049,
+    FirtsTab = 1571085577,
+    SecondTab = 1026595839,
+    ThirdTab = 1424546666,
 
 }
