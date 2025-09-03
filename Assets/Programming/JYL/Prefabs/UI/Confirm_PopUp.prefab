@@ -89,6 +89,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c297d9c71dd6a341881bf29ccf5755f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  afterPanel: {fileID: 1118983321259032976}
+  mainText: {fileID: 959255615017517719}
+  subText: {fileID: 8708486613138403943}
+  afterText: {fileID: 8673263642180298591}
+  confirmButton: {fileID: 8955456813676894153}
+  cancelButton: {fileID: 4590904420366747313}
+  afterConfirmButton: {fileID: 6485172383422916549}
 --- !u!1 &1118983321259032976
 GameObject:
   m_ObjectHideFlags: 0
@@ -448,7 +455,7 @@ GameObject:
   - component: {fileID: 5948198146033044652}
   - component: {fileID: 8955456813676894153}
   m_Layer: 5
-  m_Name: YesButton
+  m_Name: ConfirmButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -588,10 +595,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4889835945268360500}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0.20215414}
+  m_AnchorMax: {x: 1, y: 0.7956504}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5329605603765556459
 CanvasRenderer:
@@ -657,7 +664,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -704,7 +711,7 @@ GameObject:
   - component: {fileID: 529995600346645260}
   - component: {fileID: 6485172383422916549}
   m_Layer: 5
-  m_Name: ConfirmButton
+  m_Name: AfterConfirmButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -844,10 +851,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 747361085080997008}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 8, y: 25}
-  m_SizeDelta: {x: 0, y: 50}
+  m_AnchorMin: {x: 0, y: 0.32920304}
+  m_AnchorMax: {x: 1, y: 0.8113008}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8619166580586075598
 CanvasRenderer:
@@ -913,7 +920,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -979,10 +986,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 747361085080997008}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.2}
-  m_AnchorMax: {x: 1, y: 0.2}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0.32920304}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 50}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1976776536803625957
 CanvasRenderer:
@@ -1049,7 +1056,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1096,7 +1103,7 @@ GameObject:
   - component: {fileID: 7478836213936543236}
   - component: {fileID: 4590904420366747313}
   m_Layer: 5
-  m_Name: NoButton
+  m_Name: CancelButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
