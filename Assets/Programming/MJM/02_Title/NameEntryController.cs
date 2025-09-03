@@ -54,10 +54,10 @@ public class NameEntryController : MonoBehaviour
         string protagonistName = nameField.text.Trim();
         string teamName = teamNameField.text.Trim();
         if (saveManager == null) Debug.Log("세이브매니저 널");
-        saveManager.CreateSaveData(protagonistName,teamName);
+        saveManager.CreateAutoSaveData(protagonistName,teamName,"testUid123"); 
 
         nameInputPopup.SetActive(false);
-        SceneManager.LoadSceneAsync("MMJ_MainScene");
+        SceneManager.LoadSceneAsync("JYL_MainScene");
     }
 
     void ShowError(string message)
@@ -71,7 +71,5 @@ public class NameEntryController : MonoBehaviour
         if (errorPopup) errorPopup.SetActive(false);  // 팝업 닫고
         if (nameInputPopup) nameInputPopup.SetActive(true);   // 입력 팝업으로 복귀(이미 켜져 있으면 그대로)
     }
-
-    // TODO : 세이브 매니저에서 데이터 불러오기, 세이브 패널 열기
     
 }

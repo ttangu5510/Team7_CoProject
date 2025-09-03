@@ -382,7 +382,8 @@ public class UIManager : MonoBehaviour, IUiManager
         popupBlocker.SetActive(anyPopup);
 
         // 블로커 Canvas 보장
-        var blockerCanvas = popupBlocker.GetComponent<Canvas>() ?? popupBlocker.AddComponent<Canvas>();
+        // TODO : 테스트. GetComponentInParent로 바꿈
+        var blockerCanvas = popupBlocker.GetComponentInParent<Canvas>() ?? popupBlocker.AddComponent<Canvas>();
         blockerCanvas.overrideSorting = true;
 
         if (anyPopup)

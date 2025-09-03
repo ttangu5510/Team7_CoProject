@@ -66,7 +66,7 @@ public class TitleSceneManager : MonoBehaviour
 
     // 버튼에서 직접 호출하기 쉽게 래퍼 메서드 준비
     private void OnClickBeginButton() => ShowPanel(loadingPanel);
-    private void OnClickContinueButton() => ShowPanel(loadingPanel);
+    private void OnClickContinueButton() => ShowPanel(SaveUIPanel);
     private void OnClickInfoButton() => ShowPanel(nameInputPopup);
     private void OnClickSkipLoadingButton() => ShowPanel(openingPanel);
     private void OnClickSkipOpeningButton() => ShowPanel(nameInputPopup);
