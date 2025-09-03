@@ -91,9 +91,9 @@ namespace JYL
                 .AddTo(this);
             
             // X 버튼 이벤트 연결
-            returnButton.OnClickAsObservable()
-                .Subscribe(_=>OnClickExit())
-                .AddTo(this);
+            // returnButton.OnClickAsObservable()
+            //     .Subscribe(_=>OnClickExit())
+            //     .AddTo(this);
         }
 
         private void OnEnable()

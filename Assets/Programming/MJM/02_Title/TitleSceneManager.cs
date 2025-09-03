@@ -17,6 +17,7 @@ public class TitleSceneManager : MonoBehaviour
     [SerializeField] private Button beginButton;
     [SerializeField] private Button continueButton;
     [SerializeField] private Button infoButton;
+    [SerializeField] private Button exitSaveButton;
     [SerializeField] private Button skipLoadingButton;
     [SerializeField] private Button skipOpeningButton;
     
@@ -50,6 +51,10 @@ public class TitleSceneManager : MonoBehaviour
             .Subscribe(_=>OnClickSkipOpeningButton())
             .AddTo(this);
         
+        exitSaveButton.OnClickAsObservable()
+            .Subscribe(_=>OnClickExitSaveButton())
+            .AddTo(this);
+        
     }
 
     private void ShowPanel(GameObject target)
@@ -70,5 +75,6 @@ public class TitleSceneManager : MonoBehaviour
     private void OnClickInfoButton() => ShowPanel(nameInputPopup);
     private void OnClickSkipLoadingButton() => ShowPanel(openingPanel);
     private void OnClickSkipOpeningButton() => ShowPanel(nameInputPopup);
+    private void OnClickExitSaveButton() => ShowPanel(titlePanel);
     private void OnClickErrorOk() => ShowPanel(nameInputPopup); // 에러 확인 → 입력창으로
 }
