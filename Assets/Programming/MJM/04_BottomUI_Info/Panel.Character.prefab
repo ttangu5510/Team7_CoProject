@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 3697703472631002409}
   - component: {fileID: 893520254917079649}
   m_Layer: 5
-  m_Name: PlayerInfo_Panel
+  m_Name: PlayerInformation_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -193,7 +193,7 @@ GameObject:
   - component: {fileID: 5361290868832276531}
   - component: {fileID: 6727597209090520614}
   m_Layer: 5
-  m_Name: Coach_Panel
+  m_Name: CoachInformation_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -405,7 +405,7 @@ GameObject:
   - component: {fileID: 4987175382620672391}
   - component: {fileID: 3284924922911933626}
   m_Layer: 5
-  m_Name: Squad information_Panel
+  m_Name: CoachList_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -604,81 +604,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!1 &1476747195708744374
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 197474762220570304}
-  - component: {fileID: 1834298469238537911}
-  - component: {fileID: 5855593221418141420}
-  m_Layer: 5
-  m_Name: Panel
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &197474762220570304
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1476747195708744374}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4175118895395806246}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.00012207031, y: 1.6340942}
-  m_SizeDelta: {x: -45.7577, y: -29.4158}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &1834298469238537911
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1476747195708744374}
-  m_CullTransparentMesh: 1
---- !u!114 &5855593221418141420
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1476747195708744374}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &2064522521603664228
 GameObject:
   m_ObjectHideFlags: 0
@@ -691,7 +616,7 @@ GameObject:
   - component: {fileID: 545113048100948274}
   - component: {fileID: 9215261075891365302}
   m_Layer: 5
-  m_Name: recruited player_Panel
+  m_Name: RecruitedCoach_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -769,7 +694,7 @@ GameObject:
   - component: {fileID: 2332083021202773344}
   - component: {fileID: 7538997012836700399}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: CoachInformation_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -889,7 +814,7 @@ GameObject:
   - component: {fileID: 5031304776324732567}
   - component: {fileID: 5533574556850550446}
   m_Layer: 5
-  m_Name: recruited player_Panel
+  m_Name: RecruitedPlayer_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -907,7 +832,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 197474762220570304}
   - {fileID: 8632896064344357384}
   - {fileID: 3827991754757532761}
   m_Father: {fileID: 9064737074938470812}
@@ -967,7 +891,7 @@ GameObject:
   - component: {fileID: 6210768524737864103}
   - component: {fileID: 5752792857565300454}
   m_Layer: 5
-  m_Name: Squad Title Text
+  m_Name: PlayerListTitle_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1642,7 +1566,7 @@ GameObject:
   - component: {fileID: 8087194914256520809}
   - component: {fileID: 6647036804584322147}
   m_Layer: 5
-  m_Name: Squad Title Text
+  m_Name: CoachListTitle_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2059,7 +1983,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6348222886972248206}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2149,7 +2073,7 @@ GameObject:
   - component: {fileID: 3899923459095507332}
   - component: {fileID: 8383787219174737737}
   m_Layer: 5
-  m_Name: Squad information_Panel
+  m_Name: PlayerList_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2226,7 +2150,7 @@ GameObject:
   - component: {fileID: 7609496466386518298}
   - component: {fileID: 7969221362709570042}
   m_Layer: 5
-  m_Name: Button
+  m_Name: PlayerInformation_Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
