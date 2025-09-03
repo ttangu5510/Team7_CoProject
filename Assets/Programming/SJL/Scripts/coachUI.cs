@@ -27,8 +27,8 @@ namespace SJL
 
         public CoachEntity coachData; // 현재 연동된 선수 정보
 
-        private int recruitCost = 500;    // 영입 비용
-        private int recruitSuccessRate = 60; // 영입 성공 확률
+        private int recruitCost;    // 영입 비용
+        private int recruitSuccessRate; // 영입 성공 확률
 
         [Inject]
         private IResourceController resourceController;
@@ -38,7 +38,7 @@ namespace SJL
         {
             nameText.text = coach.entityName;
             gradeText.text = coach.grade.ToString();
-            //ageText.text = coach.recruitAge.ToString();
+            ageText.text = coach.curAge.ToString();
 
             coachData = coach;
 
@@ -46,7 +46,7 @@ namespace SJL
             switch (coach.grade)
             {
                 case CoachGrade.스카우트센터:
-                    recruitSuccessRate = 60;
+                    recruitSuccessRate = 50;
                     recruitCost = 1000;
                     break;
                 case CoachGrade.선수출신:
