@@ -16,8 +16,9 @@ namespace SJL
 
         [Inject] private DomAthService athService;
         [Inject] private IResourceController resourceController;
+        [Inject] private DiContainer container;
 
-        [SerializeField] public GameObject playerUIPrefab;
+        [SerializeField] public PlayerUI playerUIPrefab;
         [SerializeField] public Transform playerListPanel; // 선수들을 담을 부모 오브젝트
         [SerializeField] public GameObject playerInformationPanel;
 
@@ -67,8 +68,8 @@ namespace SJL
             int displayCount = Mathf.Min(5, shuffledList.Count);
             for (int i = 0; i < displayCount; i++)
             {
-                GameObject go = Instantiate(playerUIPrefab, playerListPanel);
-                PlayerUI ui = go.GetComponent<PlayerUI>();
+                PlayerUI ui = container.InstantiatePrefabForComponent<PlayerUI>(playerUIPrefab, playerListPanel);
+                //PlayerUI ui = go.GetComponent<PlayerUI>();
                 ui.SetPlayer(shuffledList[i]);
                 ui.playerInormationPanel = playerInformationPanel;
 
