@@ -5608,6 +5608,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1605125455}
   - component: {fileID: 1605125457}
+  - component: {fileID: 1605125458}
   m_Layer: 5
   m_Name: Header Panel
   m_TagString: Untagged
@@ -5643,6 +5644,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1605125454}
   m_CullTransparentMesh: 1
+--- !u!114 &1605125458
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1605125454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 753fd2f23dbbf0b43b039129ebe97af3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.8392157, g: 0.7176471, b: 0.87058824, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_improveResolution: 0
+  m_Resolution: 0
+  m_useNativeSize: 0
+  shapeType: 1
+  n: 4
+  delta: 5
+  radius: 100
+  corners: 3
 --- !u!224 &1629934806 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4124149893401088490, guid: 3309e035521b59241aac031ec56787b7,
