@@ -91,9 +91,9 @@ namespace JYL
                 .AddTo(this);
             
             // X 버튼 이벤트 연결
-            returnButton.OnClickAsObservable()
-                .Subscribe(_=>OnClickExit())
-                .AddTo(this);
+            // returnButton.OnClickAsObservable()
+            //     .Subscribe(_=>OnClickExit())
+            //     .AddTo(this);
         }
 
         private void OnEnable()
@@ -106,7 +106,7 @@ namespace JYL
             titleScreen.SetActive(true);
             gameObject.SetActive(false);
         }
-
+        
         private void OnClickTogle() // 불러오기/삭제하기 전환 버튼 누를 시
         {
             deleteImage.gameObject.SetActive(!deleteImage.gameObject.activeSelf);
