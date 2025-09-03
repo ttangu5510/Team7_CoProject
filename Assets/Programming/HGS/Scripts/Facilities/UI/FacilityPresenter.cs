@@ -161,20 +161,17 @@ namespace SHG
       this.scrollView.normalizedPosition = new (
         this.scrollView.normalizedPosition.x,
         1f);
-      if (this.facilitiesController.Selected.Value != null &&
-        this.facilitiesController.Selected.Value.Value.type == FacilityType.TrainingCenter) {
-        if (index == 0) {
-          this.transform.DOLocalMoveY(
-            endValue: -SHOW_Y_OFFSET,
-            duration: 0.5f)
-            .SetEase(Ease.InOutSine);
-        }
-        else {
-          this.transform.DOLocalMoveY(
-            endValue: 0,
-            duration: 0.5f)
-            .SetEase(Ease.InOutSine);
-        }
+      if (index == 0) {
+        this.transform.DOLocalMoveY(
+          endValue: -SHOW_Y_OFFSET,
+          duration: 0.5f)
+          .SetEase(Ease.InOutSine);
+      }
+      else {
+        this.transform.DOLocalMoveY(
+          endValue: 0,
+          duration: 0.5f)
+          .SetEase(Ease.InOutSine);
       } 
     }
   }
