@@ -5,7 +5,7 @@ using UnityEngine;
 namespace JYL
 {
     [System.Serializable]
-    public class CoachSave //코치 정보를 저장하는 세이브 객체
+    public record CoachSave //코치 정보를 저장하는 세이브 객체
     {
         public int id;
         public int age;

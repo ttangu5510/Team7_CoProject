@@ -101,14 +101,15 @@ namespace JYL
             // 현재 플레이중인 세이브 파일 가져옴
             SaveData currentSaveData = saveManager.GetCurrentSave();
             
-            if (currentSaveData != null) // 세이브 파일이 있을 경우, 덮어씌워야 함.
+            if (save != null) // 세이브 파일이 있을 경우, 덮어씌워야 함.
             {
                 popUp.Init(overrideText, ConfirmState.YesOrNoAndConfirm); // 팝업 내용 채우기
+                
                 popUp.ConfirmSubject.Subscribe(confirm => // 팝업의 클릭 결과 이벤트 구독
                 {
-                    if (confirm)
+                    if (confirm) // 만약 "예"를 눌렀을 경우
                     {
-                        saveManager.SaveProgress(currentSaveData, slotNumber);
+                        saveManager.SaveProgress(slotNumber); // 현재 사용중인 세이브 데이터 객체를 해당 슬롯에 저장
                         Init(currentSaveData, slotNumber, parent); // UI 정보 최신화
                     }
                 }).AddTo(this);
@@ -116,7 +117,7 @@ namespace JYL
             
             else // 세이브 파일이 없을 경우, 저장하고 확인만 함.
             {
-                saveManager.SaveProgress(currentSaveData, slotNumber); // 저장
+                saveManager.SaveProgress(slotNumber); // 저장
                 Init(currentSaveData, slotNumber, parent); // UI 정보 최신화
                 popUp.Init(newWriteText,ConfirmState.OnlyConfirm);
             }

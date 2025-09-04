@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using JWS;
+using Unity.VisualScripting;
+using UnityEditor.Rendering;
 
 namespace JYL
 {
@@ -52,7 +56,6 @@ namespace JYL
                 
                 saves.Add(save);
                 string fileName = Path.GetFileName(file);
-                Debug.Log(fileName); // TODO : 로그 테스트
                 savedTime[fileName] = File.GetCreationTime(file);
                 saveDataByName[fileName] = save;
             }
@@ -150,10 +153,12 @@ namespace JYL
         //     
         //     Debug.Log($"세이브 파일 저장됨{path}");
         // }
-        public void SaveProgress(int slotNumber)
+        
+        public void SaveProgress(int slotNumber) // 현재 사용중인 세이브 객체를 저장할 때 사용하는 함수
         {
             SaveProgress(curSave, slotNumber);
         }
+        
         public void SaveProgress(SaveData save, int slotNumber) // 현재 사용중인 세이브 객체를 세이브 파일로 저장함. 슬롯번호 기준
         {
             if (!Directory.Exists(savePath))
@@ -163,30 +168,47 @@ namespace JYL
             
             // 저장될 파일 이름 설정
             string fileName = $"Save_{slotNumber}.json";
-            
+
+            // 입력받은 세이브로 세로운 세이브 객체 생성
+            // TODO : 기술문서 작성( mutable, immutable, record, jsonUtility, with )
+            SaveData newSave = save with
+            {
+                buildings =  save.buildings.ConvertAll( building => building with{}),
+                achievements = save.achievements.ConvertAll( achievement => achievement with{}),
+                athleteSaves = save.athleteSaves.ConvertAll( athleteSave => athleteSave with{}),
+                coachSaves = save.coachSaves.ConvertAll( coachSave => coachSave with{}),
+                currencies = save.currencies with{},
+                encyclopedia = save.encyclopedia.ConvertAll( encyclopedia => encyclopedia with{}),
+                quests = save.quests.ConvertAll( quest => quest with{})
+            };
             // 세이브 슬롯 인덱스 저장
-            save.saveSlotIndex = slotNumber;
+            newSave.saveSlotIndex = slotNumber;
             
             // 딕셔너리 최신화
             savedTime[fileName] = DateTime.UtcNow;
-            saveDataByName[fileName] = save;
+            saveDataByName[fileName] = newSave;
             
             // 현재까지의 플레이 시간 저장
-            DateTime lastSavedTime = DateTime.TryParse(save.time.lastSaveUtcIso, out DateTime lastSaved) ? lastSaved : DateTime.UtcNow;
+            DateTime lastSavedTime = DateTime.TryParse(newSave.time.lastSaveUtcIso,null, DateTimeStyles.AdjustToUniversal, out DateTime lastSaved) ? lastSaved : DateTime.UtcNow;
             PlayTimeTick = DateTime.UtcNow.Ticks - lastSavedTime.Ticks;
-            save.time.playTick =  PlayTimeTick;
+            newSave.time.playTick +=  PlayTimeTick;
             
             // 현재시간 받아오기
             string timestamp = DateTime.UtcNow.ToString("o");
             // 마지막으로 저장된 시간 갱신
-            save.time.lastSaveUtcIso = timestamp;
+            newSave.time.lastSaveUtcIso = timestamp;
             
             // 세이브 파일 저장
             string path = Path.Combine(savePath, fileName);
-            string json = JsonUtility.ToJson(save,true);
+            string json = JsonUtility.ToJson(newSave,true);
             File.WriteAllText(path,json);
             
             Debug.Log($"세이브 파일 저장됨{path}");
+            
+            // 세이브 객체 리스트에 새로운 객체 추가
+            saves.Remove(saves.Where(save => save.saveSlotIndex == slotNumber) as SaveData);
+            saves.Add(newSave);
+            curSave = newSave;
         }
         #endregion
         
@@ -224,13 +246,15 @@ namespace JYL
             if (inputIndex == 0)
             {
                 filePath = Path.Combine(savePath, $"AutoSave.json");
+                saveDataByName.Remove("AutoSave.json");
             }
             else
             {
                 filePath = Path.Combine(savePath, $"Save_{inputIndex}.json");
+                saveDataByName.Remove($"Save_{inputIndex}.json");
             }
             File.Delete(filePath);
-            saves.Remove(save);
+            save.saveSlotIndex = -1; // 세이브 슬롯의 번호를 저장 안된 것으로 변경
         }
         #endregion
         

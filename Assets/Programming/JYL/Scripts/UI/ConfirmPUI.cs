@@ -88,7 +88,7 @@ namespace JYL
                 case ConfirmState.OnlyConfirm:
                     // 확인 버튼 세팅
                     confirmButton.gameObject.SetActive(false);
-                    cancelButton.gameObject.SetActive(true);
+                    cancelButton.gameObject.SetActive(false);
                     afterConfirmButton.gameObject.SetActive(true);
                     // 확인 버튼 구독
                     afterConfirmButton.OnClickAsObservable()

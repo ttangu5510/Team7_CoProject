@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.Serialization;
 using UnityEngine;
 
 namespace JYL
@@ -36,6 +37,14 @@ namespace JYL
             var utc = ParseUtcString(utcStr);
             var kst = TimeZoneInfo.ConvertTimeFromUtc(utc, KST);
             return kst.ToString(format);
+        }
+        
+        // GetOrAddComponent // 컴포넌트 가져오거나, 없으면 추가한다음 그것을 가져옴.
+        // Clone() // 클래스 객체 복사
+        public static T Clone<T>(this T instance) where T : ISerializable
+        {
+            string json = JsonUtility.ToJson(instance);
+            return JsonUtility.FromJson<T>(json);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace JWS
 
     /// 전체 세이브 데이터 루트
     [Serializable]
-    public class SaveData
+    public record SaveData
     {
         // 유저
         public string userId; // 유저 계정 고유 ID (예: "UID 72819210")
@@ -104,7 +104,7 @@ namespace JWS
 /* ========================= 시간 ========================= */
 
     [Serializable]
-    public class TimeStamp
+    public record TimeStamp
     {
         // 인게임 시간 - @년차 @계절 @주차
         public int yearCycle; // 년차
@@ -137,7 +137,7 @@ namespace JWS
 /* ========================= 재화 ========================= */
 
     [Serializable]
-    public class Currencies
+    public record Currencies
     {
         public int gold;
         public int fame;
@@ -147,7 +147,7 @@ namespace JWS
 /* ========================= 건물 ========================= */
 
     [Serializable]
-    public class BuildingState
+    public record BuildingState
     {
         public string buildingId; // 마스터 CSV의 건물 ID
         public bool isUnlocked; // 해방 여부
@@ -161,7 +161,7 @@ namespace JWS
 /* ========================= 퀘스트 ========================= */
 
     [Serializable]
-    public class QuestState
+    public record QuestState
     {
         public string id; // 퀘스트 ID(전체 목록 포함)
         public QuestProgress progress;
@@ -177,7 +177,7 @@ namespace JWS
 /* ========================= 업적 ========================= */
 
     [Serializable]
-    public class AchievementState
+    public record AchievementState
     {
         public string id; // 업적 ID(전체 목록 포함)
         public AchievementProgress progress;
@@ -193,7 +193,7 @@ namespace JWS
 /* ========================= 도감 ========================= */
 
     [Serializable]
-    public class EncyclopediaState
+    public record EncyclopediaState
     {
         public string id; // 도감 항목 ID(전체 목록 포함)
         public int obtainedCount; // 누적 획득 개수

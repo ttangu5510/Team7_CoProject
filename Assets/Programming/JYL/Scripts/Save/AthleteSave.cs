@@ -5,7 +5,7 @@ using UnityEngine;
 namespace JYL
 {
     [System.Serializable]
-    public class AthleteSave // json에 저장할 선수의 정보 클래스
+    public record AthleteSave // json에 저장할 선수의 정보 클래스
     {
         public int id;
         public int age;

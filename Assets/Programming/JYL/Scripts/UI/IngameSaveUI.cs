@@ -50,10 +50,15 @@ namespace JYL
         
         private void Init()
         {
+            // 기존 세이브 파일들 삭제
+            foreach (var item in items.Values)
+            {
+                Destroy(item.gameObject);
+            }
+            
             // 리스트/딕셔너리 클리어
             items.Clear();
             slotNumberDict.Clear();
-            allSave.Clear();
             
             // 현재 세이브 리스트 가져오기
             allSave = saveManager.GetAllSave();
@@ -61,7 +66,6 @@ namespace JYL
             foreach (var save in allSave)
             {
                 slotNumberDict[save.saveSlotIndex] = save;
-                Debug.Log($"현재 세이브 슬롯 인덱스{save.saveSlotIndex}");
             }
         }
 
