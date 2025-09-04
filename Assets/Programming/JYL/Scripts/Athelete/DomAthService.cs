@@ -42,12 +42,11 @@ namespace JYL
         {
             return repository.FindAll();
         }
-
-        public List<DomAthEntity> GetAllCanRecruitAthleteList()
+        public List<DomAthEntity> GetAllCanRecruitAthleteList() // 영입이 가능한 선수들 목록 뽑아가기
         {
             return repository.FindAllCanRecruit();
         }
-        public List<DomAthEntity> GetAllRecruitedAthleteList() // 영입된 선수 목록 뽑아가기
+        public List<DomAthEntity> GetAllRecruitedAthleteList() // 플레이어가 영입한 선수들 목록 뽑아가기. 은퇴한 선수 포함.
         {
             return repository.FindAllRecruited();
         }

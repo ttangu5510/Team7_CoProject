@@ -59,17 +59,17 @@ namespace JYL
     [System.Serializable]
     public enum CoachState
     {
-        Unrecruited,
-        Recruited,
-        Retired,
-        Hidden,
+        Unrecruited, // 영입 가능한 상태
+        Recruited, // 영입된 상태
+        Retired, // 은퇴 한 상태
+        Hidden, // 아직 숨겨져 있음(언락)
     }
 
     [System.Serializable]
     public enum CoachGrade
     {
-        스카우트센터 = 1,
-        선수출신
+        스카우트센터 = 1, // 일반
+        선수출신 // 엘리트
     }
 }
 

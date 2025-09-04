@@ -100,7 +100,7 @@ namespace JYL
         {
             // 팝업창에서 생성되는 이벤트 발행을 구독
             DeleteSavePUI del = Instantiate(deletePopUp, parent);
-            del.ConfirmSubject
+            del.ConfirmSubject // 이벤트 구독
                 .Subscribe(confirmed =>
                 {
                     if (confirmed)
