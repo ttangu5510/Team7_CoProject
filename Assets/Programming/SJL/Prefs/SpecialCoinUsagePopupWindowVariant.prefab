@@ -417,7 +417,7 @@ GameObject:
   - component: {fileID: 3860850592935003531}
   - component: {fileID: 8730965286805028860}
   m_Layer: 5
-  m_Name: Text (TMP) (2)
+  m_Name: requiredSpecialTrainingCoinsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -814,7 +814,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &69953322045140737
 RectTransform:
   m_ObjectHideFlags: 0
@@ -885,9 +885,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07ab1bb43576fcf45a0e1995f2c662c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SpecialTrainingCoins: {fileID: 9152188753272547126}
+  deployedPlayers: {fileID: 1532779544615483351}
+  requiredSpecialTrainingCoins: {fileID: 2543675239394838360}
+  remainingCoins: {fileID: 3992535726957296205}
+  centerText: {fileID: 8348565917081777404}
   leftButton: {fileID: 4178502795971308290}
   rightButton: {fileID: 3326416579304980046}
-  centerText: {fileID: 8348565917081777404}
+  cancelButton: {fileID: 6021309803914361480}
+  confirmButton: {fileID: 6940694478696631376}
 --- !u!1 &3356496753379834111
 GameObject:
   m_ObjectHideFlags: 0
@@ -1021,7 +1027,7 @@ GameObject:
   - component: {fileID: 5359582817968048854}
   - component: {fileID: 2543675239394838360}
   m_Layer: 5
-  m_Name: Text (TMP) (6)
+  m_Name: requiredSpecialTrainingCoins
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1156,7 +1162,7 @@ GameObject:
   - component: {fileID: 8674311658906762018}
   - component: {fileID: 7231551488468124595}
   m_Layer: 5
-  m_Name: Image
+  m_Name: LineImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1231,7 +1237,7 @@ GameObject:
   - component: {fileID: 5357845779379589498}
   - component: {fileID: 532090496818820085}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: abilityIncreaseText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1284,7 +1290,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBAA8\uB4E0 \uB2A5\uB825\uCE58 <color=#FF3333>30</color> \uC99D\uAC00"
+  m_text: "\uBAA8\uB4E0 \uB2A5\uB825\uCE58 <color=#FF3333>5</color> \uC99D\uAC00"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
@@ -1366,7 +1372,7 @@ GameObject:
   - component: {fileID: 8487571317251751331}
   - component: {fileID: 94821538808532554}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: SpecialTrainingCoinsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1501,7 +1507,7 @@ GameObject:
   - component: {fileID: 3432028657106196590}
   - component: {fileID: 9152188753272547126}
   m_Layer: 5
-  m_Name: Text (TMP) (4)
+  m_Name: SpecialTrainingCoins
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1636,7 +1642,7 @@ GameObject:
   - component: {fileID: 5428556193609144489}
   - component: {fileID: 2044370106959638189}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: deployedPlayersText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1980,7 +1986,7 @@ GameObject:
   - component: {fileID: 2299929010820698072}
   - component: {fileID: 1532779544615483351}
   m_Layer: 5
-  m_Name: Text (TMP) (5)
+  m_Name: deployedPlayers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2115,7 +2121,7 @@ GameObject:
   - component: {fileID: 7307174248652825517}
   - component: {fileID: 6406590343986698924}
   m_Layer: 5
-  m_Name: Text (TMP) (3)
+  m_Name: remainingCoinsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2505,7 +2511,7 @@ GameObject:
   - component: {fileID: 8875195511867611405}
   - component: {fileID: 3992535726957296205}
   m_Layer: 5
-  m_Name: Text (TMP) (7)
+  m_Name: remainingCoins
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

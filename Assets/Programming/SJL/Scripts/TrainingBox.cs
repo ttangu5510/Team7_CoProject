@@ -5,6 +5,7 @@ using JYL;
 using SHG;
 using TMPro;
 using UniRx;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -47,9 +48,10 @@ namespace SJL
 
         public List<DomAthEntity> athleteList = new();
         public Dictionary<DomAthEntity,TrainingType> assignDict = new();
-        
-        
-        
+
+        private int trainingVolume = 1;
+        private CoachGrade coach;
+
         private void Awake()
         {
             athleteList.Clear();
@@ -143,16 +145,20 @@ namespace SJL
                 switch (assignDict[player])
                 {
                     case TrainingType.Circuit:
-                        player.TrainAthlete(Ability.Health);
+                        //player.TrainAthlete(Ability.Health);
+                        athleteService.TrainAthlete(player.entityName, Ability.Health, trainingVolume, (int)coach); // 피로도 1 증가
                         break;
                     case TrainingType.LadderDrill:
-                        player.TrainAthlete(Ability.Quickness);
+                        //player.TrainAthlete(Ability.Quickness);
+                        athleteService.TrainAthlete(player.entityName, Ability.Quickness, trainingVolume, (int)coach); // 피로도 1 증가
                         break;
                     case TrainingType.Sprint:
                         player.TrainAthlete(Ability.Flexibility);
+                        athleteService.TrainAthlete(player.entityName, Ability.Flexibility, trainingVolume, (int)coach); // 피로도 1 증가
                         break;
                     case TrainingType.BurpeeTest:
-                        player.TrainAthlete(Ability.Balance);
+                        //player.TrainAthlete(Ability.Balance);
+                        athleteService.TrainAthlete(player.entityName, Ability.Balance, trainingVolume, (int)coach); // 피로도 1 증가
                         break;
                 }
 

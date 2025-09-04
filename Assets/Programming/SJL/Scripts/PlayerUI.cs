@@ -35,8 +35,8 @@ namespace SJL
         private int recruitCost;    // 영입 비용
         private int recruitSuccessRate; // 영입 성공 확률
 
-        [Inject] 
-        private IResourceController resourceController;
+        [Inject] private IResourceController resourceController;    // 자원 컨트롤러
+        [Inject] private DomAthService athService;  // 국내 선수 서비스
 
 
         public void SetPlayer(DomAthEntity player)
@@ -121,7 +121,8 @@ namespace SJL
             int dice = Random.Range(1, 101); // 1~100
             if (dice <= recruitSuccessRate)
             {
-                playerData.Recruit();
+                //playerData.Recruit();
+                athService.RecruitAthlete(playerData.entityName);
                 Debug.Log($"{nameText.text} 영입 성공!");
                 resourceController.SpendMoney(recruitCost, ExpensesType.Scout);
                 Debug.Log($"남은 돈: {resourceController.Money.Value}");
