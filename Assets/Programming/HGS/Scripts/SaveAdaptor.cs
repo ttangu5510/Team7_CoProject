@@ -17,6 +17,17 @@ namespace SHG
     IResourceController resourceController;
     [Inject]
     ITimeFlowController timeFlowController;
+    [Inject] 
+    IFacilitiesController facilityController;
+
+    void Awake()
+    {
+      if (this.saveManager == null || this.saveManager.GetCurrentSave() == null) {
+
+        Debug.LogError($"{nameof(ISaveManager.GetCurrentSave)} Failed");
+        Destroy(this.gameObject);
+      }
+    }
 
     void Start()
     {
@@ -39,22 +50,38 @@ namespace SHG
         .Subscribe(week =>
           this.saveManager.GetCurrentSave().time.week = week)
         .AddTo(this);
+      this.timeFlowController.CurrentSeason
+        .Subscribe(season => this.saveManager.GetCurrentSave().time.season = (JWS.Season)season);
       this.timeFlowController.Year
         .Subscribe(year =>
           this.saveManager.GetCurrentSave().time.yearCycle = year)
         .AddTo(this);
+      this.facilityController.Accomodation.CurrentStage
+        .Skip(1)
+        .Subscribe(stage => this.OnFacilityStageChanged(this.facilityController.Accomodation, stage))
+        .AddTo(this);
+    }
+
+    void OnFacilityStageChanged(IFacility facility, int stage)
+    {
+      var save = this.saveManager.GetCurrentSave();
+      int index = save.buildings.FindIndex(
+        building => building.buildingId == facility.Name);
+      if (index != -1) {
+        save.buildings[index].level = stage;
+      }
+      else {
+        save.buildings.Add(new JWS.BuildingState {
+          buildingId = facility.Name,
+          level = stage
+          });
+      }
     }
     
     [Button]
     void AutoSave()
     {
       this.saveManager.AutoSave();
-    }
-
-    [Button]
-    void AutoLoad()
-    {
-      this.saveManager.AutoLoad();
     }
 
     [Button]

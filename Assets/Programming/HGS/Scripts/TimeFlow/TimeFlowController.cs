@@ -25,17 +25,13 @@ namespace SHG
       this.CurrentSeason.Value = this.GetSeason(this.week);
     }
 
-    public TimeFlowController(): this(
-      year: ITimeFlowController.START_YEAR, 
-      week: ITimeFlowController.START_WEEK)
+    public TimeFlowController(
+      int year = ITimeFlowController.START_YEAR, 
+      int week = ITimeFlowController.START_WEEK)
     {
-    }
-
-    public TimeFlowController(int year, int week)
-    {
-      this.week = week - 1;
+      this.week = week;
       this.Start = (year, week);
-      this.WeekInYear =  new (week);
+      this.WeekInYear =  new (week + 1);
       this.CurrentSeason = new (this.GetSeason(this.week));
       this.Year = new (year);
       this.DateToEnd = new (this.GetDateToEnd());

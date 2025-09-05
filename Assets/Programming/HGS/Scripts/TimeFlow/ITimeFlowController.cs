@@ -10,8 +10,8 @@ namespace SHG
   {
     public static int WEEK_FOR_SEASON = 10;
     public static int WEEK_FOR_YEAR = 4 * WEEK_FOR_SEASON;
-    public static int START_YEAR = 2023;
-    public static int START_WEEK = 1;
+    public const int START_YEAR = 2023;
+    public const int START_WEEK = 0;
     public static int END_YEAR => START_YEAR + 3;
     /// <summary> 주차가 변경되기 전 실행되는 이벤트</summary>
     public Action BeforeProgress { get; set; }
