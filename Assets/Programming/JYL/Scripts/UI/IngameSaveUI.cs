@@ -62,6 +62,7 @@ namespace JYL
             
             // 현재 세이브 리스트 가져오기
             allSave = saveManager.GetAllSave();
+            
             // 슬롯 인덱스 별로 딕셔너리화
             foreach (var save in allSave)
             {

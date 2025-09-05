@@ -23,14 +23,14 @@ namespace SJL
         [SerializeField] private GameObject trainingCenter;
         
         [Header("Button")] 
-        [SerializeField] private Button circuitTrainingPositioningPlayers;
-        [SerializeField] private Button ladderDrillTrainingPositioningPlayers;
-        [SerializeField] private Button sprintsPositioningPlayers;
-        [SerializeField] private Button burpeeTestsPositioningPlayers;
-        [SerializeField] private Button popupCloseButton;
+        [SerializeField] private Button circuitPlayers;
+        [SerializeField] private Button ladderPlayers;
+        [SerializeField] private Button sprintsPlayers;
+        [SerializeField] private Button burpeePlayers;
 
+        [SerializeField] private Button trainingCloseButton;
         [SerializeField] private Button startTrainingButton;
-        [SerializeField] private Button ResetPlayerPlacementButton;
+        [SerializeField] private Button resetButton;
         
         [Header("Text")] 
         [SerializeField] private TextMeshProUGUI circuitTrainingText;
@@ -39,7 +39,7 @@ namespace SJL
         [SerializeField] private TextMeshProUGUI burpeeTestsText;
         
         [Header("Assignment panel")]
-        [SerializeField] private PlayerListInformation assignmentPanel;
+        [SerializeField] private AthleteListPanel assignmentPanel;
 
         // 플레이어 서비스 의존성 주입
         [Inject] private DomAthService athleteService;
@@ -57,23 +57,23 @@ namespace SJL
             athleteList.Clear();
             assignDict.Clear();
             
-            circuitTrainingPositioningPlayers.OnClickAsObservable()
+            circuitPlayers.OnClickAsObservable()
                 .Subscribe(_ => PositioningPlayers(athleteList, circuitTrainingText, TrainingType.Circuit))
                 .AddTo(this);
 
-            ladderDrillTrainingPositioningPlayers.OnClickAsObservable()
+            ladderPlayers.OnClickAsObservable()
                 .Subscribe(_ => PositioningPlayers(athleteList, ladderDrillTrainingText, TrainingType.LadderDrill))
                 .AddTo(this);
 
-            sprintsPositioningPlayers.OnClickAsObservable()
+            sprintsPlayers.OnClickAsObservable()
                 .Subscribe(_ => PositioningPlayers(athleteList, sprintsText, TrainingType.Sprint))
                 .AddTo(this);
 
-            burpeeTestsPositioningPlayers.OnClickAsObservable()
+            burpeePlayers.OnClickAsObservable()
                 .Subscribe(_ => PositioningPlayers(athleteList, burpeeTestsText, TrainingType.BurpeeTest))
                 .AddTo(this);
 
-            ResetPlayerPlacementButton.OnClickAsObservable()
+            resetButton.OnClickAsObservable()
                 .Subscribe(_ =>
                 {
                     assignDict.Clear();
@@ -88,21 +88,22 @@ namespace SJL
                 .Subscribe(_ => TrainPlayers())
                 .AddTo(this);
             
-            popupCloseButton.OnClickAsObservable()
+            trainingCloseButton.OnClickAsObservable()
                 .Subscribe(_ => UpdateAllAssignmentTexts())
                 .AddTo(this);
 
             UpdateAllAssignmentTexts();
         }
 
-        private void OnEnable()
+        private void OnEnable() //
         {
             // 훈련 가능한 선수만 리스트로 가져옴
             athleteList = athleteService.GetAllRecruitedAthleteList()
-                .Where(ath => ath.curState == AthleteState.Active)
+                .Where(ath => ath.curState == AthleteState.Active || ath.curState == AthleteState.Injured)
                 .ToList();
             
             // 모든 훈련가능한 선수들을 현재 배치상황 None으로 설정
+            assignDict.Clear();
             foreach (var ath in athleteList)
             {
                 assignDict[ath] = TrainingType.None;
@@ -127,7 +128,7 @@ namespace SJL
             uiText.text = $"$배치된 선수 : {assignDict.Values.Count(t => t == type)}/4";
         }
 
-        // 전종먹의 배치 현황 텍스트 업데이트
+        // 전 종목의 배치 현황 텍스트 업데이트
         private void UpdateAllAssignmentTexts()
         {
             circuitTrainingText.text = $"배치된 선수 : {assignDict.Values.Count(t => t == TrainingType.Circuit)}/4";

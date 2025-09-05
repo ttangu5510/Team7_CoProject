@@ -205,8 +205,8 @@ namespace JYL
             
             Debug.Log($"세이브 파일 저장됨{path}");
             
-            // 세이브 객체 리스트에 새로운 객체 추가
-            saves.Remove(saves.Where(save => save.saveSlotIndex == slotNumber) as SaveData);
+            // 세이브 객체 리스트에 새로운 객체 추가. 현재 사용중인 세이브 객체 변경
+            saves.Remove(saves.Where(save => save.saveSlotIndex == slotNumber) as SaveData); // 기존 동일한 세이브 슬롯의 객체는 제거
             saves.Add(newSave);
             curSave = newSave;
         }

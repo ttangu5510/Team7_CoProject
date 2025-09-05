@@ -13,7 +13,7 @@ using Zenject;
 
 namespace SJL
 {
-    public class PlayerListInformation : MonoBehaviour
+    public class AthleteListPanel : MonoBehaviour
     {
         [Header("Buttons")]
         [SerializeField] Button closeButton;
