@@ -45,13 +45,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panelsRoot: {fileID: 0}
-  popupsRoot: {fileID: 0}
+  popupRoots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   canvasScopes: []
-  popupBlocker: {fileID: 0}
   toastRoot: {fileID: 0}
   toastPrefab: {fileID: 7702466444721091304, guid: 548a71c069b891444add0b9b11fd2d92,
     type: 3}
   maxToasts: 3
   toastLife: 0.8
-  popupBaseOrder: 500
-  popupOrderStep: 10
+  ignoreInitPanelKeys:
+  - Title
