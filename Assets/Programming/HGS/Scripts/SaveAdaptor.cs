@@ -56,10 +56,12 @@ namespace SHG
         .Subscribe(year =>
           this.saveManager.GetCurrentSave().time.yearCycle = year)
         .AddTo(this);
-      this.facilityController.Accomodation.CurrentStage
-        .Skip(1)
-        .Subscribe(stage => this.OnFacilityStageChanged(this.facilityController.Accomodation, stage))
-        .AddTo(this);
+      foreach (var facility in this.facilityController.Facilities) {
+        facility.CurrentStage
+          .Skip(1)
+          .Subscribe(stage => this.OnFacilityStageChanged(this.facilityController.Accomodation, stage))
+          .AddTo(this);
+      }
     }
 
     void OnFacilityStageChanged(IFacility facility, int stage)
