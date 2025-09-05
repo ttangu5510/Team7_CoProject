@@ -1,3 +1,4 @@
+using System;
 using UniRx;
 
 namespace SHG
@@ -15,6 +16,7 @@ namespace SHG
     public (int year, int week) Start { get; private set; }
     public int YearPassedAfterStart => (this.Year.Value - this.Start.year  + 1);
     int week;
+    public Action BeforeProgress { get; set; }
 
     public void SetDate(int year, int weekInYear) {
       this.Year.Value = year;
@@ -23,17 +25,13 @@ namespace SHG
       this.CurrentSeason.Value = this.GetSeason(this.week);
     }
 
-    public TimeFlowController(): this(
-      year: ITimeFlowController.START_YEAR, 
-      week: ITimeFlowController.START_WEEK)
+    public TimeFlowController(
+      int year = ITimeFlowController.START_YEAR, 
+      int week = ITimeFlowController.START_WEEK)
     {
-    }
-
-    public TimeFlowController(int year, int week)
-    {
-      this.week = week - 1;
+      this.week = week;
       this.Start = (year, week);
-      this.WeekInYear =  new (week);
+      this.WeekInYear =  new (week + 1);
       this.CurrentSeason = new (this.GetSeason(this.week));
       this.Year = new (year);
       this.DateToEnd = new (this.GetDateToEnd());
@@ -46,6 +44,7 @@ namespace SHG
 
     public void ProgressWeeks(int weeks)
     {
+      this.BeforeProgress?.Invoke();
       this.week += weeks;
       int yearToAdd = this.week / ITimeFlowController.WEEK_FOR_YEAR;
       this.week = this.week % ITimeFlowController.WEEK_FOR_YEAR;
