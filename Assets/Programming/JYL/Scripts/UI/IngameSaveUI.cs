@@ -24,7 +24,7 @@ namespace JYL
         [Inject] private readonly DiContainer container;
 
         private RectTransform rectTransform;
-        private List<SaveData> allSave = new();
+        [SerializeField] public List<SaveData> allSave = new();
         private Dictionary<int, IngameSaveItem> items = new();
         private Dictionary<int, SaveData> slotNumberDict = new();
 
@@ -62,10 +62,12 @@ namespace JYL
             
             // 현재 세이브 리스트 가져오기
             allSave = saveManager.GetAllSave();
-            
+            Debug.Log(allSave.Count);
+            allSave.Remove(saveManager.GetCurrentSave()); // 현재 사용중인 세이브 데이터 객체는 제외
             // 슬롯 인덱스 별로 딕셔너리화
             foreach (var save in allSave)
             {
+                Debug.Log($"{save.saveSlotIndex}_{save.time.lastSaveUtcIso}");
                 slotNumberDict[save.saveSlotIndex] = save;
             }
         }
