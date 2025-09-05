@@ -58,7 +58,6 @@ namespace SHG
         .AddTo(this);
       foreach (var facility in this.facilityController.Facilities) {
         facility.CurrentStage
-          .Skip(1)
           .Subscribe(stage => this.OnFacilityStageChanged(this.facilityController.Accomodation, stage))
           .AddTo(this);
       }
@@ -66,6 +65,7 @@ namespace SHG
 
     void OnFacilityStageChanged(IFacility facility, int stage)
     {
+      Debug.Log($"OnFacilityStageChanged");
       var save = this.saveManager.GetCurrentSave();
       int index = save.buildings.FindIndex(
         building => building.buildingId == facility.Name);
