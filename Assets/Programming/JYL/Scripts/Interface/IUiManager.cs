@@ -12,8 +12,9 @@ namespace JYL
         public bool RegisterPanel(string rawKey, GameObject panel);
         public void UnregisterPanel(string rawKey);
 
+
         // 팝업
-        public GameObject ShowPopup(string rawKey, object initData = null);
+        public GameObject ShowPopup(string rawKey, int rootIndex, object initData = null);
         //public GameObject ShowPopup(string rawKey, bool modal = true, object initData = null);
         public void CloseTopPopup();
         public void CloseSpecificPopup(GameObject popup);
