@@ -45,7 +45,7 @@ namespace JYL
             string season = save.time.season.ToString();
             string week = (save.time.week % 40).ToString();
 
-            // 현재 플레이 중인 인게임 시간
+            // 인게임 시간 플레이타임
             progressedYearText.text = $"{year}년차 {season} {week}주차";
 
             // 마지막 저장 시간
