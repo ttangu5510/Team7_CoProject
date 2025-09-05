@@ -79,8 +79,8 @@ namespace SJL
                         "루틴에 따라 상승하는 능력치가 달라집니다.\n\n" +
                         "<color=#FF3333>훈련을 진행할 때 7~12의 피로도가 상승하며 1턴(1주)가 소모됩니다.</color>";
                     FacilityInformationBox.SetActive(false);
-                    TrainingBox.SetActive(true);
                     specialTrainingBox.SetActive(false);
+                    TrainingBox.SetActive(true);
                     break;
                 case PanelType.SpecialTraining:
                     explanatoryText.text = "선수틀을 배치하여 특훈시킬 수 있습니다.\n루틴에 따라 상승하는 능력치가 달라집니다.";

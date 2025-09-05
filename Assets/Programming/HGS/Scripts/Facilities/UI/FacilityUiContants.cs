@@ -34,7 +34,7 @@ namespace SHG
         {
           FacilityType.ScoutCenter, 
           new string[] {
-            "시설 정보"
+            "시설 정보", "선수 영입", "코치 영입"
           }
         },
     };
