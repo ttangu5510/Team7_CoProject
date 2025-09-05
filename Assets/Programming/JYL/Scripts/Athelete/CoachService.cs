@@ -36,17 +36,16 @@ namespace JYL
         }
         
         #region 코치 리스트
-
-        public List<CoachEntity> GetAllCoaches()
+        public List<CoachEntity> GetAllCoaches() // CSV에서 만들어진 모든 코치 리스트
         {
             return repository.FindAllCoaches();
         }
-        public List<CoachEntity> GetCanRecruitCoaches() // 영입 가능한 코치 리스트
+        public List<CoachEntity> GetCanRecruitCoaches() // 플레이어가 영입 가능한 코치 리스트. 영입된 애들, 은퇴한 애들 제외
         {
             return repository.FindAllCanRecruit();
         }
 
-        public List<CoachEntity> GetRecruitedCoaches() // 영입한 코치 리스트
+        public List<CoachEntity> GetRecruitedCoaches() // 플레이어가 영입한 코치 리스트. 은퇴 제외
         {
             return repository.FindAllRecruited();
         }
