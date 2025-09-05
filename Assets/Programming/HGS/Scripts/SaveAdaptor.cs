@@ -54,7 +54,7 @@ namespace SHG
         .Subscribe(season => this.saveManager.GetCurrentSave().time.season = (JWS.Season)season);
       this.timeFlowController.Year
         .Subscribe(year =>
-          this.saveManager.GetCurrentSave().time.yearCycle = year)
+          this.saveManager.GetCurrentSave().time.yearCycle = this.timeFlowController.YearPassedAfterStart)
         .AddTo(this);
       foreach (var facility in this.facilityController.Facilities) {
         facility.CurrentStage
