@@ -57,6 +57,7 @@ namespace SHG
           }
           this.Hide();
           });
+      this.view.SetState((int)StateRole.Hidden);
     }
 
     void UpgradeFacility(IFacility facility)
