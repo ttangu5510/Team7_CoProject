@@ -42,6 +42,7 @@ public class DomAthEntity : BaseAthEntity
         this.retireAge = retireAge;
         stats = new AthleteStats(health, quickness, flexibility, technic, speed, balance);
         curState = AthleteState.Unrecruited;
+        leftInjury = 0;
     }
 
     public void UpdateFromSave(AthleteSave save) //세이브 파일로부터 업데이트
@@ -51,6 +52,7 @@ public class DomAthEntity : BaseAthEntity
         stats = new AthleteStats(save.health, save.quickness, save.flexibility, save.technic, save.speed, save.balance);
         stats.SetFatigue(save.fatigue);
         curState = save.state;
+        leftInjury = save.leftInjury;
     }
     
     public void Recruit() // 선수 영입할 때 쓰는 함수. 재화 나가는건 다른데서 처리해야 함

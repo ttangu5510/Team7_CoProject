@@ -13,8 +13,6 @@ namespace JYL
         [Inject] private readonly IDomAthRepository repository;
         private IDisposable subscription;
         
-        // TODO: 에디터 테스트
-        public List<DomAthEntity> testList = new();
         private void Awake()
         {
             Init();
@@ -33,8 +31,6 @@ namespace JYL
                     .AddTo(this); // 객체 파괴 시 이벤트 구독 해제
             }
             
-            // TODO : 에디터 상에서 보기 위한 테스트 리스트
-            testList = GetAllAthleteList();
         }
 
         #region 선수 목록
