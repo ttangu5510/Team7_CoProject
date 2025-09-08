@@ -25,16 +25,25 @@ namespace SHG
     FacilityInfoPresenter infoPresenter;
     IDisposable subscribeFacility;
     ContainerView tabButtonContainer; 
-    List<(Button button, StatefulComponent view)> tabs;
-    HashSet<Button> tabButtons;
+    List<(Button button, StatefulComponent view)> tabButtons;
+    StatefulComponent[] tabs;
+    HashSet<Button> regiesteredButtons;
     ScrollRect scrollView;
 
     void Awake()
     {
       this.view = this.GetComponent<StatefulComponent>();
-      this.tabButtons = new ();
+      this.regiesteredButtons = new ();
       this.infoPresenter = this.GetComponentInChildren<FacilityInfoPresenter>();
-      this.tabs = new ();
+      this.tabButtons = new ();
+      var tabRoles = new InnerComponentRole[] {
+        InnerComponentRole.FirstTab,
+        InnerComponentRole.SecondTab,
+        InnerComponentRole.ThirdTab
+      };
+      this.tabs = Array.ConvertAll(
+        tabRoles,
+        role => this.view.GetItem<InnerComponentReference>((int)role).InnerComponent);
       this.scrollView = this.view.GetItem<ObjectReference>(
         (int)ObjectRole.ScrollView).Object.GetComponent<ScrollRect>();
       var closeButton = this.view.GetItem<ButtonReference>(
@@ -107,43 +116,61 @@ namespace SHG
     void UpdateTabBar(FacilityType facility)
     {
       this.tabButtonContainer.Clear();
-      this.tabs.Clear();
+      this.tabButtons.Clear();
       if (FacilityUiConstants.TAB_BUTTON_TEXTS.TryGetValue(facility,
           out string[] texts)) {
         this.tabButtonContainer.FillWithItems(
           texts,
           (view, buttonText) => {
             var button = view.GetComponent<Button>();
-            this.tabs.Add((button, view));
+            this.tabButtons.Add((button, view));
             view.SetRawTextByRole(
               (int)TextRole.ButtonLabel, buttonText);
-            if (!this.tabButtons.Contains(button)) {
+            if (!this.regiesteredButtons.Contains(button)) {
               button.OnClickAsObservable()
               .Subscribe(_ => this.OnClickTabButton(button));
-              this.tabButtons.Add(button);
+              this.regiesteredButtons.Add(button);
             }
           });
-        this.OnClickTabButton(this.tabs[0].button);
+        this.OnClickTabButton(this.tabButtons[0].button);
       }
     }
 
     void OnClickTabButton(Button button)
     {
-      var index = this.tabs.FindIndex(tab => tab.button == button);
+      var index = this.tabButtons.FindIndex(tab => tab.button == button);
       if (index == -1) {
         #if UNITY_EDITOR
-        throw (new ApplicationException($"{nameof(OnClickTabButton)}: Fail to find {button} in {nameof(this.tabs)}"));
+        throw (new ApplicationException($"{nameof(OnClickTabButton)}: Fail to find {button} in {nameof(this.tabButtons)}"));
         #else
         return ;
         #endif
       }
-      foreach (var (tabButton, view) in this.tabs) {
+      if (this.facilitiesController.Selected.Value == null) {
+        #if UNITY_EDITOR
+        throw (new ApplicationException($"{nameof(OnClickTabButton)}: {nameof(this.facilitiesController.Selected)} is null"));
+        #else
+        return ;
+        #endif
+      }
+      foreach (var (tabButton, view) in this.tabButtons) {
         if (tabButton == button) {
           view.SetState((int)StateRole.Active);
         } 
         else {
           view.SetState((int)StateRole.InActive);
         }
+      }
+      if (index > 0) {
+        StateRole tabState = this.facilitiesController.Selected.Value.Value.type
+          switch  {
+            FacilityType.Accomodation => StateRole.Accomodation,
+              FacilityType.Lounge => StateRole.Lounge,
+              FacilityType.TrainingCenter => StateRole.TrainingCenter,
+              FacilityType.MedicalCenter => StateRole.MedicalCenter,
+              FacilityType.ScoutCenter => StateRole.ScoutCenter
+          };
+        this.tabs[index].SetState((int)tabState);
       }
       switch (index) {
         case 0:
