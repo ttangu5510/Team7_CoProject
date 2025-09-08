@@ -14,14 +14,21 @@ public class MedalBookManager : MonoBehaviour
     private int currentPage = 0;                                // 현재 페이지
     private int itemsPerPage = 9;                               // 한 페이지당 보여줄 아이템 수
 
+
+    private void Awake()
+    {
+        prevButton.onClick.RemoveAllListeners();
+        nextButton.onClick.RemoveAllListeners();
+
+        prevButton.onClick.AddListener(PrevPage);
+        nextButton.onClick.AddListener(NextPage);
+    }
+
+
     void Start()
     {
         // 예시 데이터 로딩
         LoadMedals();
-
-        prevButton.onClick.AddListener(PrevPage);
-        nextButton.onClick.AddListener(NextPage);
-
         UpdatePage();
     }
 
@@ -40,27 +47,36 @@ public class MedalBookManager : MonoBehaviour
 
     void UpdatePage()
     {
-        // 기존 아이템 제거
-        foreach (Transform child in gridParent)
+        int count = allMedals?.Count ?? 0;
+        int perPage = Mathf.Max(1, itemsPerPage); // 0 방어
+        int totalPages = Mathf.Max(1, Mathf.CeilToInt(count / (float)perPage));
+
+        currentPage = Mathf.Clamp(currentPage, 0, totalPages - 1);
+
+        // 기존 아이템 제거 (역순)
+        for (int i = gridParent.childCount - 1; i >= 0; i--)
+            Destroy(gridParent.GetChild(i).gameObject);
+
+        // 페이지 범위 계산
+        int startIndex = currentPage * perPage;
+        int endIndexExclusive = Mathf.Min(startIndex + perPage, count);
+
+        // 새 아이템 생성
+        for (int i = startIndex; i < endIndexExclusive; i++)
         {
-            Destroy(child.gameObject);
+            var go = Instantiate(medalItemPrefab, gridParent);
+            if (go.TryGetComponent<MedalItem>(out var item))
+                item.SetData(allMedals[i].icon, allMedals[i].title);
         }
 
-        // 새로운 아이템 생성
-        int startIndex = currentPage * itemsPerPage;
-        int endIndex = Mathf.Min(startIndex + itemsPerPage, allMedals.Count);
+        // 페이지 텍스트 (빈 목록이면 0/x 표기)
+        int displayCurrent = (count == 0) ? 0 : (currentPage + 1);
+        pageText.text = $"{displayCurrent} / {totalPages}";
 
-        for (int i = startIndex; i < endIndex; i++)
-        {
-            GameObject item = Instantiate(medalItemPrefab, gridParent);
-            MedalItem medalItem = item.GetComponent<MedalItem>();
-            medalItem.SetData(allMedals[i].icon, allMedals[i].title);
-        }
-
-        pageText.text = $"{currentPage + 1} / {Mathf.CeilToInt((float)allMedals.Count / itemsPerPage)}";
-
-        prevButton.interactable = currentPage > 0;
-        nextButton.interactable = endIndex < allMedals.Count;
+        // 버튼 상태
+        bool hasItems = count > 0;
+        prevButton.interactable = hasItems && currentPage > 0;
+        nextButton.interactable = hasItems && currentPage < totalPages - 1;
     }
 
     void PrevPage()
@@ -74,7 +90,8 @@ public class MedalBookManager : MonoBehaviour
 
     void NextPage()
     {
-        if ((currentPage + 1) * itemsPerPage < allMedals.Count)
+        int totalPages = Mathf.Max(1, Mathf.CeilToInt(allMedals.Count / (float)itemsPerPage));
+        if (currentPage < totalPages - 1)
         {
             currentPage++;
             UpdatePage();
