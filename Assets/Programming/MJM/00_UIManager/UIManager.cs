@@ -48,6 +48,12 @@ public class UIManager : MonoBehaviour, IUiManager
     const string POPUP_PREFIX = "Popup.";
     const string POPUP_FOLDER = "Popups/"; // Resources/Popups/Popup.<Key>.prefab
 
+    [Header("Panel Init Exceptions")]
+    [Tooltip("기능이 신기해서 써봄 ㅋㅋ")]
+    [SerializeField]
+    private List<string> ignoreInitPanelKeys = new();
+
+
     private void Awake()
     {
         // 싱글톤 보장 & 파괴 금지
@@ -59,8 +65,22 @@ public class UIManager : MonoBehaviour, IUiManager
         AutoBindButtons();
 
         // 시작 상태 초기화
-        foreach (var go in panels.Values) go?.SetActive(false);
-        currentPanelKey = null;
+        // foreach (var go in panels.Values) go?.SetActive(false);
+        // currentPanelKey = null;
+
+        foreach (var kv in panels)
+        {
+            string key = kv.Key;
+            GameObject go = kv.Value;
+
+            if (ignoreInitPanelKeys.Exists(x => NormalizeKey(x) == key))
+            {
+                // Debug.Log($"[UIManager] 패널 예외 적용됨: {key}");
+                continue;
+            }
+            // Debug.Log($"[UIManager] 패널 끔: {key}");
+            go?.SetActive(false);
+        }
 
         UpdateUIState();
     }
