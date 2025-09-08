@@ -22,7 +22,6 @@ public class AssignedAthPanel : MonoBehaviour
         {
             if (pair.Value == type)
             {
-                Debug.Log($"확인용{pair.Key.entityName}");
                  athleteImg[count].gameObject.SetActive(true);
                 // athleteImg[count].sprite = Resources.Load<Sprite>($"{iconPath}{pair.Key.id}");
                 nameText[count].text = $"{pair.Key.entityName}";

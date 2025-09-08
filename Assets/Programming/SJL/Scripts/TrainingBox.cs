@@ -47,6 +47,8 @@ namespace SJL
         [Header("Set Refs")]
         [SerializeField] private AthleteListPanel assignmentPanel;
         [SerializeField] private ConfirmPUI confirmPui;
+        [SerializeField] private TrainingProgressPUI progressPui;
+        [SerializeField] private TrainingDonePUI donePui;
 
         
         // 플레이어 서비스 의존성 주입
@@ -58,7 +60,7 @@ namespace SJL
         private Dictionary<DomAthEntity,TrainingType> assignDict = new();
 
         private int trainingVolume = 1;
-        private CoachGrade coach;
+        
         private TrainingType cachedType; // 이벤트 연결을 위해 들고 있음.
         
         // 팝업 생성 시 사용되는 텍스트
@@ -272,33 +274,69 @@ namespace SJL
         // 훈련 메서드
         private void TrainPlayers()
         {
-            foreach (var player in assignDict.Keys)
+            bool success = true;
+            bool result = true;
+            foreach (var entity in assignDict.Keys)
             {
                 // 훈련별 능력치 및 피로 상승
-                switch (assignDict[player])
+                switch (assignDict[entity])
                 {
                     case TrainingType.Circuit:
-                        //player.TrainAthlete(Ability.Health);
-                        athleteService.TrainAthlete(player.entityName, Ability.Health, trainingVolume, (int)coach); // 피로도 1 증가
+                        success = athleteService.TrainAthlete(entity, Ability.Health, trainingVolume, 0); // TODO: 코치 배치패널에서 정보 가져와야 함
                         break;
                     case TrainingType.LadderDrill:
-                        //player.TrainAthlete(Ability.Quickness);
-                        athleteService.TrainAthlete(player.entityName, Ability.Quickness, trainingVolume, (int)coach); // 피로도 1 증가
+                        success = athleteService.TrainAthlete(entity, Ability.Quickness, trainingVolume, 0);
                         break;
                     case TrainingType.Sprint:
-                        player.TrainAthlete(Ability.Flexibility);
-                        athleteService.TrainAthlete(player.entityName, Ability.Flexibility, trainingVolume, (int)coach); // 피로도 1 증가
+                        success = athleteService.TrainAthlete(entity, Ability.Flexibility, trainingVolume, 0);
                         break;
                     case TrainingType.BurpeeTest:
-                        //player.TrainAthlete(Ability.Balance);
-                        athleteService.TrainAthlete(player.entityName, Ability.Balance, trainingVolume, (int)coach); // 피로도 1 증가
+                        success = athleteService.TrainAthlete(entity, Ability.Balance, trainingVolume, 0);
                         break;
                 }
-                Debug.Log($"{player.entityName} 선수가 {assignDict[player].ToString()} 훈련을 완료했습니다.");
+
+                if (!success)
+                {
+                    result = false;
+                    Debug.Log($"훈련 실패{entity.entityName}_{assignDict[entity]}");
+                }
+                else
+                {
+                    Debug.Log($"{entity.entityName} 선수가 {assignDict[entity].ToString()} 훈련을 완료했습니다.");
+                }
             }
             
             // 훈련이 끝났으니 초기화
             assignDict.Clear();
+            
+            // 훈련 진행 팝업 표시
+            TrainingProgressPUI progPui = Instantiate(progressPui, trainingCenter.transform);
+            progPui.gameObject.SetActive(true);
+            
+            _ = progPui.Init();
+            progPui.Confirmed.Subscribe(progress =>
+            {
+                if (progress) OnTrainingDone(result);
+            });
+            
+
+        }
+        
+        // 훈련 결과
+        private void OnTrainingDone(bool success)
+        {
+            TrainingDonePUI pui = Instantiate(donePui, trainingCenter.transform);
+            pui.gameObject.SetActive(true);
+            pui.Init(success);
+            pui.ConfirmSubject.Subscribe(clicked =>
+            {
+                if (clicked) OnPopUpOkClick();
+            });
+        }
+        
+        // 훈련 후, 시간 보내기
+        private void OnPopUpOkClick()
+        {
             // 시간 보내기
             flowController.ProgressWeek();
             // 패널 종료
