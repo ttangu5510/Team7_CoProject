@@ -1253,18 +1253,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trainingCenter: {fileID: 3887252724160675721}
-  circuitTrainingPositioningPlayers: {fileID: 5803599173147890663}
-  ladderDrillTrainingPositioningPlayers: {fileID: 21948824817850051}
-  sprintsPositioningPlayers: {fileID: 8018816591259063551}
-  burpeeTestsPositioningPlayers: {fileID: 3551414153312824244}
-  popupCloseButton: {fileID: 5835047440154847497}
+  circuitPlayers: {fileID: 0}
+  ladderPlayers: {fileID: 0}
+  sprintsPlayers: {fileID: 0}
+  burpeePlayers: {fileID: 0}
+  trainingCloseButton: {fileID: 0}
   startTrainingButton: {fileID: 4864804814098689658}
-  ResetPlayerPlacementButton: {fileID: 1058417529978217661}
+  resetButton: {fileID: 0}
   circuitTrainingText: {fileID: 4846870146938061100}
   ladderDrillTrainingText: {fileID: 6457169720383598141}
   sprintsText: {fileID: 6825176895851432920}
   burpeeTestsText: {fileID: 6436101498236294266}
-  assignmentPanel: {fileID: 2330669120012054146}
+  circuitImage: {fileID: 0}
+  ladderImage: {fileID: 0}
+  sprintsImage: {fileID: 0}
+  burpeeImage: {fileID: 0}
+  assignmentPanel: {fileID: 0}
+  confirmPui: {fileID: 0}
   athleteList: []
 --- !u!1 &941190146106199650
 GameObject:
@@ -2968,7 +2973,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC120\uC218 \uBC30\uCE58\uD558\uAE30"
+  m_text: "\uC120\uD0DD"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
@@ -3390,7 +3395,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4391889893949705822
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4689,7 +4694,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC120\uC218 \uBC30\uCE58\uD558\uAE30"
+  m_text: "\uC120\uD0DD"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
@@ -9121,7 +9126,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBC30\uCE58\uB41C \uC120\uC218 0/4"
+  m_text: "\uCCB4\uB825, \uC720\uC5F0\uC131 \uC0C1\uC2B9"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
@@ -11262,7 +11267,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBC30\uCE58\uB41C \uC120\uC218 0/4"
+  m_text: "\uC18D\uB3C4, \uADE0\uD615\uAC10\uAC01 \uC0C1\uC2B9"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
@@ -14806,7 +14811,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC120\uC218 \uBC30\uCE58\uD558\uAE30"
+  m_text: "\uC120\uD0DD"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
@@ -14941,7 +14946,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBC30\uCE58\uB41C \uC120\uC218 0/4"
+  m_text: "\uCCB4\uB825, \uAE30\uC220 \uC0C1\uC2B9"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
@@ -17123,18 +17128,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &2330669120012054146 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6742991800460259178, guid: bea35834f37a11b47a7b54dc5e14e8fb,
-    type: 3}
-  m_PrefabInstance: {fileID: 9064576609063027176}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79f093f70c4a45948a236a2808310177, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &2418322198852026585 stripped

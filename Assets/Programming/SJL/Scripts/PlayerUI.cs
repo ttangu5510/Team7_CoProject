@@ -90,9 +90,9 @@ namespace SJL
                 playerInormationPanel.SetActive(true);
 
                 // 여기에서 PlayerInformationPanel로 캐스팅!
-                PlayerInformationPanel info = playerInormationPanel.GetComponent<PlayerInformationPanel>();
+                AthleteInfoPanel info = playerInormationPanel.GetComponent<AthleteInfoPanel>();
                 if (info != null)
-                    info.SetPlayer(playerData); // 선수 데이터 넘기기
+                    info.SetInfo(playerData); // 선수 데이터 넘기기
             }
             else
             {

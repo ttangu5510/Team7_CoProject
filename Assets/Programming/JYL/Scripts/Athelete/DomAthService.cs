@@ -13,8 +13,6 @@ namespace JYL
         [Inject] private readonly IDomAthRepository repository;
         private IDisposable subscription;
         
-        // TODO: 에디터 테스트
-        public List<DomAthEntity> testList = new();
         private void Awake()
         {
             Init();
@@ -33,8 +31,6 @@ namespace JYL
                     .AddTo(this); // 객체 파괴 시 이벤트 구독 해제
             }
             
-            // TODO : 에디터 상에서 보기 위한 테스트 리스트
-            testList = GetAllAthleteList();
         }
 
         #region 선수 목록
@@ -89,7 +85,7 @@ namespace JYL
         #endregion
 
         #region 선수 강화
-        public void TrainAthlete(in string athleteName, in Ability status, int amount = 1, int coach = 0)
+        public bool TrainAthlete(DomAthEntity entity, in Ability status, int amount = 1, int coach = 0)
         { //선수 훈련 함수. 정해진 파라매터만 수행 가능 (기획안의 루틴에 따름). 부상이면 선수 강화 함수 수행하면 안됨
             switch (status)
             {
@@ -97,17 +93,16 @@ namespace JYL
                 case Ability.Quickness :
                 case Ability.Flexibility :
                 case Ability.Balance :
-                    // 선수를 딕셔너리에서 찾고 훈련
-                    DomAthEntity athlete = repository.FindByName(athleteName);
-                    if (athlete != null || athlete.curState == AthleteState.Injured) return; 
+                    if (entity == null || entity.curState == AthleteState.Injured) return false;  //선수가 부상 중이면 false
                         
-                    athlete.TrainAthlete(status, amount, coach);
+                    bool isSuccess = entity.TrainAthlete(status, amount, coach);
                     // 선수 세이브 객체 최신화
-                    repository.Update(athlete);
-                    break;
+                    repository.Update(entity);
+
+                    return isSuccess;
                 default:
                     Debug.LogWarning($"잘못된 파라매터 입력{status}");
-                    break;
+                    return false;
             }
         }
         #endregion
