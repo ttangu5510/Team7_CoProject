@@ -15,6 +15,14 @@ public class PanelChangerTitle : MonoBehaviour
     [Header("제목 텍스트 (TMP_Text)")]
     [SerializeField] private TMP_Text titleText;
 
+    [Header("버튼 색상 설정")]
+    [SerializeField] private Color selectedColor = Color.white;
+    [SerializeField] private Color deselectedColor = new Color(0.8f, 0.8f, 0.8f); // 연회색
+
+
+
+
+
     // 현재 열린 패널
     public PanelId Current { get; private set; } = PanelId.None;
 
@@ -34,7 +42,10 @@ public class PanelChangerTitle : MonoBehaviour
         public PanelId id;
         public Button button;
         public GameObject panel;
-        public string title; // 해당 패널에 보여줄 제목
+        public string title;
+
+        [Header("선택 시 버튼 색상 변경을 위한 이미지")]
+        public Image buttonImage; // 버튼 배경 이미지
     }
 
     private void Awake()
@@ -62,6 +73,24 @@ public class PanelChangerTitle : MonoBehaviour
     /// <summary>
     /// 지정한 패널만 열고 제목도 업데이트
     /// </summary>
+    // public void Open(PanelId target)
+    // {
+    //     foreach (var e in entries)
+    //     {
+    //         if (e?.panel == null) continue;
+    //
+    //         bool isTarget = (e.id == target);
+    //         e.panel.SetActive(isTarget);
+    //
+    //         if (isTarget && titleText != null)
+    //         {
+    //             titleText.text = e.title;
+    //         }
+    //     }
+    //
+    //     Current = target;
+    // }
+
     public void Open(PanelId target)
     {
         foreach (var e in entries)
@@ -71,14 +100,22 @@ public class PanelChangerTitle : MonoBehaviour
             bool isTarget = (e.id == target);
             e.panel.SetActive(isTarget);
 
+            // 제목 텍스트 갱신
             if (isTarget && titleText != null)
             {
                 titleText.text = e.title;
+            }
+
+            // 버튼 색상 갱신
+            if (e.buttonImage != null)
+            {
+                e.buttonImage.color = isTarget ? selectedColor : deselectedColor;
             }
         }
 
         Current = target;
     }
+
 
     /// <summary>
     /// 모든 패널 닫기
