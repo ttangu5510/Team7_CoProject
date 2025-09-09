@@ -3,22 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using JYL;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace SJL
 {
-    public class PlayerInformationPanel : MonoBehaviour
+    public class AthleteInfoPanel : MonoBehaviour
     {
         [Header("Button")]
         [SerializeField] Button closeButton;
+        
         [Header("Player Information")]
+        [SerializeField]private Image athleteIcon;
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI gradeText;
         [SerializeField] private TextMeshProUGUI ageText;
         [SerializeField] private TextMeshProUGUI typeText;
         [SerializeField] private TextMeshProUGUI growthPotentialText;
         [SerializeField] private TextMeshProUGUI retreatText;
+        
         [Header("Player Attributes")]
         [SerializeField] private Slider staminaSlider;
         [SerializeField] private Slider agilitySlider;
@@ -27,6 +31,7 @@ namespace SJL
         [SerializeField] private Slider speedSlider;
         [SerializeField] private Slider balanceSlider;
         [SerializeField] private Slider fatigueSlider;
+        
         [Header("Player Rating")]
         [SerializeField] private TextMeshProUGUI staminaRatingText;
         [SerializeField] private TextMeshProUGUI agilityRatingText;
@@ -36,44 +41,51 @@ namespace SJL
         [SerializeField] private TextMeshProUGUI balanceRatingText;
         [SerializeField] private TextMeshProUGUI fatigueRatingText;
 
+        private string iconPath = "AthleteIcon/";
 
-        public void SetPlayer(DomAthEntity player)
+        private void Awake()
+        {
+            // 버튼 이벤트 설정
+            closeButton.OnClickAsObservable()
+                .Subscribe(_=>OnCloseButtonClicked())
+                .AddTo(this);
+        }
+        
+        public void SetInfo(DomAthEntity athlete)
         {
             // 선수 정보 설정
-            nameText.text = player.entityName;
-            gradeText.text = player.affiliation.ToString();
-            ageText.text = player.recruitAge.ToString();
-            typeText.text = player.maxGrade.ToString();
-            growthPotentialText.text = $"최대 성장 가능성 : {player.maxGrade.ToString()}";
-            retreatText.text = "은퇴까지 N년 N주";
+            // TODO : 선수 스프라이트
+            // athleteIcon.sprite = Resources.Load<Sprite>($"{iconPath}{athlete.id}");
+            nameText.text = athlete.entityName;
+            gradeText.text = athlete.affiliation.ToString();
+            ageText.text = athlete.recruitAge.ToString();
+            typeText.text = athlete.maxGrade.ToString();
+            growthPotentialText.text = $"최대 성장 가능성 : {athlete.maxGrade.ToString()}";
+            //retreatText.text = "은퇴까지 N년 N주";
+            
             // 슬라이더 값 설정
-            staminaSlider.value = player.stats.health;
-            agilitySlider.value = player.stats.quickness;
-            flexibilitySlider.value = player.stats.flexibility;
-            techniqueSlider.value = player.stats.technic;
-            speedSlider.value = player.stats.speed;
-            balanceSlider.value = player.stats.balance;
-            fatigueSlider.value = player.stats.fatigue;
+            staminaSlider.value = athlete.stats.health;
+            agilitySlider.value = athlete.stats.quickness;
+            flexibilitySlider.value = athlete.stats.flexibility;
+            techniqueSlider.value = athlete.stats.technic;
+            speedSlider.value = athlete.stats.speed;
+            balanceSlider.value = athlete.stats.balance;
+            fatigueSlider.value = athlete.stats.fatigue;
+            
             // 등급 텍스트 설정
-            staminaRatingText.text = GetRating(player.stats.health);
-            agilityRatingText.text = GetRating(player.stats.quickness);
-            flexibilityRatingText.text = GetRating(player.stats.flexibility);
-            techniqueRatingText.text = GetRating(player.stats.technic);
-            speedRatingText.text = GetRating(player.stats.speed);
-            balanceRatingText.text = GetRating(player.stats.balance);
-            fatigueRatingText.text = GetRating(player.stats.fatigue);
-        }
-
-        private void Start()
-        {
-            closeButton.onClick.AddListener(OnCloseButtonClicked);
-        }
-
-        public void OnCloseButtonClicked()
+            staminaRatingText.text = GetRating(athlete.stats.health);
+            agilityRatingText.text = GetRating(athlete.stats.quickness);
+            flexibilityRatingText.text = GetRating(athlete.stats.flexibility);
+            techniqueRatingText.text = GetRating(athlete.stats.technic);
+            speedRatingText.text = GetRating(athlete.stats.speed);
+            balanceRatingText.text = GetRating(athlete.stats.balance);
+            fatigueRatingText.text = GetRating(athlete.stats.fatigue);
+        } 
+        private void OnCloseButtonClicked()
         {
             // 정보 패널 닫기
             Debug.Log("정보 패널 닫힘");
-            gameObject.SetActive(false);
+            Destroy(gameObject);
         }
 
         private string GetRating(int value) // 등급 계산

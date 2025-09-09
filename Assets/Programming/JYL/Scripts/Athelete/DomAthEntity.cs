@@ -42,6 +42,7 @@ public class DomAthEntity : BaseAthEntity
         this.retireAge = retireAge;
         stats = new AthleteStats(health, quickness, flexibility, technic, speed, balance);
         curState = AthleteState.Unrecruited;
+        leftInjury = 0;
     }
 
     public void UpdateFromSave(AthleteSave save) //세이브 파일로부터 업데이트
@@ -51,6 +52,7 @@ public class DomAthEntity : BaseAthEntity
         stats = new AthleteStats(save.health, save.quickness, save.flexibility, save.technic, save.speed, save.balance);
         stats.SetFatigue(save.fatigue);
         curState = save.state;
+        leftInjury = save.leftInjury;
     }
     
     public void Recruit() // 선수 영입할 때 쓰는 함수. 재화 나가는건 다른데서 처리해야 함
@@ -81,7 +83,7 @@ public class DomAthEntity : BaseAthEntity
     
     
     // 선수를 훈련 시킬 때 사용하는 함수. 각 능력치가 변화하는 것에 이벤트를 걸 수 있다.
-    public void TrainAthlete(in Ability ability, int amount = 1, int coach = 0) 
+    public bool TrainAthlete(in Ability ability, int amount = 1, int coach = 0) 
     {
         // 부상 당하면 훈련 실패
         int rand = Random.Range(0, 100);
@@ -102,7 +104,7 @@ public class DomAthEntity : BaseAthEntity
         {
             Debug.Log("부상입음");
             leftInjury = 2;
-            return;
+            return false;
         }
         
         // 부상은 안당했고, 훈련 시작
@@ -110,7 +112,9 @@ public class DomAthEntity : BaseAthEntity
         stats.ApplyTrainValue(ability, amount, maxStat);
         
         // 훈련 완료 후 피로도 증가. 코치가 있을 경우, 코치 버프만큼 감소
-        stats.SetFatigue(Random.Range(7, 12) + coach);
+        stats.SetFatigue(Random.Range(7, 12) - coach);
+        
+        return true;
     }
     
     public void RecoverAthlete(int amount) // 선수 회복에 쓰이는 함수
