@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: Confirm
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 4819863324696138023}
   - component: {fileID: 6905318636248036297}
   - component: {fileID: 7533994375791083688}
-  - component: {fileID: 6742991800460259178}
+  - component: {fileID: 8293249055683348463}
   m_Layer: 5
   m_Name: PlayerListPanel
   m_TagString: Untagged
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6742991800460259178
+--- !u!114 &8293249055683348463
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -225,11 +225,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 557828814722451884}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79f093f70c4a45948a236a2808310177, type: 3}
+  m_Script: {fileID: 11500000, guid: 57b845cb6361d4b409255c7dac300efe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   closeButton: {fileID: 3256552082324269281}
   applyButton: {fileID: 1769298830756157434}
+  resetButton: {fileID: 2794317628128243284}
+  popUpParent: {fileID: 0}
   parentContent: {fileID: 1531029107923945874}
   trainingBox: {fileID: 0}
   athleteItem: {fileID: 8747420808053314781, guid: da6f140e546a97f48b403a0992aca09f,
@@ -497,7 +499,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: "\uC120\uC218 \uBAA9\uB85D"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
@@ -507,8 +509,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -580,7 +582,7 @@ GameObject:
   - component: {fileID: 2713081559334303083}
   - component: {fileID: 1769298830756157434}
   m_Layer: 5
-  m_Name: Button1
+  m_Name: Button.ConfirmAssign
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -933,7 +935,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -1019.20886}
+  m_SizeDelta: {x: 0, y: -1215.199}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &868121095290620772
 MonoBehaviour:
@@ -1064,7 +1066,7 @@ GameObject:
   - component: {fileID: 495553944350860524}
   - component: {fileID: 2794317628128243284}
   m_Layer: 5
-  m_Name: Button2
+  m_Name: Button.ResetAssign
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1237,7 +1239,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: Reset
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,

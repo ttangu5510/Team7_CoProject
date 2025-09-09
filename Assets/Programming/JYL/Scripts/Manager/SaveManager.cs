@@ -169,17 +169,18 @@ namespace JYL
             // 저장될 파일 이름 설정
             string fileName = $"Save_{slotNumber}.json";
 
-            // 입력받은 세이브로 세로운 세이브 객체 생성
+            // 입력받은 세이브로 세로운 record 세이브 객체 생성
             // TODO : 기술문서 작성( mutable, immutable, record, jsonUtility, with )
             SaveData newSave = save with
             {
+                time = save.time with{},
+                currencies = save.currencies with{},
                 buildings =  save.buildings.ConvertAll( building => building with{}),
-                achievements = save.achievements.ConvertAll( achievement => achievement with{}),
                 athleteSaves = save.athleteSaves.ConvertAll( athleteSave => athleteSave with{}),
                 coachSaves = save.coachSaves.ConvertAll( coachSave => coachSave with{}),
-                currencies = save.currencies with{},
-                encyclopedia = save.encyclopedia.ConvertAll( encyclopedia => encyclopedia with{}),
-                quests = save.quests.ConvertAll( quest => quest with{})
+                quests = save.quests.ConvertAll( quest => quest with{}),
+                achievements = save.achievements.ConvertAll( achievement => achievement with{}),
+                encyclopedia = save.encyclopedia.ConvertAll( encyclopedia => encyclopedia with{})
             };
             // 세이브 슬롯 인덱스 저장
             newSave.saveSlotIndex = slotNumber;
@@ -205,10 +206,9 @@ namespace JYL
             
             Debug.Log($"세이브 파일 저장됨{path}");
             
-            // 세이브 객체 리스트에 새로운 객체 추가
-            saves.Remove(saves.Where(save => save.saveSlotIndex == slotNumber) as SaveData);
+            // 세이브 객체 리스트에 새로운 객체 추가. 현재 사용중인 세이브 객체 변경
+            saves.Remove(saves.Find(index => index.saveSlotIndex == slotNumber)); // 기존 동일한 세이브 슬롯의 객체는 제거
             saves.Add(newSave);
-            curSave = newSave;
         }
         #endregion
         
