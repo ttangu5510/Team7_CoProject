@@ -17,6 +17,7 @@ namespace JYL
         public int speed;
         public int balance;
         public int fatigue;
+        public int leftInjury;
 
         public AthleteState state;
 
@@ -33,6 +34,7 @@ namespace JYL
             balance = entity.stats.balance;
             fatigue = entity.stats.fatigue;
 
+            leftInjury = entity.leftInjury;
             state = entity.curState;
         }
 
@@ -48,6 +50,7 @@ namespace JYL
             balance = entity.stats.balance;
             fatigue = entity.stats.fatigue;
             
+            leftInjury = entity.leftInjury;
             state =  entity.curState;
         }
     }
