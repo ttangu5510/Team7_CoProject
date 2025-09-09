@@ -96,8 +96,3 @@ public class TrophyBookManager : MonoBehaviour
     }
 }
 
-public class TrophyData
-{
-    public string title;
-    public Sprite icon;
-}

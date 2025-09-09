@@ -1,14 +1,27 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class MedalItem : MonoBehaviour
 {
-    public Image medalIcon; // UI에서 아이콘으로 보여질 부분
-    public Text medalTitle; // 메달 이름
+    public Button clickArea;
+    public Image medalIcon;
+    public Text medalTitle;
+    public GameObject lockMask; // 잠금시 덮개(옵션)
 
-    public void SetData(Sprite icon, string title)
+    private MedalData data;
+    private Action<MedalData> onClick;
+
+    public void Bind(MedalData data, Action<MedalData> onClick)
     {
-        medalIcon.sprite = icon;
-        medalTitle.text = title;
+        this.data = data;
+        this.onClick = onClick;
+
+        medalIcon.sprite = data.icon;
+        medalTitle.text = data.unlocked ? data.title : "???";
+        if (lockMask) lockMask.SetActive(!data.unlocked);
+
+        clickArea.onClick.RemoveAllListeners();
+        clickArea.onClick.AddListener(() => this.onClick?.Invoke(this.data));
     }
 }

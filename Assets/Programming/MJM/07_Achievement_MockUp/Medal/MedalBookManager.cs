@@ -14,6 +14,9 @@ public class MedalBookManager : MonoBehaviour
     private int currentPage = 0;                                // 현재 페이지
     private int itemsPerPage = 9;                               // 한 페이지당 보여줄 아이템 수
 
+    public MedalDetailPopup popupPrefab;
+    public Transform popupRoot; // 없으면 Canvas
+
 
     private void Awake()
     {
@@ -66,7 +69,7 @@ public class MedalBookManager : MonoBehaviour
         {
             var go = Instantiate(medalItemPrefab, gridParent);
             if (go.TryGetComponent<MedalItem>(out var item))
-                item.SetData(allMedals[i].icon, allMedals[i].title);
+                item.Bind(allMedals[i], OnClickMedal);
         }
 
         // 페이지 텍스트 (빈 목록이면 0/x 표기)
@@ -97,10 +100,13 @@ public class MedalBookManager : MonoBehaviour
             UpdatePage();
         }
     }
+
+    void OnClickMedal(MedalData data)
+    {
+        var root = popupRoot ? popupRoot : transform.root;
+        var popup = Instantiate(popupPrefab, root);
+        popup.Open(data);
+    }
+
 }
 
-public class MedalData
-{
-    public string title;
-    public Sprite icon;
-}
