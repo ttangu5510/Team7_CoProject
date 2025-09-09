@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using JYL;
@@ -18,14 +19,16 @@ public class SpecialTrainingResultPUI : MonoBehaviour
     [SerializeField] private Button closeButton;
 
     private string iconPath = "AthleteIcon/";
-
+    
+    private Subject<bool> confirmSubject = new();
+    public IObservable<bool> ConfirmSubject => confirmSubject;
     private void Awake()
     {
         closeButton.OnClickAsObservable()
             .Subscribe(_ => gameObject.SetActive(false));
     }
 
-    private void SetParameters(in int times, Dictionary<DomAthEntity, TrainingType> dict)
+    public void SetParameters(int times, Dictionary<DomAthEntity, TrainingType> dict)
     {
         int count = 0;
         foreach (var pair in dict)

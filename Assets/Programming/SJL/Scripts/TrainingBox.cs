@@ -77,19 +77,19 @@ namespace SJL
             EnableInit();
             
             circuitPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(athleteList, TrainingType.Circuit))
+                .Subscribe(_ => PositioningPlayers(TrainingType.Circuit))
                 .AddTo(this);
 
             ladderPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(athleteList, TrainingType.LadderDrill))
+                .Subscribe(_ => PositioningPlayers(TrainingType.LadderDrill))
                 .AddTo(this);
 
             sprintsPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(athleteList, TrainingType.Sprint))
+                .Subscribe(_ => PositioningPlayers(TrainingType.Sprint))
                 .AddTo(this);
 
             burpeePlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(athleteList, TrainingType.BurpeeTest))
+                .Subscribe(_ => PositioningPlayers(TrainingType.BurpeeTest))
                 .AddTo(this);
 
             resetButton.OnClickAsObservable()
@@ -145,10 +145,10 @@ namespace SJL
         }
 
         // 선수 배치. 선수 선택 UI 팝업 띄움
-        private void PositioningPlayers(List<DomAthEntity> targetList, TrainingType type)
+        private void PositioningPlayers(TrainingType type)
         {
             assignmentPanel.gameObject.SetActive(true);
-            assignmentPanel.SelectTrainingAthlete(targetList, type, assignDict);
+            assignmentPanel.SelectTrainingAthlete(athleteList, type, assignDict);
             cachedType = type;
         }
 
