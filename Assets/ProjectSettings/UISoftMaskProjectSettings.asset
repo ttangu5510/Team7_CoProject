@@ -1,0 +1,127 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!200 &-7035398543272168300
+ShaderVariantCollection:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ShaderVariants
+  m_Shaders:
+  - first: {fileID: 4800000, guid: 2933b413a51fc4ff3a83c7ef4177ae84, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 9839189d918374a318d397a86e90aa73, type: 3}
+    second:
+      variants:
+      - keywords: SOFTMASKABLE
+        passType: 0
+      - keywords: SOFTMASKABLE UNITY_UI_ALPHACLIP
+        passType: 0
+  - first: {fileID: 4800000, guid: 63261060f5b084969aca3decbe52d1d0, type: 3}
+    second:
+      variants:
+      - keywords: SOFTMASKABLE
+        passType: 0
+  - first: {fileID: 4800000, guid: e94e1f7424a0a43ac8b7ed672319bb4b, type: 3}
+    second:
+      variants:
+      - keywords: SOFTMASKABLE
+        passType: 0
+  - first: {fileID: 4800000, guid: 96246b1ead49a4c5a996fd477bc5a117, type: 3}
+    second:
+      variants:
+      - keywords: COLOR_FILTER GRADATION_GRADIENT SOFTMASKABLE
+        passType: 0
+      - keywords: COLOR_FILTER SOFTMASKABLE
+        passType: 0
+      - keywords: EDGE_SHINY SOFTMASKABLE
+        passType: 0
+  - first: {fileID: 4800000, guid: 935b7be1c88464d2eb87204fdfab5a38, type: 3}
+    second:
+      variants:
+      - keywords: COLOR_FILTER GRADATION_GRADIENT SOFTMASKABLE
+        passType: 0
+      - keywords: SOFTMASKABLE TRANSITION_SHINY
+        passType: 0
+  - first: {fileID: 4800000, guid: e65241fa80a374114b3f55ed746c04d9, type: 3}
+    second:
+      variants:
+      - keywords: COLOR_FILTER GRADATION_GRADIENT SOFTMASKABLE
+        passType: 0
+  - first: {fileID: 4800000, guid: 5795604f1c83eb053a1009ea1ecf9201, type: 3}
+    second:
+      variants:
+      - keywords: SOFTMASKABLE
+        passType: 0
+  - first: {fileID: 4800000, guid: 24e9dc4085e991b9e9f92806335d40e0, type: 3}
+    second:
+      variants:
+      - keywords: SOFTMASKABLE
+        passType: 0
+  - first: {fileID: 4800000, guid: 99b6648b8cb0517379ac23d63963c5f8, type: 3}
+    second:
+      variants:
+      - keywords: SOFTMASKABLE
+        passType: 0
+  - first: {fileID: 4800000, guid: ec3045415b2bc70ad9f06d311cdb1911, type: 3}
+    second:
+      variants:
+      - keywords: SOFTMASKABLE
+        passType: 0
+  - first: {fileID: 4800000, guid: f9f98f9bedfd262a7980b5b631d6d296, type: 3}
+    second:
+      variants:
+      - keywords: SOFTMASKABLE
+        passType: 0
+  - first: {fileID: 4800000, guid: dc71784963c12a8399db74a842ac601c, type: 3}
+    second:
+      variants:
+      - keywords: SOFTMASKABLE
+        passType: 0
+  - first: {fileID: 4800000, guid: 6278a3e7bf84eceda81ad5f5994ae2e3, type: 3}
+    second:
+      variants:
+      - keywords: SOFTMASKABLE
+        passType: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb5b5e33068c14a2bacdd6575e94f505, type: 3}
+  m_Name: UISoftMaskProjectSettings
+  m_EditorClassIdentifier: 
+  m_SoftMaskEnabled: 1
+  m_StereoEnabled: 1
+  m_TransformSensitivity: 1
+  m_HideGeneratedComponents: 1
+  m_ShaderVariantRegistry:
+    m_OptionalShaders:
+    - key: Hidden/UI/Default (UIEffect)
+      value: Hidden/UI/Default (UIEffect)
+    - key: Hidden/TextMeshPro/Bitmap (UIEffect)
+      value: Hidden/TextMeshPro/Bitmap (UIEffect)
+    - key: Hidden/TextMeshPro/Distance Field (UIEffect)
+      value: Hidden/TextMeshPro/Distance Field (UIEffect)
+    - key: Hidden/TextMeshPro/Distance Field Overlay (UIEffect)
+      value: Hidden/TextMeshPro/Distance Field Overlay (UIEffect)
+    - key: Hidden/TextMeshPro/Distance Field SSD (UIEffect)
+      value: Hidden/TextMeshPro/Distance Field SSD (UIEffect)
+    - key: Hidden/TextMeshPro/Mobile/Bitmap (UIEffect)
+      value: Hidden/TextMeshPro/Mobile/Bitmap (UIEffect)
+    - key: Hidden/TextMeshPro/Mobile/Distance Field (UIEffect)
+      value: Hidden/TextMeshPro/Mobile/Distance Field (UIEffect)
+    - key: Hidden/TextMeshPro/Mobile/Distance Field Overlay (UIEffect)
+      value: Hidden/TextMeshPro/Mobile/Distance Field Overlay (UIEffect)
+    - key: Hidden/TextMeshPro/Mobile/Distance Field SSD (UIEffect)
+      value: Hidden/TextMeshPro/Mobile/Distance Field SSD (UIEffect)
+    m_Asset: {fileID: -7035398543272168300}
+    m_ErrorOnUnregisteredVariant: 0
+    m_UnregisteredVariants: []

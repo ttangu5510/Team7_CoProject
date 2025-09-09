@@ -4,5 +4,15 @@
 public enum InnerComponentRole
 {
     Unknown = 0,
+    Popup = 889390096,
+    AthleteListScreen = -1002966541,
+    AthleteSelectionScreen = -493729419,
+    RecordScreen = -719548751,
+    RankScreen = 1760291168,
+    ResultScreen = 470027097,
+    RewardScreen = -96959049,
+    SecondTab = 1026595839,
+    ThirdTab = 1424546666,
+    FirstTab = -388534543,
 
 }
