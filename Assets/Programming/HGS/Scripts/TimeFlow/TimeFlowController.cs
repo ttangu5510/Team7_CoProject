@@ -1,5 +1,6 @@
 using System;
 using UniRx;
+using UnityEngine;
 
 namespace SHG
 {
@@ -75,6 +76,7 @@ namespace SHG
 
       for (int year = 1; year <= yearsLeft; ++year) {
         for (int i = 0; i < ITimeFlowController.WEEK_FOR_YEAR; i++) {
+          Debug.Log($"{allGameDate.Length}__{year*ITimeFlowController.WEEK_FOR_YEAR + i}");
           allGameDate[year * ITimeFlowController.WEEK_FOR_YEAR + i] = new GameDate {
             Year = yearAfterStart + year,
             Week = i + 1
