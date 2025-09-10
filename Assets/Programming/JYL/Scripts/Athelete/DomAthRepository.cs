@@ -81,7 +81,7 @@ namespace JYL
             if (entity.affiliation != AthleteAffiliation.일반선수 && entity.curState == AthleteState.Retired) // 만약 후보급 이상의 선수고 은퇴한 경우 
             {
                 // 세이브 파일에서 은퇴 나이(28세)와 코치 목록에 활성화.
-                CoachSave coachSave = saveManager.GetCurrentSave().FindCoach(entity.id + 10000);
+                CoachSave coachSave = saveManager.GetCurrentSave().FindCoach(entity.id + 10000); // 선수의 ID기준으로 10000을 더하면 코치 ID임.
                 if(coachSave.state == CoachState.Hidden) coachSave.UpdateStatus(entity.curAge.Value, CoachState.Unrecruited); // Hidden으로 되어 있으면, 고용 가능한 상태로 전환시킴
             }
         }

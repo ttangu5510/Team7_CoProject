@@ -1998,7 +1998,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -465}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &339837134298808737
@@ -2194,7 +2194,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -256, y: 653}
+  m_AnchoredPosition: {x: -269, y: 190}
   m_SizeDelta: {x: 300, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &576683540743260852
@@ -2304,14 +2304,14 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4274587078312597094}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3007165241856094524}
   - {fileID: 5128376256243297960}
   - {fileID: 6706835567386568526}
-  - {fileID: 3007165241856094524}
   - {fileID: 8743342122888668247}
   - {fileID: 4269197668652682018}
   - {fileID: 4851687721015017407}
@@ -2342,19 +2342,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed4393b707b83ad40a16f100d30f9db8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trainingCenter: {fileID: 7576378092058286173}
-  circuitTrainingPositioningPlayers: {fileID: 8951945247781162174}
-  ladderDrillTrainingPositioningPlayers: {fileID: 7287194477915401087}
-  sprintsPositioningPlayers: {fileID: 9053527274623757497}
-  burpeeTestsPositioningPlayers: {fileID: 838118075329323179}
-  popupCloseButton: {fileID: 7162246340772635186}
+  circuitPlayers: {fileID: 0}
+  ladderPlayers: {fileID: 0}
+  sprintsPlayers: {fileID: 0}
+  burpeePlayers: {fileID: 0}
+  trainingCloseButton: {fileID: 0}
   startTrainingButton: {fileID: 5332731036148208333}
-  ResetPlayerPlacementButton: {fileID: 6403391036269351634}
-  circuitTrainingText: {fileID: 8875370596150317453}
-  ladderDrillTrainingText: {fileID: 8069579088025641506}
-  sprintsText: {fileID: 1628426547823961751}
-  burpeeTestsText: {fileID: 3198832166009221256}
+  resetButton: {fileID: 0}
+  circuitImage: {fileID: 0}
+  ladderImage: {fileID: 0}
+  sprintsImage: {fileID: 0}
+  burpeeImage: {fileID: 0}
   assignmentPanel: {fileID: 0}
+  confirmPui: {fileID: 0}
+  progressPui: {fileID: 0}
+  donePui: {fileID: 0}
   athleteList: []
 --- !u!1 &4569722383297842489
 GameObject:
@@ -2393,8 +2395,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 200}
-  m_SizeDelta: {x: 0, y: 400}
+  m_AnchoredPosition: {x: -0.0024414062, y: -34}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6340581233877508197
 MonoBehaviour:
@@ -2590,7 +2592,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 244, y: 653.0001}
+  m_AnchoredPosition: {x: 251, y: 190}
   m_SizeDelta: {x: 300, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6625506249985841540
@@ -3795,8 +3797,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.60400003}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.0024414062, y: 1102.728}
-  m_SizeDelta: {x: 61.291992, y: -310.04623}
+  m_AnchoredPosition: {x: 0, y: 598}
+  m_SizeDelta: {x: 0, y: -310.0462}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3452238658053948923
 CanvasRenderer:

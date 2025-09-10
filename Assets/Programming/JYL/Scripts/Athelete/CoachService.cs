@@ -13,10 +13,6 @@ namespace JYL
         [Inject] private readonly ICoachRepository repository;
         private IDisposable subscription; // 구독 해제를 위한 객체
         
-        // TODO: 에디터 테스트
-        public List<CoachEntity> coachList = new ();
-
-
         private void Awake()
         {
             Init();
@@ -30,9 +26,7 @@ namespace JYL
                 .Subscribe(OnAthleteRetiredEvent); // 코치로 전환 작업
 
             // TODO : 코치의 은퇴 구독 필요함
-            
-            // TODO: 테스트용
-            coachList = GetAllCoaches();
+
         }
         
         #region 코치 리스트

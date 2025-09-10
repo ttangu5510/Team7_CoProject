@@ -25,9 +25,6 @@ namespace SJL
         [SerializeField] private RectTransform popUpParent;
         [SerializeField] Transform parentContent;
         
-        [Header("Set Training Box")]
-        [SerializeField] TrainingBox trainingBox;
-
         [Header("Set Prefabs")] 
         [SerializeField] private AthleteTrainingItemUI athleteItem;
 
