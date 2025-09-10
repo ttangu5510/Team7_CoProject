@@ -22,7 +22,7 @@ namespace SHG
         {
           FacilityType.TrainingCenter, 
           new string[] {
-            "시설 정보", "훈련", "특훈"
+            "시설 정보", "훈련", "특훈", "코치"
           }
         },
         {

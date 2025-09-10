@@ -62,5 +62,6 @@ public enum StateRole
     SecondTab = 1026595839,
     ThirdTab = 1424546666,
     InActive = 1846072803,
+    ForthTab = 1030529568,
 
 }
