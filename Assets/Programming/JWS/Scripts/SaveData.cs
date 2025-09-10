@@ -85,6 +85,23 @@ namespace JWS
             encyclopedia.Clear();
         }
         
+        // 세이브데이터 객체 복사
+        public SaveData CloneSave()
+        {
+            SaveData newSave = this with
+            {
+                time = time with { },
+                currencies = currencies with { },
+                buildings = buildings.ConvertAll(building => building with { }),
+                athleteSaves = athleteSaves.ConvertAll(athleteSave => athleteSave with { }),
+                coachSaves = coachSaves.ConvertAll(coachSave => coachSave with { }),
+                quests = quests.ConvertAll(quest => quest with { }),
+                achievements = achievements.ConvertAll(achievement => achievement with { }),
+                encyclopedia = encyclopedia.ConvertAll(encyclopedia => encyclopedia with { })
+            };
+            return newSave;
+        }
+        
         public AthleteSave FindAthlete(DomAthEntity entity)
         {
             return athleteSaves.Find(ath => ath.id == entity.id);

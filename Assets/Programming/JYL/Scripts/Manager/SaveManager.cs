@@ -171,17 +171,8 @@ namespace JYL
 
             // 입력받은 세이브로 세로운 record 세이브 객체 생성
             // TODO : 기술문서 작성( mutable, immutable, record, jsonUtility, with )
-            SaveData newSave = save with
-            {
-                time = save.time with{},
-                currencies = save.currencies with{},
-                buildings =  save.buildings.ConvertAll( building => building with{}),
-                athleteSaves = save.athleteSaves.ConvertAll( athleteSave => athleteSave with{}),
-                coachSaves = save.coachSaves.ConvertAll( coachSave => coachSave with{}),
-                quests = save.quests.ConvertAll( quest => quest with{}),
-                achievements = save.achievements.ConvertAll( achievement => achievement with{}),
-                encyclopedia = save.encyclopedia.ConvertAll( encyclopedia => encyclopedia with{})
-            };
+            SaveData newSave = save.CloneSave();
+            
             // 세이브 슬롯 인덱스 저장
             newSave.saveSlotIndex = slotNumber;
             
@@ -228,7 +219,8 @@ namespace JYL
 
         public void LoadProgress(SaveData save) // 현재 선택중인 세이브 파일을 변경함
         {
-            curSave = save;
+            SaveData newSave = save.CloneSave();
+            curSave = newSave;
         }
 
         public void LoadProgress(string fileName) // 이름으로 불러올 수 있게 만듦. 어떤 걸 쓰게 될 지 모름.

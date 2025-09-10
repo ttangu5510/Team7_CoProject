@@ -42,7 +42,7 @@ public class SpecialTrainingResultPUI : MonoBehaviour
             }
         }
 
-        for (int i = count; count < athleteIcon.Length; i++)
+        for (int i = count; i < athleteIcon.Length; i++)
         {
             // athleteIcon[i].gameObject.SetActive(false);
             nameText[count].text = "";
