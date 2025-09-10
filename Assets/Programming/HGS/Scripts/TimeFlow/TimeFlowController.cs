@@ -1,6 +1,6 @@
 using System;
+using System.Collections.Generic;
 using UniRx;
-using UnityEngine;
 
 namespace SHG
 {
@@ -67,24 +67,23 @@ namespace SHG
       int yearsLeft = ITimeFlowController.END_YEAR - this.Year.Value;
       count += yearsLeft * ITimeFlowController.WEEK_FOR_YEAR;
 
-      var allGameDate = new GameDate[count];
+      var allGameDate = new List<GameDate>(count);
       var yearAfterStart = this.YearPassedAfterStart;
       var weekInYear = this.WeekInYear.Value;
       for (int i = 0; i < weeksLeftThisYear; i++, weekInYear++) {
-        allGameDate[i] = new GameDate { Year = yearAfterStart, Week = weekInYear }; 
+        allGameDate.Add(new GameDate { Year = yearAfterStart, Week = weekInYear });
       }
 
       for (int year = 1; year <= yearsLeft; ++year) {
         for (int i = 0; i < ITimeFlowController.WEEK_FOR_YEAR; i++) {
-          Debug.Log($"{allGameDate.Length}__{year*ITimeFlowController.WEEK_FOR_YEAR + i}");
-          allGameDate[year * ITimeFlowController.WEEK_FOR_YEAR + i] = new GameDate {
+          allGameDate.Add(new GameDate {
             Year = yearAfterStart + year,
             Week = i + 1
-          };
-        } 
+          });
+        }
       }
 
-      return (allGameDate);
+      return (allGameDate.ToArray());
     }
 
     Season GetSeason(int week)
