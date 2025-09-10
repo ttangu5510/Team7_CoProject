@@ -2,40 +2,47 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class LoadingPanel : MonoBehaviour
+namespace SJL
 {
-    [SerializeField] private TextMeshProUGUI titleText;
-    [SerializeField] private Image illustration;
-    [SerializeField] private TextMeshProUGUI messageText;
-    [SerializeField] private Button actionButton;
-
-    public void Setup(string title, Sprite illust, string message, string buttonLabel, UnityEngine.Events.UnityAction action)
+    public class LoadingPopup : MonoBehaviour
     {
-        titleText.text = title;
-        illustration.sprite = illust;
-        messageText.text = message;
-        actionButton.GetComponentInChildren<TextMeshProUGUI>().text = buttonLabel;
-        actionButton.onClick.RemoveAllListeners();
-        actionButton.onClick.AddListener(action);
-    }
+        [SerializeField] private TextMeshProUGUI titleText;
+        [SerializeField] private Image illustrationImage;
+        [SerializeField] private TextMeshProUGUI messageText;
+        [SerializeField] private Button actionButton;
+        [SerializeField] private TextMeshProUGUI actionButtonText;
 
-    public void Show() { gameObject.SetActive(true); }
-    public void Hide() { gameObject.SetActive(false); }
+        // 팝업에 상황별 정보와 액션을 세팅
+        public void Setup(string title, Sprite illustration, string message, string buttonLabel, UnityAction buttonAction)
+        {  
+            titleText.text = title; // 타이틀
+            illustrationImage.sprite = illustration;    // 일러스트
+            messageText.text = message; // 본문 메시지
+            actionButtonText.text = buttonLabel;    // 버튼 라벨
+            // 버튼 이벤트 초기화 및 재등록
+            actionButton.onClick.RemoveAllListeners();
+            actionButton.onClick.AddListener(buttonAction);
+        }
+
+        public void Show() { gameObject.SetActive(true); }  // 팝업 보이기
+        public void Hide() { gameObject.SetActive(false); } // 팝업 숨기기
+    }
 }
 
 /*
   사용 예시
     [SerializeField] private LoadingPopup loadingPopup;
-    [SerializeField] private Sprite errorSprite;
+    [SerializeField] private Sprite errorSprite;    
     [SerializeField] private Sprite failSprite;
 
     private void ShowErrorPopup()
     {
         loadingPopup.Setup(
             title: "로딩 오류",
-            illustration: errorSprite,
+            illustration: errorSprite,  // 오류 일러스트
             message: "로딩 중 오류가 발생했습니다.",
             buttonLabel: "재시도",
             buttonAction: OnRetryClicked
@@ -47,7 +54,7 @@ public class LoadingPanel : MonoBehaviour
     {
         loadingPopup.Setup(
             title: "로딩 실패",
-            illustration: failSprite,
+            illustration: failSprite,   // 실패 일러스트
             message: "로딩이 실패하여 타이틀로 이동합니다.",
             buttonLabel: "타이틀로",
             buttonAction: OnMoveToTitleClicked

@@ -34,6 +34,8 @@ public class TrainingDonePUI : MonoBehaviour
 
     private void OnClickOk()
     {
+        Debug.Log("클릭됨");
+        okButton.interactable = false;
         confirmSubject.OnNext(true);
         confirmSubject.OnCompleted();
         Destroy(gameObject);
