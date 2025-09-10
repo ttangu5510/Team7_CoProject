@@ -433,12 +433,12 @@ GameObject:
   - component: {fileID: 5912936107497394598}
   - component: {fileID: 4820683454270217922}
   m_Layer: 5
-  m_Name: SpecialTrainingResultsWindow
+  m_Name: SpecialTrainResultPUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8598356079631358955
 RectTransform:
   m_ObjectHideFlags: 0
@@ -510,10 +510,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f88ad77dea67c26449bd016332bf37ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  athleteIcon: []
-  nameText: []
-  resultText: []
-  closeButton: {fileID: 0}
+  athleteIcon:
+  - {fileID: 7661715301236149691}
+  - {fileID: 2264866282649104283}
+  - {fileID: 2765868961511934212}
+  - {fileID: 8472386879310858977}
+  nameText:
+  - {fileID: 379840062367698794}
+  - {fileID: 4284527223362923557}
+  - {fileID: 7282614735581852100}
+  - {fileID: 2053954594207223769}
+  resultText:
+  - {fileID: 8899375113939321781}
+  - {fileID: 2204170852497499798}
+  - {fileID: 4150691603690304632}
+  - {fileID: 1638104080807526375}
+  closeButton: {fileID: 8587590300415125316}
 --- !u!1 &3555619828334042812
 GameObject:
   m_ObjectHideFlags: 0
@@ -826,7 +838,7 @@ GameObject:
   - component: {fileID: 7377728294371533310}
   - component: {fileID: 8587590300415125316}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Button.Close
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1706,7 +1718,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: "\uD655\uC778"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
@@ -1716,8 +1728,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1734,8 +1746,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

@@ -15,7 +15,8 @@ namespace JYL
 }
 public class SpecialTrainingCoinPUI : MonoBehaviour
 {
-    [Header("UI Components")]
+    [Header("UI Components")] 
+    [SerializeField] private TextMeshProUGUI increaseAmountText;
     [SerializeField] private TextMeshProUGUI SpecialTrainingCoins;
     [SerializeField] private TextMeshProUGUI deployedPlayers;
     [SerializeField] private TextMeshProUGUI requiredSpecialTrainingCoins;
@@ -33,9 +34,10 @@ public class SpecialTrainingCoinPUI : MonoBehaviour
     private int maxStep = 10; // 최대 단계를 원하는 값으로
     private int assignedPlayers = 0;
     private bool canTrain;
+    private int trainingAmount = 5;
 
     // 외부 주입. 현재 코인 갯수
-    private int coin = 0;
+    private int coin;
     
     private void Awake()
     {
@@ -54,6 +56,14 @@ public class SpecialTrainingCoinPUI : MonoBehaviour
         rightButton.OnClickAsObservable()
             .Subscribe(_ => OnRightButtonClicked())
             .AddTo(this);
+    }
+    public void Init(int assignedNum, int coin)
+    {
+        canTrain = false;
+        this.coin = coin;
+        assignedPlayers = assignedNum;
+        UpdateUI();
+        SetConfirmButton();
     }
 
     private void OnLeftButtonClicked()
@@ -76,6 +86,7 @@ public class SpecialTrainingCoinPUI : MonoBehaviour
         }
     }
 
+    // 특훈을 수행하는 버튼. 특훈할 수 있는 조건을 만족해야 버튼이 활성화 된다.
     private void OnClickConfirmButton()
     {
         // 이벤트 발행
@@ -88,14 +99,6 @@ public class SpecialTrainingCoinPUI : MonoBehaviour
         Destroy(gameObject);
     }
     
-    public void Init(int assignedNum, int coin)
-    {
-        canTrain = false;
-        this.coin = coin;
-        assignedPlayers = assignedNum;
-        UpdateUI();
-        SetConfirmButton();
-    }
 
     private void SetConfirmButton()
     {
@@ -104,6 +107,7 @@ public class SpecialTrainingCoinPUI : MonoBehaviour
 
     private void UpdateUI() // UI 업데이트 메서드
     {
+        increaseAmountText.text = $"모든 능력치 <color=#FF3333>{currentStep * trainingAmount}</color> 증가";
         centerText.text = $"{currentStep}회 진행";
         // 필요시 버튼 활성/비활성도 처리
         leftButton.interactable = (currentStep > minStep);

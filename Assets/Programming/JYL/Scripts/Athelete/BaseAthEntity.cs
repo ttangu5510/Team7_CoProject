@@ -118,6 +118,19 @@ namespace JYL
             return newStat;
         }
 
+        public AthleteStats ApplySpecialTrainValue(in int times, in int value, in int maxStat)
+        {
+            int newHealth = Mathf.Clamp(health + value * times, 0, maxStat);
+            int newQuickness = Mathf.Clamp(quickness + value * times, 0, maxStat);
+            int newFlexibility = Mathf.Clamp(flexibility + value * times, 0, maxStat);
+            int newTechnic = Mathf.Clamp(technic + value * times, 0, maxStat);
+            int newSpeed = Mathf.Clamp(speed + value * times, 0, maxStat);
+            int newBalance = Mathf.Clamp(balance + value * times, 0, maxStat);
+            
+            AthleteStats newStat = new(newHealth, newQuickness, newFlexibility, newTechnic, newSpeed, newBalance);
+            return newStat;
+        }
+
         public void SetFatigue(int amount)
         {
             fatigue += amount;

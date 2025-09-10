@@ -13,6 +13,9 @@ namespace JYL
         [Inject] private readonly IDomAthRepository repository;
         private IDisposable subscription;
         
+        // TODO : 테스트 용 리스트
+        [SerializeField] public List<DomAthEntity> testList = new();
+        
         private void Awake()
         {
             Init();
@@ -31,6 +34,9 @@ namespace JYL
                     .AddTo(this); // 객체 파괴 시 이벤트 구독 해제
             }
             
+            // TODO : 테스트 리스트
+            testList = GetAllRecruitedAthleteList();
+
         }
 
         #region 선수 목록
@@ -106,9 +112,9 @@ namespace JYL
             }
         }
 
-        public void ApplySpecialTraining(DomAthEntity entity, int trainingTimes)
+        public void ApplySpecialTraining(DomAthEntity entity, int trainingTimes, int amountPerTime)
         {
-            
+            entity.SpecialTrain(trainingTimes, amountPerTime);
             repository.Update(entity);
         }
         #endregion

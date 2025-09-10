@@ -37,8 +37,16 @@ public class SpecialTrainingResultPUI : MonoBehaviour
             {
                 //athleteIcon[count].sprite = Resources.Load<Sprite>($"{iconPath}{pair.Key.id}");
                 nameText[count].text = pair.Key.entityName;
-                resultText[count].text = $"전체 능력치: {times * 5}";
+                resultText[count].text = $"전체 능력치 : +{times * 5}";
+                count++;
             }
+        }
+
+        for (int i = count; count < athleteIcon.Length; i++)
+        {
+            // athleteIcon[i].gameObject.SetActive(false);
+            nameText[count].text = "";
+            resultText[count].text = "";
         }
     }
     
