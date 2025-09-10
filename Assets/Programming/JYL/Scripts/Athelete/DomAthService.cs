@@ -13,6 +13,9 @@ namespace JYL
         [Inject] private readonly IDomAthRepository repository;
         private IDisposable subscription;
         
+        // TODO : 테스트 용 리스트
+        [SerializeField] public List<DomAthEntity> testList = new();
+        
         private void Awake()
         {
             Init();
@@ -31,6 +34,9 @@ namespace JYL
                     .AddTo(this); // 객체 파괴 시 이벤트 구독 해제
             }
             
+            // TODO : 테스트 리스트
+            testList = GetAllRecruitedAthleteList();
+
         }
 
         #region 선수 목록
@@ -84,7 +90,7 @@ namespace JYL
         }
         #endregion
 
-        #region 선수 강화
+        #region 선수 훈련, 특훈
         public bool TrainAthlete(DomAthEntity entity, in Ability status, int amount = 1, int coach = 0)
         { //선수 훈련 함수. 정해진 파라매터만 수행 가능 (기획안의 루틴에 따름). 부상이면 선수 강화 함수 수행하면 안됨
             switch (status)
@@ -104,6 +110,12 @@ namespace JYL
                     Debug.LogWarning($"잘못된 파라매터 입력{status}");
                     return false;
             }
+        }
+
+        public void ApplySpecialTraining(DomAthEntity entity, int trainingTimes, int amountPerTime)
+        {
+            entity.SpecialTrain(trainingTimes, amountPerTime);
+            repository.Update(entity);
         }
         #endregion
         

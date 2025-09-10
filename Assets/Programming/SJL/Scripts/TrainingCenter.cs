@@ -39,12 +39,7 @@ namespace SJL
                 .Subscribe(_ => ShowPanel(PanelType.FacilityInformation)).AddTo(this);
 
             trainingButton.OnClickAsObservable()
-                .Subscribe(_ => { statefulComponent.SetState((int)StateRole.Active);
-                    statefulComponent.SetRawTextByRole((int)TextRole.ExplanatioryText, "선수틀을 배치하여 훈련시킬 수 있습니다.\n" +
-                        "루틴에 따라 상승하는 능력치가 달라집니다.\n\n" +
-                        "<color=#FF3333>훈련을 진행할 때 7~12의 피로도가 상승하며 1턴(1주)가 소모됩니다.</color>");
-                });
-                //.Subscribe(_ => ShowPanel(PanelType.Training)).AddTo(this);
+                .Subscribe(_ => ShowPanel(PanelType.Training)).AddTo(this);
 
             specialTrainingButton.OnClickAsObservable()
                 .Subscribe(_ => ShowPanel(PanelType.SpecialTraining)).AddTo(this); 

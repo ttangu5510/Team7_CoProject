@@ -109,12 +109,21 @@ public class DomAthEntity : BaseAthEntity
         
         // 부상은 안당했고, 훈련 시작
         int maxStat = ((int)maxGrade + 1) * 100;
-        stats.ApplyTrainValue(ability, amount, maxStat);
+        AthleteStats newStat = stats.ApplyTrainValue(ability, amount, maxStat);
+        stats = newStat;
         
         // 훈련 완료 후 피로도 증가. 코치가 있을 경우, 코치 버프만큼 감소
         stats.SetFatigue(Random.Range(7, 12) - coach);
         
         return true;
+    }
+    
+    // 선수 특훈 수행 함수
+    public void SpecialTrain(in int times, in int value)
+    {
+        int maxStat = ((int)maxGrade + 1) * 100;
+        AthleteStats newStats = stats.ApplySpecialTrainValue(times, value, maxStat);
+        stats = newStats;
     }
     
     public void RecoverAthlete(int amount) // 선수 회복에 쓰이는 함수

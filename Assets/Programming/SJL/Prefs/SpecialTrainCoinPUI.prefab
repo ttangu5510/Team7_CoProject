@@ -809,12 +809,12 @@ GameObject:
   - component: {fileID: 3964344115554414590}
   - component: {fileID: 5503921998625387553}
   m_Layer: 5
-  m_Name: SpecialCoinUsagePopupWindowVariant
+  m_Name: SpecialTrainCoinPUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &69953322045140737
 RectTransform:
   m_ObjectHideFlags: 0
@@ -832,7 +832,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0025024414}
+  m_AnchoredPosition: {x: 0, y: 0.0024414062}
   m_SizeDelta: {x: 0, y: -0.0050049}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8801847019741715539
@@ -885,6 +885,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07ab1bb43576fcf45a0e1995f2c662c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  increaseAmountText: {fileID: 532090496818820085}
   SpecialTrainingCoins: {fileID: 9152188753272547126}
   deployedPlayers: {fileID: 1532779544615483351}
   requiredSpecialTrainingCoins: {fileID: 2543675239394838360}
