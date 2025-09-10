@@ -25,7 +25,7 @@ public class SpecialTrainingResultPUI : MonoBehaviour
     private void Awake()
     {
         closeButton.OnClickAsObservable()
-            .Subscribe(_ => gameObject.SetActive(false));
+            .Subscribe(_ => Destroy(gameObject));
     }
 
     public void SetParameters(int times, Dictionary<DomAthEntity, TrainingType> dict)

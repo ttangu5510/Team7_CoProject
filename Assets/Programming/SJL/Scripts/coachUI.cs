@@ -31,7 +31,7 @@ namespace SJL
         private int recruitSuccessRate; // 영입 성공 확률
 
         [Inject] private IResourceController resourceController;
-        [Inject] private CoachService coachService;
+        [Inject] private CoachService coachService; 
 
 
         public void SetPlayer(CoachEntity coach)

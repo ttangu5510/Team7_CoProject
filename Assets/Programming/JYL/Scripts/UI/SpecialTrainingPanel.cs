@@ -176,7 +176,7 @@ public class SpecialTrainingPanel : MonoBehaviour
             pui.Confirmed.Subscribe(done =>
             {
                 if (done) ProgressDonePopUp();
-            });
+            }).AddTo(pui);
         }
     }
 
@@ -189,7 +189,7 @@ public class SpecialTrainingPanel : MonoBehaviour
         pui.ConfirmSubject.Subscribe(confirm =>
         {
             if (confirm) ShowConfirmPopUp();
-        });
+        }).AddTo(pui);
     }
 
     // "훈련 완료" 팝업을 확인 클릭 시 수행. 특훈 결과를 보여준다.
@@ -202,6 +202,6 @@ public class SpecialTrainingPanel : MonoBehaviour
             .Subscribe(confirm =>
             {
                 if(confirm) trainingCenter.gameObject.SetActive(false);
-            });
+            }).AddTo(pui);
     }
 }
