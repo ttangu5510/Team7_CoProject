@@ -1,90 +1,49 @@
-using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using Zenject;
-using TMPro;
 using JYL;
-using SHG; // FacilityTable 접근
 
-public class TreatmentRoomTabView : MonoBehaviour
+namespace JWS
 {
-    [Header("Hierarchy")]
-    [SerializeField] private Transform slotPanel;  // .../InfoView/Athlete Assignment Panel/Slot Panel
-
-    [Header("Prefabs")]
-    [SerializeField] private GameObject playerSlotPrefab;      // Player Slot.prefab
-    [SerializeField] private GameObject noAvailableSlotPrefab; // No Available Player Slot.prefab
-    [SerializeField] private GameObject needUpgradeSlotPrefab; // Need Upgrade Slot.prefab
-    [SerializeField] private GameObject emptySlotPrefab;       // (선택)
-
-    [Header("Config")]
-    [SerializeField] private int totalSlots = 8; // Slot A~H
-
-    [Inject] private DomAthService _ath; 
-    [Inject] private ISaveManager _save;
-
-    public void Render(IReadOnlyList<DomAthEntity> assignCandidatesOverride = null)
+    /// 의료센터 탭: 그냥 바인딩만.
+    public class TreatmentRoomTabView : MonoBehaviour
     {
-        var recruited = _ath.GetAllRecruitedAthleteList(); // <-- 수정: 메서드 사용
-        var assignCandidates = assignCandidatesOverride ?? recruited;
+        [Header("UI")]
+        [SerializeField] private TextMeshProUGUI totalCountText;
+        [SerializeField] private TextMeshProUGUI injuredCountText;
 
-        int capacity = GetCapacityFromSave();
-        capacity = Mathf.Clamp(capacity, 0, totalSlots);
+        [Header("Slots (하이어라키 슬롯 오브젝트)")]
+        [SerializeField] private PlayerSlotView[] slots;
 
-        Rebuild(slotPanel);
+        [Inject] private DomAthService domAthService;
 
-        for (int i = 0; i < totalSlots; i++)
+        private void OnEnable()
         {
-            bool hasPlayer = (assignCandidates != null && i < assignCandidates.Count && assignCandidates[i] != null);
-            GameObject prefab =
-                (i >= capacity)              ? needUpgradeSlotPrefab :
-                hasPlayer                    ? playerSlotPrefab :
-                (noAvailableSlotPrefab != null ? noAvailableSlotPrefab : emptySlotPrefab);
-
-            var go = Instantiate(prefab, slotPanel, false);
-
-            // Player Slot일 때만 간단 바인딩
-            if (hasPlayer && go != null)
-            {
-                var e = assignCandidates[i];
-                var nameText = go.transform.Find("Ath Name Text")?.GetComponent<TMP_Text>();
-                var timeText = go.transform.Find("Ath TimeLeft Text")?.GetComponent<TMP_Text>();
-                if (nameText) nameText.text = e.entityName;
-                if (timeText) timeText.text = (e.curState == AthleteState.Injured) ? $"{e.leftInjury}턴 남음" : "정상";
-            }
+            Refresh();
         }
-    }
 
-    private int GetCapacityFromSave()
-    {
-        var save = _save.GetCurrentSave(); // <-- 수정: 메서드 사용
-        if (save == null || save.buildings == null || save.buildings.Count == 0)
-            return FacilityTable.MedicalCenter.NumberOfAthletes[0];
-
-        // buildingId가 시설 이름(예: "의료 센터")로 저장됨. 방어적으로 몇 가지 키워드도 체크.
-        var medical = save.buildings.FirstOrDefault(b =>
-            b.buildingId == FacilityTable.MedicalCenter.Name ||          // "의료 센터"
-            b.buildingId == "의료 센터" ||
-            b.buildingId == "Medical Center" ||
-            b.buildingId == "MedicalCenter");
-
-        int stage = Mathf.Clamp(medical?.level ?? 0, 0, FacilityTable.MedicalCenter.MAX_UPGRADED_STAGE);
-        // NumberOfAthletes 길이는 MAX_UPGRADED_STAGE+1 가정
-        stage = Mathf.Clamp(stage, 0, FacilityTable.MedicalCenter.NumberOfAthletes.Length - 1);
-        return FacilityTable.MedicalCenter.NumberOfAthletes[stage];
-    }
-
-    private void Rebuild(Transform parent)
-    {
-        if (!parent) return;
-        for (int i = parent.childCount - 1; i >= 0; i--)
+        public void Refresh()
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying) DestroyImmediate(parent.GetChild(i).gameObject);
-            else Destroy(parent.GetChild(i).gameObject);
-#else
-            Destroy(parent.GetChild(i).gameObject);
-#endif
+            // 1) 전체/부상자 리스트 가져오기
+            var all = domAthService.GetAllRecruitedAthleteList();              // 프로젝트에 이미 있는 함수
+            var injured = all.Where(a => a.curState == AthleteState.Injured)   // 상태 이름은 프로젝트에 맞춰 조정
+                .ToList();
+
+            // 2) 카운트 텍스트
+            if (totalCountText)   totalCountText.text   = all.Count.ToString();
+            if (injuredCountText) injuredCountText.text = injured.Count.ToString();
+
+            // 3) 슬롯 채우기
+            //    - 부상자 있으면 앞에서부터 순서대로 Set
+            //    - 남는 슬롯은 Clear
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (i < injured.Count && slots[i] != null)
+                    slots[i].Set(injured[i]);
+                else if (slots[i] != null)
+                    slots[i].Clear();
+            }
         }
     }
 }
