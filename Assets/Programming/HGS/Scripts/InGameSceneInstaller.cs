@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 using JYL;
@@ -87,6 +87,11 @@ namespace SHG
         .AsSingle()
         .WithArguments(
           MatchTable.Data);
+
+            this.Container.Bind<IUiManager>()
+                .To<UIManager>()
+                .FromComponentInHierarchy()
+                .AsSingle();
     }
   }
 }

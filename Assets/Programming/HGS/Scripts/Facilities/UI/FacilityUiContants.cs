@@ -16,19 +16,19 @@ namespace SHG
         {
           FacilityType.Lounge, 
           new string[] {
-            "시설 정보"
+            "시설 정보", "휴식"
           }
         },
         {
           FacilityType.TrainingCenter, 
           new string[] {
-            "시설 정보", "훈련", "특훈"
+            "시설 정보", "훈련", "특훈", "코치"
           }
         },
         {
           FacilityType.MedicalCenter, 
           new string[] {
-            "시설 정보"
+            "시설 정보", "치료실"
           }
         },
         {
