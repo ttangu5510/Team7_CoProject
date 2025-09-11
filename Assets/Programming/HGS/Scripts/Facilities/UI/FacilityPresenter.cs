@@ -8,6 +8,7 @@ using UniRx;
 using UniRx.Triggers;
 using Zenject;
 using DG.Tweening;
+using JYL;
 
 namespace SHG
 {
@@ -16,7 +17,7 @@ namespace SHG
   [RequireComponent(typeof(StatefulComponent))]
   public class FacilityPresenter : MonoBehaviour
   {
-    const float SHOW_Y_OFFSET = 500f;
+    const float SHOW_Y_OFFSET = 000f;
     const float HIDE_Y_OFFSET = 800f;
 
     [Inject]
@@ -29,6 +30,9 @@ namespace SHG
     StatefulComponent[] tabs;
     HashSet<Button> regiesteredButtons;
     ScrollRect scrollView;
+
+    [Inject]
+     IUiManager uIManager;
 
     void Awake()
     {
@@ -99,6 +103,7 @@ namespace SHG
         endValue: -SHOW_Y_OFFSET,
         duration: 0.5f)
         .SetEase(Ease.InOutSine);
+            uIManager.AddHashSet(this);
     }
 
     void Hide()
@@ -111,6 +116,7 @@ namespace SHG
           this.view.SetState((int)StateRole.Hidden);
           this.facilitiesController.UnSelectFacility();
         });
+            uIManager.RemoveHashSet(this);
     }
 
     void UpdateTabBar(FacilityType facility)

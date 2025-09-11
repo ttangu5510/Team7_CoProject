@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
@@ -6,6 +6,7 @@ using Zenject;
 using UniRx;
 using UniRx.Triggers;
 using LightScrollSnap;
+using JYL;
 
 namespace SHG
 {
@@ -23,6 +24,10 @@ namespace SHG
     CompositeDisposable disposables;
     Queue<GameDate> dateLeftThisYear;
     MatchListPresenter matchListPresenter;
+
+    [Inject]
+        IUiManager uIManager;
+
     
     void Awake()
     {
@@ -74,6 +79,20 @@ namespace SHG
 
       this.OnDestroyAsObservable()
         .Subscribe(_ => this.disposables?.Dispose());
+
+
+            UIManager.IsUIOpenRx
+                .Subscribe(open => {
+
+                    if (open)
+                    {
+                        view.SetState((int)StateRole.FxxkThePoilce);
+                    }
+                    else
+                    {
+                        view.SetState((int)StateRole.FxxkTheSystem);
+                    }
+                });
     }
 
     void UpdateContainer()
