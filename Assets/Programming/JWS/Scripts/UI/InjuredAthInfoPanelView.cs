@@ -9,7 +9,7 @@ namespace JSW
 {
     public sealed class InjuredAthInfoPanelView : MonoBehaviour
     {
-        [Inject] private IDomAthReadModel _ath;
+        //[Inject] private IDomAthReadModel _ath;
 
         [SerializeField] private int athleteId; // 외부에서 SetTarget으로 주입
 
@@ -44,9 +44,9 @@ namespace JSW
         {
             if (athleteId <= 0) return;
 
-            _ath.ObserveById(athleteId)
-                .Subscribe(Render)
-                .AddTo(_cd);
+            //_ath.ObserveById(athleteId)
+            //    .Subscribe(Render)
+            //    .AddTo(_cd);
         }
 
         private void Render(DomAthEntity a)

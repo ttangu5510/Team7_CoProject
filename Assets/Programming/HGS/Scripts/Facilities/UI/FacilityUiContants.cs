@@ -16,7 +16,7 @@ namespace SHG
         {
           FacilityType.Lounge, 
           new string[] {
-            "시설 정보"
+            "시설 정보", "휴식"
           }
         },
         {
@@ -28,7 +28,7 @@ namespace SHG
         {
           FacilityType.MedicalCenter, 
           new string[] {
-            "시설 정보"
+            "시설 정보", "치료실"
           }
         },
         {

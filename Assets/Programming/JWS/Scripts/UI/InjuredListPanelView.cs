@@ -8,7 +8,7 @@ namespace JSW
 {
     public sealed class InjuredListPanelView : MonoBehaviour
     {
-        [Inject] private IDomAthReadModel _ath;
+        //[Inject] private IDomAthReadModel _ath;
 
         [SerializeField] private Transform content;        // ScrollView Content
         [SerializeField] private InjuredRowView rowPrefab; // 아이템 프리팹
@@ -18,9 +18,9 @@ namespace JSW
 
         private void OnEnable()
         {
-            _ath.ObserveInjured()
-                .Subscribe(Render)
-                .AddTo(_cd);
+            //_ath.ObserveInjured()
+            //    .Subscribe(Render)
+            //    .AddTo(_cd);
         }
 
         private void OnDisable() => _cd.Clear();
