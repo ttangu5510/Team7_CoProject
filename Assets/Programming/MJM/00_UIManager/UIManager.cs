@@ -16,8 +16,7 @@ public class UIManager : MonoBehaviour, IUiManager
     // Rx 공개
     public static readonly BoolReactiveProperty IsUIOpenRx = new BoolReactiveProperty(false);
 
-
-    public static HashSet<string> isUIOpen { get; set; } = new HashSet<string>();
+    public static HashSet<string> isUIOpen { get; private set; }
 
     private static UIManager instance;
     public static UIManager Instance => instance;
@@ -64,6 +63,7 @@ public class UIManager : MonoBehaviour, IUiManager
         if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
         else { Destroy(gameObject); return; }
 
+        isUIOpen = new();
         // 초기 바인딩
         AutoBindPanels();
         AutoBindButtons();
@@ -189,7 +189,7 @@ public class UIManager : MonoBehaviour, IUiManager
             kv.Value?.SetActive(kv.Key == key);
 
         currentPanelKey = key;
-        isUIOpen.Add(key);
+        //isUIOpen.Add(key);
         UpdateUIState();
     }
 

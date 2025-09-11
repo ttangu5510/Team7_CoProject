@@ -107,7 +107,8 @@ namespace SHG
             uIManager.AddHashSet(this);
     }
 
-    void Hide()
+    // TODO : 테스트 중. TrainingBox에서 ProgressWeek 함수 이후 UI 닫기 필요.
+    public void Hide()
     {
       this.transform.DOLocalMoveY(
         endValue: -HIDE_Y_OFFSET,
