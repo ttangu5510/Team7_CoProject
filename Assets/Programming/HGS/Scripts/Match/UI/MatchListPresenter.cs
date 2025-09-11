@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +9,7 @@ using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
 using Zenject;
 using DG.Tweening;
+using JYL;
 
 namespace SHG
 {
@@ -24,8 +25,11 @@ namespace SHG
     IMatchController matchController;
     [Inject]
     ITimeFlowController timeFlowController;
+        [Inject]
+        IUiManager uiManager;
 
-    StatefulComponent view;
+
+        StatefulComponent view;
     StatefulComponent popup;
     ContainerView containerView;
     Queue<MatchData> scheduledMatches;
@@ -51,48 +55,56 @@ namespace SHG
       this.disposables = new ();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-      this.view.SetState((int)StateRole.Hidden);
-      this.IsShowing = new (false);
-      this.IsShowing
-        .Subscribe(show => {
-          if (show) {
-          this.view.SetState((int)StateRole.PopupHidden);
-            this.view.SetState((int)StateRole.Shown);
-            this.container.transform     
-            .DOLocalMoveY(
-              endValue: -300f,
-              duration: 0.5f)
-            .SetEase(Ease.OutSine);
-          }
-          else {
-            this.container.transform
-            .DOLocalMoveY(
-              endValue: -600f,
-              duration:0.5f)
-            .SetEase(Ease.InSine)
-            .OnComplete(() => {
-              this.view.SetState((int)StateRole.Hidden);
-              });
-          }
-        })
-        .AddTo(this.disposables);
+        // Start is called before the first frame update
+        void Start()
+        {
+            this.view.SetState((int)StateRole.Hidden);
+            uiManager.RemoveHashSet(this);
+            this.IsShowing = new(false);
+            this.IsShowing
+              .Subscribe(show => {
+                  if (show) {
+                      this.view.SetState((int)StateRole.PopupHidden);
+                      uiManager.RemoveHashSet(this);
+                      this.view.SetState((int)StateRole.Shown);
+                      uiManager.AddHashSet(this);
+                      this.container.transform
+                  .DOLocalMoveY(
+                    endValue: -300f,
+                    duration: 0.5f)
+                  .SetEase(Ease.OutSine);
+                  }
+                  else {
+                      this.container.transform
+                .DOLocalMoveY(
+                  endValue: -600f,
+                  duration: 0.5f)
+                .SetEase(Ease.InSine)
+                .OnComplete(() => {
+                    this.view.SetState((int)StateRole.Hidden);
+                    uiManager.RemoveHashSet(this);
+                });
+                  }
+              })
+              .AddTo(this.disposables);
 
-      this.view.GetItem<ButtonReference>(
-        (int)ButtonRole.CloseButton).Button
-        .OnClickAsObservable()
-        .Subscribe(_ => this.IsShowing.Value = false)
-        .AddTo(this.disposables);
+            this.view.GetItem<ButtonReference>(
+              (int)ButtonRole.CloseButton).Button
+              .OnClickAsObservable()
+              .Subscribe(_ => this.IsShowing.Value = false)
+              .AddTo(this.disposables);
 
-      this.popup = this.view.GetItem<InnerComponentReference>(
-        (int)InnerComponentRole.Popup).InnerComponent;
-      popup.GetItem<ButtonReference>(
-        (int)ButtonRole.ConfirmButton).Button
-        .OnClickAsObservable()
-        .Subscribe(_ => this.view.SetState((int)StateRole.PopupHidden))
-        .AddTo(this.disposables);
+            this.popup = this.view.GetItem<InnerComponentReference>(
+              (int)InnerComponentRole.Popup).InnerComponent;
+            popup.GetItem<ButtonReference>(
+              (int)ButtonRole.ConfirmButton).Button
+              .OnClickAsObservable()
+              .Subscribe(_ => {
+                  uiManager.RemoveHashSet(this);
+                  this.view.SetState((int)StateRole.PopupHidden);
+              })
+              .AddTo(this.disposables)
+            ;
 
       this.SubscribeTimeFlow();
       this.SubscribeMatch();
@@ -204,7 +216,8 @@ namespace SHG
         this.FillPopupContent(true);
       }
       this.view.SetState((int)StateRole.PopupShown);
-    }
+            uiManager.AddHashSet(this);
+        }
 
     void FillPopupContent(bool isRegistered)
     {
