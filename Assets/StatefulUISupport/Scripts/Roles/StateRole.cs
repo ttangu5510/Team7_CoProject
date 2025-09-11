@@ -63,5 +63,7 @@ public enum StateRole
     ThirdTab = 1424546666,
     InActive = 1846072803,
     ForthTab = 1030529568,
+    FxxkTheSystem = 2113924241,
+    FxxkThePoilce = -1355056512,
 
 }
