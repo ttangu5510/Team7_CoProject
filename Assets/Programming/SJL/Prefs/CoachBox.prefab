@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB8E8\uD2F4 1"
+  m_text: "\uC2A4\uD53C\uB4DC \uC2A4\uCF00\uC774\uD305"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 5370748298488782570}
   - component: {fileID: 481414324410841008}
   m_Layer: 5
-  m_Name: Text (TMP) (3)
+  m_Name: Text.CoachFatigue2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -407,7 +407,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3866351320981266441
 RectTransform:
   m_ObjectHideFlags: 0
@@ -542,7 +542,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4186548495120561482
 RectTransform:
   m_ObjectHideFlags: 0
@@ -672,7 +672,7 @@ GameObject:
   - component: {fileID: 3006282986038172104}
   - component: {fileID: 5317916655231159167}
   m_Layer: 5
-  m_Name: Text (TMP) (2)
+  m_Name: Text.CoachName1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -923,7 +923,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB8E8\uD2F4 2"
+  m_text: "\uD53C\uACA8 \uC2A4\uCF00\uC774\uD305"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1009,7 +1009,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1179852979108266941
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1267,7 +1267,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB8E8\uD2F4 4"
+  m_text: "\uC2A4\uD0A4\uC810\uD504"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1668,7 +1668,7 @@ GameObject:
   - component: {fileID: 6361899714223753945}
   - component: {fileID: 4051470437639290440}
   m_Layer: 5
-  m_Name: Text (TMP) (2)
+  m_Name: Text.CoachName2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1802,7 +1802,7 @@ GameObject:
   - component: {fileID: 7113820614006395044}
   - component: {fileID: 1757583953366189402}
   m_Layer: 5
-  m_Name: Text (TMP) (3)
+  m_Name: Text.CoachFatigue3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2139,10 +2139,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae7e241c15891a141afa71151d041ae8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Routine1: {fileID: 4257968696217374187}
-  Routine2: {fileID: 6371146964706344211}
-  Routine3: {fileID: 7464603917063954611}
-  Routine4: {fileID: 1866416547926073258}
+  routineButton:
+  - {fileID: 4257968696217374187}
+  - {fileID: 6371146964706344211}
+  - {fileID: 7464603917063954611}
+  - {fileID: 1866416547926073258}
+  coachImage:
+  - {fileID: 5776103434325015302}
+  - {fileID: 581827554876659716}
+  - {fileID: 953174850096139506}
+  - {fileID: 8289529465303504927}
+  coachName:
+  - {fileID: 5317916655231159167}
+  - {fileID: 4051470437639290440}
+  - {fileID: 8771697192575314233}
+  - {fileID: 8221398185366807025}
+  coachFatigue:
+  - {fileID: 5631963220046625880}
+  - {fileID: 481414324410841008}
+  - {fileID: 1757583953366189402}
+  - {fileID: 6925302187381359012}
+  coachListPanel: {fileID: 0}
 --- !u!1 &5692656479146235069
 GameObject:
   m_ObjectHideFlags: 0
@@ -2155,7 +2172,7 @@ GameObject:
   - component: {fileID: 1798431688606577391}
   - component: {fileID: 8221398185366807025}
   m_Layer: 5
-  m_Name: Text (TMP) (2)
+  m_Name: Text.CoachName4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2342,7 +2359,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uB8E8\uD2F4 3"
+  m_text: "\uC2A4\uCF08\uB808\uD1A4"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2423,7 +2440,7 @@ GameObject:
   - component: {fileID: 5760315156303257345}
   - component: {fileID: 6925302187381359012}
   m_Layer: 5
-  m_Name: Text (TMP) (3)
+  m_Name: Text.CoachFatigue4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2635,7 +2652,7 @@ GameObject:
   - component: {fileID: 4098257629011216995}
   - component: {fileID: 5631963220046625880}
   m_Layer: 5
-  m_Name: Text (TMP) (3)
+  m_Name: Text.CoachFatigue1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3026,7 +3043,7 @@ GameObject:
   - component: {fileID: 4546709370185816508}
   - component: {fileID: 8771697192575314233}
   m_Layer: 5
-  m_Name: Text (TMP) (2)
+  m_Name: Text.CoachName3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3165,7 +3182,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8163641866693652516
 RectTransform:
   m_ObjectHideFlags: 0

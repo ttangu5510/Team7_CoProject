@@ -171,17 +171,8 @@ namespace JYL
 
             // 입력받은 세이브로 세로운 record 세이브 객체 생성
             // TODO : 기술문서 작성( mutable, immutable, record, jsonUtility, with )
-            SaveData newSave = save with
-            {
-                time = save.time with{},
-                currencies = save.currencies with{},
-                buildings =  save.buildings.ConvertAll( building => building with{}),
-                athleteSaves = save.athleteSaves.ConvertAll( athleteSave => athleteSave with{}),
-                coachSaves = save.coachSaves.ConvertAll( coachSave => coachSave with{}),
-                quests = save.quests.ConvertAll( quest => quest with{}),
-                achievements = save.achievements.ConvertAll( achievement => achievement with{}),
-                encyclopedia = save.encyclopedia.ConvertAll( encyclopedia => encyclopedia with{})
-            };
+            SaveData newSave = save.CloneSave();
+            
             // 세이브 슬롯 인덱스 저장
             newSave.saveSlotIndex = slotNumber;
             
@@ -228,7 +219,8 @@ namespace JYL
 
         public void LoadProgress(SaveData save) // 현재 선택중인 세이브 파일을 변경함
         {
-            curSave = save;
+            SaveData newSave = save.CloneSave();
+            curSave = newSave;
         }
 
         public void LoadProgress(string fileName) // 이름으로 불러올 수 있게 만듦. 어떤 걸 쓰게 될 지 모름.
@@ -299,11 +291,11 @@ namespace JYL
         {
             if (entity.grade == CoachGrade.스카우트센터) // 코치가 일반 등급이면, 세이브 객체를 생성 후 저장함.
             {
-                CoachSave coach = new(entity); // 생성자로 코치 객체를 기준으로 생성
-                curSave.coachSaves.Add(coach);
+                CoachSave newCoach = new(entity); // 생성자로 코치 객체를 기준으로 생성
+                curSave.coachSaves.Add(newCoach);
             }
             
-            else // 후보 이상급 코치면 세이브 파일이 있는지 먼저 체크한 후 로직 진행함
+            else // 후보 이상급 코치면 세이브 파일이 있는지 먼저 체크한 후 로직 진행함. 은퇴해야지만 Hidden에서 Unrecruited로 됨.
             {
                 CoachSave newCoach = curSave.FindCoach(entity);
                 if (newCoach != null)
@@ -321,6 +313,21 @@ namespace JYL
         public void RetireCoach(CoachEntity entity) // Repository에서 사용. 코치 세이브 객체를 찾은 후, 은퇴로 상태 변경
         {
             curSave.FindCoach(entity).state = CoachState.Retired;
+            for (int i = 0; i < curSave.coachAssign.Length; i++)
+            {
+                if (curSave.coachAssign[i] == entity.id)
+                {
+                    curSave.coachAssign[i] = -1;
+                }
+            }
+            // 배치 중이면 배치 해제
+            for (int i = 0; i < curSave.coachAssign.Length; i++)
+            {
+                if (curSave.coachAssign[i] == entity.id)
+                {
+                    curSave.coachAssign[i] = -1;
+                }
+            }
         }
 
         public void OutCoach(CoachEntity entity) // Repository 코치 방출에서 사용
@@ -346,6 +353,15 @@ namespace JYL
             {
                 curSave.coachSaves.Remove(coach);
             }
+            
+            // 배치 중이면 배치 해제
+            for (int i = 0; i < curSave.coachAssign.Length; i++)
+            {
+                if (curSave.coachAssign[i] == entity.id)
+                {
+                    curSave.coachAssign[i] = -1;
+                }
+            }
         }
 
         public void UpdateCoachEntity(CoachEntity entity) // 세이브 객체를 통해 코치 동적 객체를 최신화 함
@@ -362,6 +378,19 @@ namespace JYL
             {
                 Debug.Log($"코치 세이브 객체가 없음{entity.entityName}");
             }
+        }
+        #endregion
+
+        #region 코치 배치
+
+        public int[] GetAssignedCoaches() // 현재 배치 중인 코치 배열
+        {
+            return (int[])curSave.coachAssign.Clone();
+        }
+
+        public void SetAssignedCoaches(int[] assignedCoaches) // 배치 중인 코치 배열 업데이트
+        {
+            curSave.coachAssign = (int[])assignedCoaches.Clone();
         }
         #endregion
         

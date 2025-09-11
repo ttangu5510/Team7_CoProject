@@ -7,8 +7,6 @@ using SHG;
 using SJL;
 using TMPro;
 using UniRx;
-using Unity.VisualScripting;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;

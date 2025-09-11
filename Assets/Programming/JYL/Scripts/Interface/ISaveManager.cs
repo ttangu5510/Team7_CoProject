@@ -7,7 +7,6 @@ namespace JYL
 {
     public interface ISaveManager : IInitializable
     {
-        
         // 세이브 
         void CreateSaveData(int slotNumber = 0);
         void CreateAutoSaveData(string playerName, string clanName, string uid = "TestAutoSave123");
@@ -34,6 +33,8 @@ namespace JYL
         void RetireCoach(CoachEntity entity);
         void OutCoach(CoachEntity entity);
         void UpdateCoachEntity(CoachEntity entity);
+        int[] GetAssignedCoaches();
+        void SetAssignedCoaches(int[] assignedCoaches);
         
         // 리스트 추출
         List<SaveData> GetAllSave();
