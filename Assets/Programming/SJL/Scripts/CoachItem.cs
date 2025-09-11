@@ -30,7 +30,12 @@ namespace SJL
             nameText.text = entity.entityName;
             abilityText.text = $"피로도 감소: -{(int)entity.grade}";
             ageText.text = $"({entity.curAge})";
-            
+
+            UpdateButton(isAssigned);
+        }
+
+        public void UpdateButton(bool isAssigned)
+        {
             if (isAssigned)
             {
                 assignText.text = "배치 중";

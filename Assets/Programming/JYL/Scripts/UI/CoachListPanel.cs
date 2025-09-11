@@ -10,6 +10,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
+namespace JYL
+{
 public class CoachListPanel : MonoBehaviour
 {
     [Header("Set References")]
@@ -78,19 +80,22 @@ public class CoachListPanel : MonoBehaviour
     // 코치를 배치하면 수행되는 함수.
     private void OnClickAssignCoach(CoachEntity coach, CoachItem item)
     {
-        Debug.Log($"배치 수행됨{coach.entityName}__{itemDict[item]}");
         if (itemDict[item]) // 이미 배치되어 있었다면,
         {
             int index = assignedCoaches.IndexOf(coach.id);
+            Debug.Log($"인덱스{index}");
             assignedCoaches[index] = -1; // "배치 중" 인 아이템은 "배치 하기"로 변경
             isAssigned = false; // 배치 판별을 false로 돌림
+            item.UpdateButton(isAssigned);
+            itemDict[item] = false;
             //item.Init();
         }
         else if (!isAssigned) // 배치되어 있지 않았다면
         {
-            // 새로이 배치하고, 이벤트를 발행한 다음 패널을 닫음
             MessageBroker.Default.Publish(new AssignCoachEvent(routineNumber, coach.id));
+            // 새로이 배치하고, 이벤트를 발행한 다음 패널을 닫음
             gameObject.SetActive(false);
         }
     }
+}
 }
