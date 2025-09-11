@@ -1,51 +1,43 @@
 using System.Collections.Generic;
-using System.Linq;
+using UniRx;
 using UnityEngine;
 using Zenject;
-using TMPro;
-using JYL;
+using JYL; // DomAthEntity
 
-public class InjuredListPanelView : MonoBehaviour
+namespace JSW
 {
-    [Header("Hierarchy")]
-    [SerializeField] private Transform listContent; // .../Scroll View/Viewport/Content
-
-    [Header("Prefabs")]
-    [SerializeField] private GameObject injuredItemPrefab; // Injured Athlete Item.prefab
-
-    [Inject] private DomAthService _ath; // 읽기 전용
-
-    public void Render()
+    public sealed class InjuredListPanelView : MonoBehaviour
     {
-        var injured = _ath.GetAllRecruitedAthleteList()      // <-- 수정: 메서드 사용
-            .Where(a => a.curState == AthleteState.Injured)
-            .ToList();
+        [Inject] private IDomAthReadModel _ath;
 
-        Rebuild(listContent);
+        [SerializeField] private Transform content;        // ScrollView Content
+        [SerializeField] private InjuredRowView rowPrefab; // 아이템 프리팹
 
-        foreach (var e in injured)
+        private readonly CompositeDisposable _cd = new();
+        private readonly List<GameObject> _pool = new();
+
+        private void OnEnable()
         {
-            var go = Instantiate(injuredItemPrefab, listContent, false);
-
-            var nameText    = go.transform.Find("Ath NameText")?.GetComponent<TMP_Text>();
-            var fatigueText = go.transform.Find("Fatigue Text")?.GetComponent<TMP_Text>();
-
-            if (nameText)    nameText.text    = e.entityName;
-            if (fatigueText) fatigueText.text = $"{(e.stats != null ? e.stats.fatigue : 0)}%";
+            _ath.ObserveInjured()
+                .Subscribe(Render)
+                .AddTo(_cd);
         }
-    }
 
-    private void Rebuild(Transform parent)
-    {
-        if (!parent) return;
-        for (int i = parent.childCount - 1; i >= 0; i--)
+        private void OnDisable() => _cd.Clear();
+
+        private void Render(IReadOnlyList<DomAthEntity> list)
         {
-#if UNITY_EDITOR
-            if (!Application.isPlaying) DestroyImmediate(parent.GetChild(i).gameObject);
-            else Destroy(parent.GetChild(i).gameObject);
-#else
-            Destroy(parent.GetChild(i).gameObject);
-#endif
+            foreach (var go in _pool) go.SetActive(false);
+
+            while (_pool.Count < list.Count)
+                _pool.Add(Instantiate(rowPrefab, content).gameObject);
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                var row = _pool[i].GetComponent<InjuredRowView>();
+                row.gameObject.SetActive(true);
+                row.Bind(list[i]);
+            }
         }
     }
 }
