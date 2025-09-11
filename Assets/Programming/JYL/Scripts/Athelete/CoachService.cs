@@ -13,8 +13,7 @@ namespace JYL
         [Inject] private readonly ICoachRepository repository;
         private IDisposable subscription; // 구독 해제를 위한 객체
 
-        [SerializeField] public List<CoachEntity> testList = new();
-        
+        [SerializeField] public int[] coachesTest = new int[4];
         private void Awake()
         {
             Init();
@@ -41,9 +40,13 @@ namespace JYL
                     .AddTo(this);
             }
 
-            // TODO: 테스트 리스트
-            testList = GetAllCoaches();
+            coachesTest = repository.FindAllAssigned();
+        }
 
+        // TODO: 코치 배치 테스트
+        public void RefreshCoaches()
+        {
+            coachesTest = repository.FindAllAssigned();
         }
 
         #region 코치 객체, 리스트

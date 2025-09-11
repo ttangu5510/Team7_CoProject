@@ -109,6 +109,9 @@ namespace SJL
             assignedCoaches[assignEvent.SlotNumber] = assignEvent.CoachId; // 코치 배치 배열 최신화
             saveManager.SetAssignedCoaches(assignedCoaches); // 세이브 객체의 코치 배치 배열 또한 최신화
             UpdateUI(); // UI 최신화
+            
+            //TODO:Test 코치영입,배치
+            coachService.RefreshCoaches();
         }
 
     }

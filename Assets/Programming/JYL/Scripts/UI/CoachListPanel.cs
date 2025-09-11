@@ -88,6 +88,7 @@ public class CoachListPanel : MonoBehaviour
             isAssigned = false; // 배치 판별을 false로 돌림
             item.UpdateButton(isAssigned);
             itemDict[item] = false;
+            MessageBroker.Default.Publish(new AssignCoachEvent(routineNumber, -1));
             //item.Init();
         }
         else if (!isAssigned) // 배치되어 있지 않았다면

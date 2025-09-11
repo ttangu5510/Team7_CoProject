@@ -20,8 +20,7 @@ namespace JYL
         #endif
 
         private List<SaveData> saves = new();
-        // TODO : 코치 영입, 배치 테스트
-        public SaveData curSave;
+        private SaveData curSave;
 
         private readonly Dictionary<string, DateTime> savedTime = new(); // 세이브 파일이 저장된 시간 딕셔너리
         private readonly Dictionary<string, SaveData> saveDataByName = new(); //세이브 객체를 이름으로 찾는 딕셔너리
