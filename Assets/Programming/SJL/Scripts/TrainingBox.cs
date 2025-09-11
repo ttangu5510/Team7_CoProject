@@ -5,7 +5,6 @@ using JYL;
 using SHG;
 using TMPro;
 using UniRx;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -49,6 +48,7 @@ namespace SJL
         [SerializeField] private ConfirmPUI confirmPui;
         [SerializeField] private TrainingProgressPUI progressPui;
         [SerializeField] private TrainingDonePUI donePui;
+        [SerializeField] private FacilityPresenter facilityPresenter;
 
         
         // 플레이어 서비스 의존성 주입
@@ -332,7 +332,7 @@ namespace SJL
 
         }
         
-        // 훈련 결과
+        // 이벤트. 훈련 결과
         private void OnTrainingDone(bool success)
         {
             TrainingDonePUI pui = Instantiate(donePui, trainingCenter.transform);
@@ -344,13 +344,13 @@ namespace SJL
             });
         }
         
-        // 훈련 후, 시간 보내기
+        // 이벤트. 훈련 후, 시간 보내기
         private void OnPopUpOkClick()
         {
             // 시간 보내기
             flowController.ProgressWeek();
-            // 패널 종료
-            trainingCenter.gameObject.SetActive(false);
+            // TODO : ProgressWeek을 통해 UI 초기화 필요
+            facilityPresenter.Hide();
         }
     }
 }
