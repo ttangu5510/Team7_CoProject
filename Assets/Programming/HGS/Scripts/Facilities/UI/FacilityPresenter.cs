@@ -43,7 +43,8 @@ namespace SHG
       var tabRoles = new InnerComponentRole[] {
         InnerComponentRole.FirstTab,
         InnerComponentRole.SecondTab,
-        InnerComponentRole.ThirdTab
+        InnerComponentRole.ThirdTab,
+        InnerComponentRole.ForthTab,
       };
       this.tabs = Array.ConvertAll(
         tabRoles,
@@ -187,6 +188,9 @@ namespace SHG
           break;
         case 2:
           this.view.SetState((int)StateRole.ThirdTab);
+          break;
+        case 3:
+          this.view.SetState((int)StateRole.ForthTab);
           break;
         default: 
           throw (new ApplicationException($"{nameof(OnClickTabButton)}: index is out of range {index}"));
