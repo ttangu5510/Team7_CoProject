@@ -14,7 +14,7 @@ namespace SJL
 {
     public enum TrainingType
     {
-        None, Circuit, LadderDrill, Sprint, BurpeeTest, Special
+        None, SpeedSkating, FigureSkating, Skeleton, SkiJump, Special
     }
     
     public class TrainingBox : MonoBehaviour
@@ -23,10 +23,10 @@ namespace SJL
         private Canvas trainingCenter;
         
         [Header("Button")] 
-        [SerializeField] private Button circuitPlayers;
-        [SerializeField] private Button ladderPlayers;
-        [SerializeField] private Button sprintsPlayers;
-        [SerializeField] private Button burpeePlayers;
+        [SerializeField] private Button speedSkatingButton;
+        [SerializeField] private Button figureSkatingButton;
+        [SerializeField] private Button skeletonButton;
+        [SerializeField] private Button skiJumpButton;
 
         [SerializeField] private Button trainingCloseButton;
         [SerializeField] private Button startTrainingButton;
@@ -39,10 +39,10 @@ namespace SJL
         // [SerializeField] private TextMeshProUGUI burpeeTestsText;
         
         [Header("Assigned AthleteImage")] // 편성된 선수들의 이미지 및 이름 관리
-        [SerializeField] private AssignedAthPanel circuitImage;
-        [SerializeField] private AssignedAthPanel ladderImage;
-        [SerializeField] private AssignedAthPanel sprintsImage;
-        [SerializeField] private AssignedAthPanel burpeeImage;
+        [SerializeField] private AssignedAthPanel speedSkatingImage;
+        [SerializeField] private AssignedAthPanel figureSkatingImage;
+        [SerializeField] private AssignedAthPanel skeletonImage;
+        [SerializeField] private AssignedAthPanel skiJumpImage;
         
         [Header("Set Refs")]
         [SerializeField] private AthleteListPanel assignmentPanel;
@@ -53,6 +53,8 @@ namespace SJL
         
         // 플레이어 서비스 의존성 주입
         [Inject] private DomAthService athleteService;
+        // 코치 서비스 의존성 주입
+        [Inject] private CoachService coachService;
         // 시간 컨트롤러 의존성 주입
         [Inject] private ITimeFlowController flowController;
         // 시설의 업그레이드 정도 적용
@@ -76,20 +78,20 @@ namespace SJL
             
             EnableInit();
             
-            circuitPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(TrainingType.Circuit))
+            speedSkatingButton.OnClickAsObservable()
+                .Subscribe(_ => AssignAthletes(TrainingType.SpeedSkating))
                 .AddTo(this);
 
-            ladderPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(TrainingType.LadderDrill))
+            figureSkatingButton.OnClickAsObservable()
+                .Subscribe(_ => AssignAthletes(TrainingType.FigureSkating))
                 .AddTo(this);
 
-            sprintsPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(TrainingType.Sprint))
+            skeletonButton.OnClickAsObservable()
+                .Subscribe(_ => AssignAthletes(TrainingType.Skeleton))
                 .AddTo(this);
 
-            burpeePlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(TrainingType.BurpeeTest))
+            skiJumpButton.OnClickAsObservable()
+                .Subscribe(_ => AssignAthletes(TrainingType.SkiJump))
                 .AddTo(this);
 
             resetButton.OnClickAsObservable()
@@ -145,7 +147,7 @@ namespace SJL
         }
 
         // 선수 배치. 선수 선택 UI 팝업 띄움
-        private void PositioningPlayers(TrainingType type)
+        private void AssignAthletes(TrainingType type)
         {
             assignmentPanel.gameObject.SetActive(true);
             assignmentPanel.SelectTrainingAthlete(athleteList, type, assignDict);
@@ -157,48 +159,48 @@ namespace SJL
         {
             switch (type)
             {
-                case TrainingType.Circuit:
+                case TrainingType.SpeedSkating:
                     if (assignDict.Values.Count(t => t == type) > 0)
                     {
-                        circuitImage.gameObject.SetActive(true);
-                        circuitImage.UpdateUI(assignDict, type);
+                        speedSkatingImage.gameObject.SetActive(true);
+                        speedSkatingImage.UpdateUI(assignDict, type);
                     }
                     else
                     {
-                        circuitImage.gameObject.SetActive(false);
+                        speedSkatingImage.gameObject.SetActive(false);
                     }
                     break;
-                case TrainingType.LadderDrill:
+                case TrainingType.FigureSkating:
                     if (assignDict.Values.Count(t => t == type) > 0)
                     {
-                        ladderImage.gameObject.SetActive(true);
-                        ladderImage.UpdateUI(assignDict, type);
+                        figureSkatingImage.gameObject.SetActive(true);
+                        figureSkatingImage.UpdateUI(assignDict, type);
                     }
                     else
                     {
-                        ladderImage.gameObject.SetActive(false);
+                        figureSkatingImage.gameObject.SetActive(false);
                     }
                     break;
-                case TrainingType.Sprint:
+                case TrainingType.Skeleton:
                     if (assignDict.Values.Count(t => t == type) > 0)
                     {
-                        sprintsImage.gameObject.SetActive(true);
-                        sprintsImage.UpdateUI(assignDict, type);
+                        skeletonImage.gameObject.SetActive(true);
+                        skeletonImage.UpdateUI(assignDict, type);
                     }
                     else
                     {
-                        sprintsImage.gameObject.SetActive(false);
+                        skeletonImage.gameObject.SetActive(false);
                     }
                     break;
-                case TrainingType.BurpeeTest:
+                case TrainingType.SkiJump:
                     if (assignDict.Values.Count(t => t == type) > 0)
                     {
-                        burpeeImage.gameObject.SetActive(true);
-                        burpeeImage.UpdateUI(assignDict, type);
+                        skiJumpImage.gameObject.SetActive(true);
+                        skiJumpImage.UpdateUI(assignDict, type);
                     }
                     else
                     {
-                        burpeeImage.gameObject.SetActive(false);
+                        skiJumpImage.gameObject.SetActive(false);
                     }
                     break;
             }
@@ -207,45 +209,45 @@ namespace SJL
         // 전 종목의 배치 현황 텍스트 업데이트
         private void UpdateAllAssignment()
         {
-            int assignedCircuitCount = assignDict.Values.Count(t => t == TrainingType.Circuit);
+            int assignedCircuitCount = assignDict.Values.Count(t => t == TrainingType.SpeedSkating);
             if (assignedCircuitCount > 0)
             { 
-                circuitImage.gameObject.SetActive(true);
-                circuitImage.UpdateUI(assignDict, TrainingType.Circuit);
+                speedSkatingImage.gameObject.SetActive(true);
+                speedSkatingImage.UpdateUI(assignDict, TrainingType.SpeedSkating);
             }
             else
             {
-                circuitImage.gameObject.SetActive(false);
+                speedSkatingImage.gameObject.SetActive(false);
             }
-            int assignedLadderCount = assignDict.Values.Count(t => t == TrainingType.LadderDrill);
+            int assignedLadderCount = assignDict.Values.Count(t => t == TrainingType.FigureSkating);
             if (assignedLadderCount > 0)
             {
-                ladderImage.gameObject.SetActive(true);
-                ladderImage.UpdateUI(assignDict, TrainingType.LadderDrill);
+                figureSkatingImage.gameObject.SetActive(true);
+                figureSkatingImage.UpdateUI(assignDict, TrainingType.FigureSkating);
             }
             else
             {
-                ladderImage.gameObject.SetActive(false);
+                figureSkatingImage.gameObject.SetActive(false);
             }
-            int assignedSprintsCount = assignDict.Values.Count(t => t == TrainingType.Sprint);
+            int assignedSprintsCount = assignDict.Values.Count(t => t == TrainingType.Skeleton);
             if (assignedSprintsCount > 0)
             {
-                sprintsImage.gameObject.SetActive(true);
-                sprintsImage.UpdateUI(assignDict, TrainingType.Sprint);
+                skeletonImage.gameObject.SetActive(true);
+                skeletonImage.UpdateUI(assignDict, TrainingType.Skeleton);
             }
             else
             {
-                sprintsImage.gameObject.SetActive(false);
+                skeletonImage.gameObject.SetActive(false);
             }
-            int assignedBurpeeCount = assignDict.Values.Count(t => t == TrainingType.BurpeeTest);
+            int assignedBurpeeCount = assignDict.Values.Count(t => t == TrainingType.SkiJump);
             if (assignedBurpeeCount > 0)
             {
-                burpeeImage.gameObject.SetActive(true);
-                burpeeImage.UpdateUI(assignDict, TrainingType.BurpeeTest);
+                skiJumpImage.gameObject.SetActive(true);
+                skiJumpImage.UpdateUI(assignDict, TrainingType.SkiJump);
             }
             else
             {
-                burpeeImage.gameObject.SetActive(false);
+                skiJumpImage.gameObject.SetActive(false);
             }
                 
         }
@@ -281,22 +283,25 @@ namespace SJL
         {
             bool success = true;
             bool result = true;
+            
+            // 코치 정보 가져오기
+            int[] coaches = coachService.GetAssignedCoachesArray();
             foreach (var entity in assignDict.Keys)
             {
                 // 훈련별 능력치 및 피로 상승
                 switch (assignDict[entity])
                 {
-                    case TrainingType.Circuit:
-                        success = athleteService.TrainAthlete(entity, Ability.Health, trainAmount, 0); // TODO: 코치 배치패널에서 정보 가져와야 함
+                    case TrainingType.SpeedSkating: // 순발력, 기술
+                        success = athleteService.TrainAthlete(entity, TrainingType.SpeedSkating, trainAmount,coaches[0]);
                         break;
-                    case TrainingType.LadderDrill:
-                        success = athleteService.TrainAthlete(entity, Ability.Quickness, trainAmount, 0);
+                    case TrainingType.FigureSkating: // 기술, 체력
+                        success = athleteService.TrainAthlete(entity, TrainingType.FigureSkating, trainAmount, coaches[1]);
                         break;
-                    case TrainingType.Sprint:
-                        success = athleteService.TrainAthlete(entity, Ability.Flexibility, trainAmount, 0);
+                    case TrainingType.Skeleton: // 유연성, 체력
+                        success = athleteService.TrainAthlete(entity, TrainingType.Skeleton, trainAmount, coaches[2]);
                         break;
-                    case TrainingType.BurpeeTest:
-                        success = athleteService.TrainAthlete(entity, Ability.Balance, trainAmount, 0);
+                    case TrainingType.SkiJump: // 균형감각, 속도
+                        success = athleteService.TrainAthlete(entity, TrainingType.SkiJump, trainAmount, coaches[3]);
                         break;
                 }
 

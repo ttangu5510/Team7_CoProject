@@ -20,7 +20,8 @@ namespace JYL
         #endif
 
         private List<SaveData> saves = new();
-        private SaveData curSave;
+        // TODO : 코치 영입, 배치 테스트
+        public SaveData curSave;
 
         private readonly Dictionary<string, DateTime> savedTime = new(); // 세이브 파일이 저장된 시간 딕셔너리
         private readonly Dictionary<string, SaveData> saveDataByName = new(); //세이브 객체를 이름으로 찾는 딕셔너리
@@ -291,11 +292,11 @@ namespace JYL
         {
             if (entity.grade == CoachGrade.스카우트센터) // 코치가 일반 등급이면, 세이브 객체를 생성 후 저장함.
             {
-                CoachSave coach = new(entity); // 생성자로 코치 객체를 기준으로 생성
-                curSave.coachSaves.Add(coach);
+                CoachSave newCoach = new(entity); // 생성자로 코치 객체를 기준으로 생성
+                curSave.coachSaves.Add(newCoach);
             }
             
-            else // 후보 이상급 코치면 세이브 파일이 있는지 먼저 체크한 후 로직 진행함
+            else // 후보 이상급 코치면 세이브 파일이 있는지 먼저 체크한 후 로직 진행함. 은퇴해야지만 Hidden에서 Unrecruited로 됨.
             {
                 CoachSave newCoach = curSave.FindCoach(entity);
                 if (newCoach != null)
@@ -313,6 +314,14 @@ namespace JYL
         public void RetireCoach(CoachEntity entity) // Repository에서 사용. 코치 세이브 객체를 찾은 후, 은퇴로 상태 변경
         {
             curSave.FindCoach(entity).state = CoachState.Retired;
+            for (int i = 0; i < curSave.coachAssign.Length; i++)
+            {
+                if (curSave.coachAssign[i] == entity.id)
+                {
+                    curSave.coachAssign[i] = -1;
+                }
+            }
+            // 배치 중이면 배치 해제
             for (int i = 0; i < curSave.coachAssign.Length; i++)
             {
                 if (curSave.coachAssign[i] == entity.id)
@@ -345,6 +354,15 @@ namespace JYL
             {
                 curSave.coachSaves.Remove(coach);
             }
+            
+            // 배치 중이면 배치 해제
+            for (int i = 0; i < curSave.coachAssign.Length; i++)
+            {
+                if (curSave.coachAssign[i] == entity.id)
+                {
+                    curSave.coachAssign[i] = -1;
+                }
+            }
         }
 
         public void UpdateCoachEntity(CoachEntity entity) // 세이브 객체를 통해 코치 동적 객체를 최신화 함
@@ -361,6 +379,19 @@ namespace JYL
             {
                 Debug.Log($"코치 세이브 객체가 없음{entity.entityName}");
             }
+        }
+        #endregion
+
+        #region 코치 배치
+
+        public int[] GetAssignedCoaches() // 현재 배치 중인 코치 배열
+        {
+            return (int[])curSave.coachAssign.Clone();
+        }
+
+        public void SetAssignedCoaches(int[] assignedCoaches) // 배치 중인 코치 배열 업데이트
+        {
+            curSave.coachAssign = (int[])assignedCoaches.Clone();
         }
         #endregion
         

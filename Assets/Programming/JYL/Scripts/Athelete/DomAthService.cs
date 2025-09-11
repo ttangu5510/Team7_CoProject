@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using SJL;
 using UnityEngine;
 using UniRx;
 using Zenject;
@@ -101,25 +102,40 @@ namespace JYL
         #endregion
 
         #region 선수 훈련, 특훈
-        public bool TrainAthlete(DomAthEntity entity, in Ability status, int amount = 1, int coach = 0)
+        public bool TrainAthlete(DomAthEntity entity, in TrainingType type, int amount = 1, int coach = 0)
         { //선수 훈련 함수. 정해진 파라매터만 수행 가능 (기획안의 루틴에 따름). 부상이면 선수 강화 함수 수행하면 안됨
-            switch (status)
+            if (entity == null || entity.curState == AthleteState.Injured) return false;  //선수가 부상 중이거나 null이면 false
+            
+            bool isSuccess = false; // 반환에 사용될 boolean
+            Ability firstAbility;
+            Ability secondAbility;
+            switch (type)
             {
-                case Ability.Health :
-                case Ability.Quickness :
-                case Ability.Flexibility :
-                case Ability.Balance :
-                    if (entity == null || entity.curState == AthleteState.Injured) return false;  //선수가 부상 중이면 false
-                        
-                    bool isSuccess = entity.TrainAthlete(status, amount, coach);
-                    // 선수 세이브 객체 최신화
-                    repository.Update(entity);
-
-                    return isSuccess;
+                case TrainingType.SpeedSkating :
+                    firstAbility = Ability.Quickness;
+                    secondAbility = Ability.Technic;
+                    break;
+                case TrainingType.FigureSkating :
+                    firstAbility = Ability.Technic;
+                    secondAbility = Ability.Health;
+                    break;
+                case TrainingType.Skeleton :
+                    firstAbility = Ability.Flexibility;
+                    secondAbility = Ability.Health;
+                    break;
+                case TrainingType.SkiJump :
+                    firstAbility = Ability.Balance;
+                    secondAbility = Ability.Speed;
+                    break;
                 default:
-                    Debug.LogWarning($"잘못된 파라매터 입력{status}");
+                    Debug.LogWarning($"잘못된 파라매터 입력{type}");
                     return false;
             }
+                
+            isSuccess = entity.TrainAthlete(firstAbility, secondAbility, amount, coach);
+            // 선수 세이브 객체 최신화
+            repository.Update(entity);
+            return isSuccess;
         }
 
         public void ApplySpecialTraining(DomAthEntity entity, int trainingTimes, int amountPerTime)

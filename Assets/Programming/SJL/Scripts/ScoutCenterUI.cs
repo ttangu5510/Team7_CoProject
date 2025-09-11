@@ -14,6 +14,7 @@ namespace SJL
     {
         [SerializeField] Button playerRecruitmentButton;
 
+        [Inject] private DiContainer container;
         [Inject] private DomAthService athService;
         [Inject] private IResourceController  resourceController;
         
@@ -67,8 +68,7 @@ namespace SJL
             int displayCount = Mathf.Min(5, shuffledList.Count);
             for (int i = 0; i < displayCount; i++)
             {
-                GameObject go = Instantiate(playerUIPrefab, playerListPanel);
-                PlayerUI ui = go.GetComponent<PlayerUI>();
+                PlayerUI ui = container.InstantiatePrefabForComponent<PlayerUI>(playerUIPrefab, playerListPanel);
                 ui.SetPlayer(shuffledList[i]);
                 ui.playerInormationPanel = playerInformationPanel;
                 

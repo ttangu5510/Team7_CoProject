@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6486677423399918832}
   - component: {fileID: 5775164491780819276}
   m_Layer: 5
-  m_Name: Button.Burpee
+  m_Name: Button.SkiJump
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1113,22 +1113,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed4393b707b83ad40a16f100d30f9db8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  circuitPlayers: {fileID: 4353102994019903577}
-  ladderPlayers: {fileID: 5511178763977120311}
-  sprintsPlayers: {fileID: 2107328904330336170}
-  burpeePlayers: {fileID: 5775164491780819276}
+  speedSkatingButton: {fileID: 4353102994019903577}
+  figureSkatingButton: {fileID: 5511178763977120311}
+  skeletonButton: {fileID: 2107328904330336170}
+  skiJumpButton: {fileID: 5775164491780819276}
   trainingCloseButton: {fileID: 0}
   startTrainingButton: {fileID: 4208536472952343524}
   resetButton: {fileID: 3311646215268585983}
-  circuitImage: {fileID: 770044058319592246}
-  ladderImage: {fileID: 8594843239531034782}
-  sprintsImage: {fileID: 8775303415987673190}
-  burpeeImage: {fileID: 5445402330302240641}
+  speedSkatingImage: {fileID: 770044058319592246}
+  figureSkatingImage: {fileID: 8594843239531034782}
+  skeletonImage: {fileID: 8775303415987673190}
+  skiJumpImage: {fileID: 5445402330302240641}
   assignmentPanel: {fileID: 0}
   confirmPui: {fileID: 3588112059142428576, guid: 231576ea8c61adf408ca15aeba18aa4c,
     type: 3}
-  progressPui: {fileID: 0}
-  donePui: {fileID: 0}
+  progressPui: {fileID: 1364569529963978765, guid: c749348e51f7ccf46b1e29d43f8da28c,
+    type: 3}
+  donePui: {fileID: 954504518920932738, guid: fd7658eb46dc51a4fb3a0d930fadbb9f, type: 3}
   athleteList: []
 --- !u!1 &3964322242305082390
 GameObject:
@@ -1489,7 +1490,7 @@ GameObject:
   - component: {fileID: 1167741095271211672}
   - component: {fileID: 5511178763977120311}
   m_Layer: 5
-  m_Name: Button.Ladder
+  m_Name: Button.FigureSkating
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1821,7 +1822,7 @@ GameObject:
   - component: {fileID: 2330058860992574222}
   - component: {fileID: 4353102994019903577}
   m_Layer: 5
-  m_Name: Button.Circuit
+  m_Name: Button.SpeedSkating
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2983,7 +2984,7 @@ GameObject:
   - component: {fileID: 4300471450059260402}
   - component: {fileID: 2107328904330336170}
   m_Layer: 5
-  m_Name: Button.Sprint
+  m_Name: Button.Skeleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

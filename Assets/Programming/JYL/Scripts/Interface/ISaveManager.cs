@@ -34,6 +34,8 @@ namespace JYL
         void RetireCoach(CoachEntity entity);
         void OutCoach(CoachEntity entity);
         void UpdateCoachEntity(CoachEntity entity);
+        int[] GetAssignedCoaches();
+        void SetAssignedCoaches(int[] assignedCoaches);
         
         // 리스트 추출
         List<SaveData> GetAllSave();

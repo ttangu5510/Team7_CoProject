@@ -12,13 +12,15 @@ namespace JYL
     {
         [Inject] private readonly ICoachRepository repository;
         private IDisposable subscription; // 구독 해제를 위한 객체
+
+        [SerializeField] public List<CoachEntity> testList = new();
         
         private void Awake()
         {
             Init();
         }
 
-        public void Init()
+        private void Init()
         {
             // 선수 은퇴 시 이벤트 수행을 위한 구독
             subscription = MessageBroker.Default //선수 은퇴 이벤트가 발행되면, 구독해뒀다가 수행
@@ -31,18 +33,25 @@ namespace JYL
             foreach (CoachEntity coach in coachList)
             {
                 var age = coach.curAge.ToReadOnlyReactiveProperty();
-                age.Where(a => a >= coach.retireAge)    // 은퇴 나이일 때 이벤트 수행
+                age.Where(a => a >= coach.retireAge) // 은퇴 나이일 때 이벤트 수행
                     .TakeWhile(_ =>
-                        coach.curState != CoachState.Retired &&     // 은퇴 전
-                        coach.curState != CoachState.Unrecruited)   // 방출 전까지 구독
+                        coach.curState != CoachState.Retired && // 은퇴 전
+                        coach.curState != CoachState.Unrecruited) // 방출 전까지 구독
                     .Subscribe(_ => RetireCoach(coach))
                     .AddTo(this);
             }
 
+            // TODO: 테스트 리스트
+            testList = GetAllCoaches();
 
         }
-        
-        #region 코치 리스트
+
+        #region 코치 객체, 리스트
+
+        public CoachEntity FindCoachById(int id)
+        {
+            return repository.FindById(id);
+        }
         public List<CoachEntity> GetAllCoaches() // CSV에서 만들어진 모든 코치 리스트
         {
             return repository.FindAllCoaches();
@@ -61,14 +70,45 @@ namespace JYL
         {
             return repository.FindAllRetired();
         }
+
+        public int[] GetAssignedCoachesArray() // 현재 배치된 코치들의 entity를 index 기준으로 가져옴
+        {
+            int[] returnArray = new int[4];
+            int[] assignedCoaches = repository.FindAllAssigned();
+            for (int i = 0; i < returnArray.Length; i++)
+            {
+                if (assignedCoaches[i] != -1)
+                {
+                    returnArray[i] = (int)repository.FindById(assignedCoaches[i]).grade;
+                }
+                else
+                {
+                    returnArray[i] = 0;
+                }
+            }
+            return returnArray;
+        }
+
+        public CoachEntity[] GetAssignedCoachesEntity()
+        {
+            CoachEntity[] returnList = new CoachEntity[4];
+            int[] assignedCoaches = repository.FindAllAssigned();
+            for (int i = 0; i < returnList.Length; i++)
+            {
+                if (assignedCoaches[i] != -1)
+                {
+                    returnList[i] = repository.FindById(assignedCoaches[i]);
+                }
+            }
+            return returnList;
+        }
         #endregion
 
         
         #region 코치 영입, 방출, 은퇴
-        public void RecruitCoach(string coachName) // 코치를 영입.
+        public void RecruitCoach(CoachEntity entity) // 코치를 영입.
         {
             // 코치의 동적 객체 최신화와 세이브 객체 최신화 진행
-            CoachEntity entity = repository.FindByName(coachName); // 레포지토리에서 동적 객체 찾음
             entity.Recruit(); // 도메인 로직 수행
             repository.Save(entity); // 레포지토리를 통해 변경 사항 저장
             
@@ -105,5 +145,6 @@ namespace JYL
             repository.Update(coach); // 코치의 동적 객체를 통해 세이브 객체 최신화
         }
         #endregion
+        
     }
 }
