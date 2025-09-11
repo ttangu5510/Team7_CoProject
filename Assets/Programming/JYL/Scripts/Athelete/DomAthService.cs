@@ -21,17 +21,19 @@ namespace JYL
             Init();
         }
 
-        public void Init() // 국내 선수 초기화 작업 . 이벤트 구독에 사용
+        private void Init() // 국내 선수 초기화 작업 . 이벤트 구독에 사용
         {
-            List<DomAthEntity> athleteList = GetAllRecruitedAthleteList();
+            // 영입한 선수들 중, 은퇴하지 않은 선수들만 리스트화
+            List<DomAthEntity> athleteList = GetAllRecruitedAthleteList().Where(t=>t.curState != AthleteState.Retired).ToList();
             foreach (DomAthEntity athlete in athleteList)
             {
                 var age = athlete.curAge.ToReadOnlyReactiveProperty();
 
                 // 현재 나이가 은퇴나이보다 높고, 은퇴 상태가 아닐 때
-                age.Where(curAge => curAge >= athlete.retireAge && athlete.curState != AthleteState.Retired)
+                age.Where(curAge => curAge >= athlete.retireAge)
+                    .TakeWhile(_=> athlete.curState != AthleteState.Unrecruited && athlete.curState != AthleteState.Retired) // 방출 전, 은퇴 전까지 구독
                     .Subscribe(x => RetireAthlete(athlete)) // 은퇴 구독
-                    .AddTo(this); // 객체 파괴 시 이벤트 구독 해제
+                    .AddTo(this); // 서비스 객체 파괴 시 이벤트 구독 해제
             }
             
             // TODO : 테스트 리스트
@@ -63,8 +65,16 @@ namespace JYL
             entity.Recruit(); // isRecruited true로 변경
             // Repository를 통해서 변경 사항을 저장한다.
             repository.Save(entity);
+            
+            // 은퇴 구독 추가
+            var age =  entity.curAge.ToReadOnlyReactiveProperty();
+            age.Where(ageValue => ageValue >= entity.retireAge)
+                .TakeWhile(_ => entity.curState != AthleteState.Unrecruited && entity.curState != AthleteState.Retired)// 방출 전, 은퇴 전까지 구독
+                .Subscribe(sendAge => RetireAthlete(entity))
+                .AddTo(this);
         }
 
+        // 선수 은퇴 함수는 선수의 나이에 의해 자동으로 수행 됨.
         public void RetireAthlete(DomAthEntity entity) // 일반 선수면 그냥 Retired 상태.
                                                        // 후보 이상이면 추가적으로 CoachService에서
                                                        // 코치 동적, 세이브 객체의 상태를 Hidden -> Unrecruited로 변경

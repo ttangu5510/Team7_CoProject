@@ -48,6 +48,9 @@ namespace JWS
 
         // 도감
         public List<EncyclopediaState> encyclopedia = new(); // 전체 목록 + 트로피/메달 보유 여부
+        
+        // 코치 배치 배열. id를 저장함
+        public int[] coachAssign;
 
         // ==== Init 메서드 ====
         public void Init(string userId, string userName, string clanName)
@@ -55,7 +58,8 @@ namespace JWS
             this.userId = userId;
             playerName = userName;
             this.clanName = clanName;
-
+            coachAssign = new[] { -1, -1, -1, -1 };
+            
             // 시간 초기화
             time.yearCycle = 1;
             time.season = Season.Spring;
@@ -72,9 +76,6 @@ namespace JWS
             buildings.Clear();
 
             // 선수/코치 초기화
-            // roster = new Roster();
-            // playerStates.Clear();
-            // coaches.Clear();
             // opponentRecords.Clear();
             athleteSaves.Clear();
             coachSaves.Clear();
@@ -90,6 +91,7 @@ namespace JWS
         {
             SaveData newSave = this with
             {
+                coachAssign =  (int[])coachAssign?.Clone(), 
                 time = time with { },
                 currencies = currencies with { },
                 buildings = buildings.ConvertAll(building => building with { }),

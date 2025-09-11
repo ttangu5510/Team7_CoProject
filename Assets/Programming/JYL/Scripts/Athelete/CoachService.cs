@@ -20,12 +20,25 @@ namespace JYL
 
         public void Init()
         {
+            // 선수 은퇴 시 이벤트 수행을 위한 구독
             subscription = MessageBroker.Default //선수 은퇴 이벤트가 발행되면, 구독해뒀다가 수행
                 .Receive<AthleteRetiredEvent>()
                 .Where(e => e.affiliation != AthleteAffiliation.일반선수) // 후보급 이상 선수만
                 .Subscribe(OnAthleteRetiredEvent); // 코치로 전환 작업
 
-            // TODO : 코치의 은퇴 구독 필요함
+            // 코치 은퇴 구독
+            List<CoachEntity> coachList = GetRecruitedCoaches();
+            foreach (CoachEntity coach in coachList)
+            {
+                var age = coach.curAge.ToReadOnlyReactiveProperty();
+                age.Where(a => a >= coach.retireAge)    // 은퇴 나이일 때 이벤트 수행
+                    .TakeWhile(_ =>
+                        coach.curState != CoachState.Retired &&     // 은퇴 전
+                        coach.curState != CoachState.Unrecruited)   // 방출 전까지 구독
+                    .Subscribe(_ => RetireCoach(coach))
+                    .AddTo(this);
+            }
+
 
         }
         
@@ -58,6 +71,15 @@ namespace JYL
             CoachEntity entity = repository.FindByName(coachName); // 레포지토리에서 동적 객체 찾음
             entity.Recruit(); // 도메인 로직 수행
             repository.Save(entity); // 레포지토리를 통해 변경 사항 저장
+            
+            // 은퇴 이벤트 추가
+            var age = entity.curAge.ToReadOnlyReactiveProperty();
+            age.Where(a => a >= entity.retireAge) // 은퇴 나이일 때 이벤트 수행
+                .TakeWhile(_ =>
+                    entity.curState != CoachState.Retired && // 은퇴 전
+                    entity.curState != CoachState.Unrecruited) // 방출 전까지 구독
+                .Subscribe(_ => RetireCoach(entity))
+                .AddTo(this);
         }
 
         public void OutCoach(string coachName) // 코치 방출
@@ -68,9 +90,8 @@ namespace JYL
             repository.Delete(entity); // 레포지토리를 통해 변경 사항 저장. 일반급과 후보급 이상이 서로 다른 로직 수행
         }
 
-        public void RetireCoach(string coachName) // 코치 은퇴
+        private void RetireCoach(CoachEntity entity) // 코치 은퇴
         {
-            CoachEntity entity = repository.FindByName(coachName);
             entity.Retire(); // 객체를 은퇴 상태로 변경
             repository.Update(entity); // 세이브 객체도 변동사항 저장
         }

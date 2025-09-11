@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using StatefulUI.Runtime.Core;
 using UnityEngine;
 
 namespace JYL
@@ -30,7 +31,7 @@ namespace JYL
             Init(); //초기화 시작
         }
 
-        public void Init()
+        private void Init()
         {
             coachDict.Clear(); // 딕셔너리 초기화
             
@@ -40,7 +41,7 @@ namespace JYL
                 var entity = CoachFactory.CreateCoachEntityFromCSV(data);
                 if (!coachDict.TryAdd(entity.entityName, entity))
                 {
-                    Debug.LogWarning($"이미 추가된 선수임{entity.entityName}");
+                    Debug.LogWarning($"이미 추가된 코치임{entity.entityName}");
                 }
                 
                 saveManager.UpdateCoachEntity(entity);
@@ -83,7 +84,8 @@ namespace JYL
 
         public void Update(CoachEntity entity) // Service 코치 업데이트. 동적 객체를 통해 세이브 객체를 최신화 함.
         {
-            saveManager.GetCurrentSave().FindCoach(entity).UpdateStatus(entity); // 세이브 객체도 업데이트함.
+            saveManager.RetireCoach(entity);
+            
         }
     }
 }
