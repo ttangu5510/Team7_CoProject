@@ -53,7 +53,8 @@ namespace SJL
             List<DomAthEntity> shuffledList = new(playerDataList);
 
             // 확률값(%) 적용: 시설 컨트롤러에서 값 가져오기
-            //Debug.Log($"NationalGradeAthlete 확률: {facilitiesController.ScoutCenter.ChanceForNationalGradeAthlete.Value},{facilitiesController.ScoutCenter.CurrentStage.Value}");
+            //Debug.Log($"NationalGradeAthlete 확률: {facilitiesController.ScoutCenter.ChanceForNationalGradeAthlete.Value}");
+            //Debug.Log($"시설 레벨 : {facilitiesController.ScoutCenter.CurrentStage.Value}");
             float nationalChance = facilitiesController.ScoutCenter.ChanceForNationalGradeAthlete.Value; // 0.01 ~ 0.07, etc.
 
             var nationalList = shuffledList.Where(x => x.affiliation == AthleteAffiliation.국가대표).ToList();  
@@ -70,11 +71,11 @@ namespace SJL
             {
                 double roll = rng.NextDouble(); // 0.0 이상 1.0 미만
 
-                if (nationalList.Count > 0 && roll < nationalChance)    // 국가대표 확률 체크
+                if (nationalList.Count > 0 && roll < nationalChance)    // 국가대표 확률에 걸리면 국가대표 우선 선택
                 {
-                    int idx = rng.Next(nationalList.Count);
-                    finalList.Add(nationalList[idx]);
-                    nationalList.RemoveAt(idx);
+                    int idx = rng.Next(nationalList.Count); // 국가대표 리스트에서 랜덤 선택
+                    finalList.Add(nationalList[idx]);   // 최종 리스트에 추가
+                    nationalList.RemoveAt(idx); // 선택된 국가대표 리스트에서 제거
                 }
                 else
                 {
@@ -98,9 +99,9 @@ namespace SJL
                         // 후보와 일반 모두 없음 -> 국가대표가 있다면 강제로 뽑기
                         if (nationalList.Count > 0)
                         {
-                            int idx = rng.Next(nationalList.Count);
-                            finalList.Add(nationalList[idx]);
-                            nationalList.RemoveAt(idx);
+                            int idx = rng.Next(nationalList.Count); // 국가대표 리스트에서 랜덤 선택
+                            finalList.Add(nationalList[idx]);   // 최종 리스트에 추가
+                            nationalList.RemoveAt(idx); // 선택된 국가대표 리스트에서 제거
                         }
                         else
                         {
