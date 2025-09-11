@@ -14,7 +14,7 @@ namespace SJL
 {
     public enum TrainingType
     {
-        None, Circuit, LadderDrill, Sprint, BurpeeTest
+        None, Circuit, LadderDrill, Sprint, BurpeeTest, Special
     }
     
     public class TrainingBox : MonoBehaviour
@@ -55,11 +55,13 @@ namespace SJL
         [Inject] private DomAthService athleteService;
         // 시간 컨트롤러 의존성 주입
         [Inject] private ITimeFlowController flowController;
+        // 시설의 업그레이드 정도 적용
+        [Inject] private IFacilitiesController facilitiesController;
 
         public List<DomAthEntity> athleteList = new();
         private Dictionary<DomAthEntity,TrainingType> assignDict = new();
 
-        private int trainingVolume = 1;
+        private int trainAmount = 1;
         
         private TrainingType cachedType; // 이벤트 연결을 위해 들고 있음.
         
@@ -75,19 +77,19 @@ namespace SJL
             EnableInit();
             
             circuitPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(athleteList, TrainingType.Circuit))
+                .Subscribe(_ => PositioningPlayers(TrainingType.Circuit))
                 .AddTo(this);
 
             ladderPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(athleteList, TrainingType.LadderDrill))
+                .Subscribe(_ => PositioningPlayers(TrainingType.LadderDrill))
                 .AddTo(this);
 
             sprintsPlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(athleteList, TrainingType.Sprint))
+                .Subscribe(_ => PositioningPlayers(TrainingType.Sprint))
                 .AddTo(this);
 
             burpeePlayers.OnClickAsObservable()
-                .Subscribe(_ => PositioningPlayers(athleteList, TrainingType.BurpeeTest))
+                .Subscribe(_ => PositioningPlayers(TrainingType.BurpeeTest))
                 .AddTo(this);
 
             resetButton.OnClickAsObservable()
@@ -137,13 +139,16 @@ namespace SJL
             
             // UI 초기화
             UpdateAllAssignment();
+            
+            // 시설의 업그레이드 정도 최신화
+            trainAmount = facilitiesController.TrainingCenter.BonusStat.Value;
         }
 
         // 선수 배치. 선수 선택 UI 팝업 띄움
-        private void PositioningPlayers(List<DomAthEntity> targetList, TrainingType type)
+        private void PositioningPlayers(TrainingType type)
         {
             assignmentPanel.gameObject.SetActive(true);
-            assignmentPanel.SelectTrainingAthlete(targetList, type, assignDict);
+            assignmentPanel.SelectTrainingAthlete(athleteList, type, assignDict);
             cachedType = type;
         }
 
@@ -282,16 +287,16 @@ namespace SJL
                 switch (assignDict[entity])
                 {
                     case TrainingType.Circuit:
-                        success = athleteService.TrainAthlete(entity, Ability.Health, trainingVolume, 0); // TODO: 코치 배치패널에서 정보 가져와야 함
+                        success = athleteService.TrainAthlete(entity, Ability.Health, trainAmount, 0); // TODO: 코치 배치패널에서 정보 가져와야 함
                         break;
                     case TrainingType.LadderDrill:
-                        success = athleteService.TrainAthlete(entity, Ability.Quickness, trainingVolume, 0);
+                        success = athleteService.TrainAthlete(entity, Ability.Quickness, trainAmount, 0);
                         break;
                     case TrainingType.Sprint:
-                        success = athleteService.TrainAthlete(entity, Ability.Flexibility, trainingVolume, 0);
+                        success = athleteService.TrainAthlete(entity, Ability.Flexibility, trainAmount, 0);
                         break;
                     case TrainingType.BurpeeTest:
-                        success = athleteService.TrainAthlete(entity, Ability.Balance, trainingVolume, 0);
+                        success = athleteService.TrainAthlete(entity, Ability.Balance, trainAmount, 0);
                         break;
                 }
 
