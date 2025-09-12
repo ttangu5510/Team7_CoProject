@@ -38,7 +38,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1400, y: 1000}
+  m_SizeDelta: {x: 1000, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8577330216304962845
 CanvasRenderer:
@@ -111,8 +111,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00024414, y: 165}
-  m_SizeDelta: {x: 1150, y: 500}
+  m_AnchoredPosition: {x: 0, y: 165}
+  m_SizeDelta: {x: 800, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2464516934505569337
 CanvasRenderer:
@@ -186,8 +186,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00024414, y: -166.74}
-  m_SizeDelta: {x: 1400, y: 163.48}
+  m_AnchoredPosition: {x: -0.000015259, y: -166.74}
+  m_SizeDelta: {x: 1000, y: 163.48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6319618214412803294
 CanvasRenderer:
@@ -219,8 +219,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uD6C8\uB828 \uC9C4\uD589 \uC911.."
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5861b0e380032e343b1a813991e92af6, type: 2}
-  m_sharedMaterial: {fileID: 3767718567204531551, guid: 5861b0e380032e343b1a813991e92af6,
+  m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
+  m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -298,6 +298,7 @@ GameObject:
   - component: {fileID: 8385710062602180969}
   - component: {fileID: 1202138314128456271}
   - component: {fileID: 333790284489217170}
+  - component: {fileID: 1493856693731877783}
   m_Layer: 5
   m_Name: loadingWindow
   m_TagString: Untagged
@@ -363,6 +364,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1493856693731877783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4819302834731429848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d0968eb562000a498966a46aba930f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  progressText: {fileID: 8167596128305315163}
+  progressSlider: {fileID: 6873541111262400654}
+  progressTime: 5
+  delayTime: 0.5
 --- !u!1 &5258296652099135156
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,8 +642,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -348.47998}
-  m_SizeDelta: {x: 1300, y: 100}
+  m_AnchoredPosition: {x: 0, y: -322}
+  m_SizeDelta: {x: 900, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &6873541111262400654
 MonoBehaviour:
@@ -668,7 +685,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 9027816752778629638}
   m_FillRect: {fileID: 2106293989983225606}
   m_HandleRect: {fileID: 0}
   m_Direction: 0

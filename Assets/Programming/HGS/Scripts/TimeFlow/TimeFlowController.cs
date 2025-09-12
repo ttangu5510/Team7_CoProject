@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UniRx;
 
 namespace SHG
@@ -15,6 +17,7 @@ namespace SHG
     public (int year, int week) Start { get; private set; }
     public int YearPassedAfterStart => (this.Year.Value - this.Start.year  + 1);
     int week;
+    public Action BeforeProgress { get; set; }
 
     public void SetDate(int year, int weekInYear) {
       this.Year.Value = year;
@@ -23,17 +26,13 @@ namespace SHG
       this.CurrentSeason.Value = this.GetSeason(this.week);
     }
 
-    public TimeFlowController(): this(
-      year: ITimeFlowController.START_YEAR, 
-      week: ITimeFlowController.START_WEEK)
+    public TimeFlowController(
+      int year = ITimeFlowController.START_YEAR, 
+      int week = ITimeFlowController.START_WEEK)
     {
-    }
-
-    public TimeFlowController(int year, int week)
-    {
-      this.week = week - 1;
+      this.week = week;
       this.Start = (year, week);
-      this.WeekInYear =  new (week);
+      this.WeekInYear =  new (week + 1);
       this.CurrentSeason = new (this.GetSeason(this.week));
       this.Year = new (year);
       this.DateToEnd = new (this.GetDateToEnd());
@@ -46,6 +45,7 @@ namespace SHG
 
     public void ProgressWeeks(int weeks)
     {
+      this.BeforeProgress?.Invoke();
       this.week += weeks;
       int yearToAdd = this.week / ITimeFlowController.WEEK_FOR_YEAR;
       this.week = this.week % ITimeFlowController.WEEK_FOR_YEAR;
@@ -67,23 +67,23 @@ namespace SHG
       int yearsLeft = ITimeFlowController.END_YEAR - this.Year.Value;
       count += yearsLeft * ITimeFlowController.WEEK_FOR_YEAR;
 
-      var allGameDate = new GameDate[count];
+      var allGameDate = new List<GameDate>(count);
       var yearAfterStart = this.YearPassedAfterStart;
       var weekInYear = this.WeekInYear.Value;
       for (int i = 0; i < weeksLeftThisYear; i++, weekInYear++) {
-        allGameDate[i] = new GameDate { Year = yearAfterStart, Week = weekInYear }; 
+        allGameDate.Add(new GameDate { Year = yearAfterStart, Week = weekInYear });
       }
 
       for (int year = 1; year <= yearsLeft; ++year) {
         for (int i = 0; i < ITimeFlowController.WEEK_FOR_YEAR; i++) {
-          allGameDate[year * ITimeFlowController.WEEK_FOR_YEAR + i] = new GameDate {
+          allGameDate.Add(new GameDate {
             Year = yearAfterStart + year,
             Week = i + 1
-          };
-        } 
+          });
+        }
       }
 
-      return (allGameDate);
+      return (allGameDate.ToArray());
     }
 
     Season GetSeason(int week)

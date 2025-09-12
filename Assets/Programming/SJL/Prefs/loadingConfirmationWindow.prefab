@@ -36,8 +36,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1400, y: 1000}
+  m_AnchoredPosition: {x: 0.000015259, y: -61}
+  m_SizeDelta: {x: 1000, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6188348629974614945
 CanvasRenderer:
@@ -112,7 +112,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -343}
+  m_AnchoredPosition: {x: 0, y: -409}
   m_SizeDelta: {x: 400, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9146556485685314950
@@ -207,6 +207,7 @@ GameObject:
   - component: {fileID: 2735316619224201874}
   - component: {fileID: 611787429085386751}
   - component: {fileID: 8038541127615661529}
+  - component: {fileID: 1913501914560420127}
   m_Layer: 5
   m_Name: loadingConfirmationWindow
   m_TagString: Untagged
@@ -273,6 +274,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1913501914560420127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7303719337120432437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff8954868fec556488edaee6a50f1580, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  okButton: {fileID: 3885130892447175629}
+  stateText: {fileID: 1501431241831727205}
 --- !u!1 &7410444130541460035
 GameObject:
   m_ObjectHideFlags: 0
@@ -307,8 +322,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00024414, y: -166.74}
-  m_SizeDelta: {x: 1400, y: 163.48}
+  m_AnchoredPosition: {x: 0.000030518, y: -171.0432}
+  m_SizeDelta: {x: 1000, y: 172.0862}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6366268470325203323
 CanvasRenderer:
@@ -340,8 +355,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uD6C8\uB828 \uC644\uB8CC!"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5861b0e380032e343b1a813991e92af6, type: 2}
-  m_sharedMaterial: {fileID: 3767718567204531551, guid: 5861b0e380032e343b1a813991e92af6,
+  m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
+  m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -442,8 +457,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00024414, y: 165}
-  m_SizeDelta: {x: 1150, y: 500}
+  m_AnchoredPosition: {x: 0.00001812, y: 152}
+  m_SizeDelta: {x: 900, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6212441935623772428
 CanvasRenderer:
@@ -550,8 +565,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uD655\uC778"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5861b0e380032e343b1a813991e92af6, type: 2}
-  m_sharedMaterial: {fileID: 3767718567204531551, guid: 5861b0e380032e343b1a813991e92af6,
+  m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
+  m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}

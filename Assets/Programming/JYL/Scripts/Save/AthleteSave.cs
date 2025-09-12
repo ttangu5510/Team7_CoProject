@@ -5,7 +5,7 @@ using UnityEngine;
 namespace JYL
 {
     [System.Serializable]
-    public class AthleteSave // json에 저장할 선수의 정보 클래스
+    public record AthleteSave // json에 저장할 선수의 정보 클래스
     {
         public int id;
         public int age;
@@ -17,6 +17,7 @@ namespace JYL
         public int speed;
         public int balance;
         public int fatigue;
+        public int leftInjury;
 
         public AthleteState state;
 
@@ -33,6 +34,7 @@ namespace JYL
             balance = entity.stats.balance;
             fatigue = entity.stats.fatigue;
 
+            leftInjury = entity.leftInjury;
             state = entity.curState;
         }
 
@@ -48,6 +50,7 @@ namespace JYL
             balance = entity.stats.balance;
             fatigue = entity.stats.fatigue;
             
+            leftInjury = entity.leftInjury;
             state =  entity.curState;
         }
     }

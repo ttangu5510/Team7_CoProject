@@ -42,7 +42,7 @@ namespace SHG
 
     void OnDestroy()
     {
-      this.disposables.Dispose();
+      this.disposables?.Dispose();
     }
 
     [Button]

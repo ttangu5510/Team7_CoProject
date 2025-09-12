@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using SJL;
 using UnityEngine;
 using UniRx;
 using Zenject;
@@ -13,27 +14,32 @@ namespace JYL
         [Inject] private readonly IDomAthRepository repository;
         private IDisposable subscription;
         
-        // TODO: 에디터 테스트
-        public List<DomAthEntity> testList = new();
+        // TODO : 테스트 용 리스트
+        [SerializeField] public List<DomAthEntity> testList = new();
+        
         private void Awake()
         {
             Init();
         }
 
-        public void Init()
+        private void Init() // 국내 선수 초기화 작업 . 이벤트 구독에 사용
         {
-            List<DomAthEntity> athleteList = GetAllRecruitedAthleteList();
+            // 영입한 선수들 중, 은퇴하지 않은 선수들만 리스트화
+            List<DomAthEntity> athleteList = GetAllRecruitedAthleteList().Where(t=>t.curState != AthleteState.Retired).ToList();
             foreach (DomAthEntity athlete in athleteList)
             {
                 var age = athlete.curAge.ToReadOnlyReactiveProperty();
 
                 // 현재 나이가 은퇴나이보다 높고, 은퇴 상태가 아닐 때
-                age.Where(curAge => curAge >= athlete.retireAge && athlete.curState != AthleteState.Retired)
+                age.Where(curAge => curAge >= athlete.retireAge)
+                    .TakeWhile(_=> athlete.curState != AthleteState.Unrecruited && athlete.curState != AthleteState.Retired) // 방출 전, 은퇴 전까지 구독
                     .Subscribe(x => RetireAthlete(athlete)) // 은퇴 구독
-                    .AddTo(this); // 객체 파괴 시 이벤트 구독 해제
+                    .AddTo(this); // 서비스 객체 파괴 시 이벤트 구독 해제
             }
             
-            testList = GetAllAthleteList();
+            // TODO : 테스트 리스트
+            testList = GetAllRecruitedAthleteList();
+
         }
 
         #region 선수 목록
@@ -41,12 +47,11 @@ namespace JYL
         {
             return repository.FindAll();
         }
-
-        public List<DomAthEntity> GetAllCanRecruitAthleteList()
+        public List<DomAthEntity> GetAllCanRecruitAthleteList() // 영입이 가능한 선수들 목록 뽑아가기
         {
             return repository.FindAllCanRecruit();
         }
-        public List<DomAthEntity> GetAllRecruitedAthleteList() // 영입된 선수 목록 뽑아가기
+        public List<DomAthEntity> GetAllRecruitedAthleteList() // 플레이어가 영입한 선수들 목록 뽑아가기. 은퇴한 선수 포함.
         {
             return repository.FindAllRecruited();
         }
@@ -61,8 +66,16 @@ namespace JYL
             entity.Recruit(); // isRecruited true로 변경
             // Repository를 통해서 변경 사항을 저장한다.
             repository.Save(entity);
+            
+            // 은퇴 구독 추가
+            var age =  entity.curAge.ToReadOnlyReactiveProperty();
+            age.Where(ageValue => ageValue >= entity.retireAge)
+                .TakeWhile(_ => entity.curState != AthleteState.Unrecruited && entity.curState != AthleteState.Retired)// 방출 전, 은퇴 전까지 구독
+                .Subscribe(sendAge => RetireAthlete(entity))
+                .AddTo(this);
         }
 
+        // 선수 은퇴 함수는 선수의 나이에 의해 자동으로 수행 됨.
         public void RetireAthlete(DomAthEntity entity) // 일반 선수면 그냥 Retired 상태.
                                                        // 후보 이상이면 추가적으로 CoachService에서
                                                        // 코치 동적, 세이브 객체의 상태를 Hidden -> Unrecruited로 변경
@@ -88,27 +101,47 @@ namespace JYL
         }
         #endregion
 
-        #region 선수 강화
-        public void TrainAthlete(in string athleteName, in Ability status, int amount = 1, int coach = 0)
+        #region 선수 훈련, 특훈
+        public bool TrainAthlete(DomAthEntity entity, in TrainingType type, int amount = 1, int coach = 0)
         { //선수 훈련 함수. 정해진 파라매터만 수행 가능 (기획안의 루틴에 따름). 부상이면 선수 강화 함수 수행하면 안됨
-            switch (status)
+            if (entity == null || entity.curState == AthleteState.Injured) return false;  //선수가 부상 중이거나 null이면 false
+            
+            bool isSuccess = false; // 반환에 사용될 boolean
+            Ability firstAbility;
+            Ability secondAbility;
+            switch (type)
             {
-                case Ability.Health :
-                case Ability.Quickness :
-                case Ability.Flexibility :
-                case Ability.Balance :
-                    // 선수를 딕셔너리에서 찾고 훈련
-                    DomAthEntity athlete = repository.FindByName(athleteName);
-                    if (athlete != null || athlete.curState == AthleteState.Injured) return; 
-                        
-                    athlete.TrainAthlete(status, amount, coach);
-                    // 선수 세이브 객체 최신화
-                    repository.Update(athlete);
+                case TrainingType.SpeedSkating :
+                    firstAbility = Ability.Quickness;
+                    secondAbility = Ability.Technic;
+                    break;
+                case TrainingType.FigureSkating :
+                    firstAbility = Ability.Technic;
+                    secondAbility = Ability.Health;
+                    break;
+                case TrainingType.Skeleton :
+                    firstAbility = Ability.Flexibility;
+                    secondAbility = Ability.Health;
+                    break;
+                case TrainingType.SkiJump :
+                    firstAbility = Ability.Balance;
+                    secondAbility = Ability.Speed;
                     break;
                 default:
-                    Debug.LogWarning($"잘못된 파라매터 입력{status}");
-                    break;
+                    Debug.LogWarning($"잘못된 파라매터 입력{type}");
+                    return false;
             }
+                
+            isSuccess = entity.TrainAthlete(firstAbility, secondAbility, amount, coach);
+            // 선수 세이브 객체 최신화
+            repository.Update(entity);
+            return isSuccess;
+        }
+
+        public void ApplySpecialTraining(DomAthEntity entity, int trainingTimes, int amountPerTime)
+        {
+            entity.SpecialTrain(trainingTimes, amountPerTime);
+            repository.Update(entity);
         }
         #endregion
         

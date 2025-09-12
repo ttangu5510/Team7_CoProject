@@ -3,6 +3,7 @@ using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
 using UniRx;
 using Zenject;
+using DG.Tweening;
 
 namespace SHG
 {
@@ -26,15 +27,19 @@ namespace SHG
     MatchViewRecordScreen recordScreen;
     MatchViewRankScreen rankScreen;
     MatchViewResultScreen resultScreen;
+    MatchViewRewardScreen rewardScreen;
 
     StatefulComponent view;
     ReactiveProperty<ViewState> currentState;
     CompositeDisposable matchSubscription;
+    Transform contanier;
 
     void Awake()
     {
       this.currentState = new (ViewState.None);
       this.view = this.GetComponent<StatefulComponent>();
+      this.contanier = this.view.GetItem<ObjectReference>(
+        (int)ObjectRole.Container).Object.transform;
     }
 
     // Start is called before the first frame update
@@ -63,6 +68,22 @@ namespace SHG
         parentState: this.currentState,
         view: this.view.GetItem<InnerComponentReference>(
           (int)InnerComponentRole.ResultScreen).InnerComponent);
+
+      this.rewardScreen = new MatchViewRewardScreen(
+        parentState: this.currentState,
+        view: this.view.GetItem<InnerComponentReference>(
+        (int)InnerComponentRole.RewardScreen).InnerComponent);
+
+      this.rewardScreen.ConfirmButton.OnClickAsObservable()
+        .Subscribe(_ => {
+            if (this.matchController.CurrentMatch.Value != null) {
+              this.matchController.EndCurrentMatch();
+            }
+            if (this.currentState.Value == ViewState.Reward) {
+              this.currentState.Value = ViewState.None;
+            }
+          })
+        .AddTo(this);
     }
 
     void OnViewStateChanged(ViewState state)
@@ -73,6 +94,22 @@ namespace SHG
       }
       else {
         this.view.SetState((int)StateRole.Hidden);
+      }
+      switch (state) {
+        case (ViewState.Record):
+          this.contanier.DOLocalMoveY(
+            endValue: -400f,
+            duration: 0.5f)
+            .SetEase(Ease.InSine);
+          break;
+        case (ViewState.Rank):
+          this.contanier.DOLocalMoveY(
+            endValue: 0f,
+            duration: 0.5f)
+            .SetEase(Ease.InSine);
+          break;
+        default: 
+          break;
       }
     }
 
@@ -102,12 +139,12 @@ namespace SHG
       match.SportRecords
         .ObserveReplace()
         .Subscribe(replacedEvent => 
-          this.recordScreen.UpdateScoreBoard(replacedEvent.NewValue))
+          this.recordScreen.UpdateScoreBoard(replacedEvent.NewValue, match))
         .AddTo(this.matchSubscription);
 
       match.SportRecords
         .ObserveAdd()
-        .Subscribe(addedEvent => this.recordScreen.UpdateScoreBoard(addedEvent.Value))
+        .Subscribe(addedEvent => this.recordScreen.UpdateScoreBoard(addedEvent.Value, match))
         .AddTo(this.matchSubscription);
     }
 
@@ -134,10 +171,11 @@ namespace SHG
         case Match.State.Ended:
           this.currentState.Value = ViewState.Result;
           this.resultScreen.UpdateView(match);
-          this.matchController.EndCurrentMatch();
-          this.resourceController.AddMoney(
-            1000, IncomeType.CompetitionGrant);
-          this.resourceController.AddFame(300);
+          this.rewardScreen.UpdateView(match);
+//          this.matchController.EndCurrentMatch();
+//          this.resourceController.AddMoney(
+//            1000, IncomeType.CompetitionGrant);
+//          this.resourceController.AddFame(300);
           break;
       }
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using SJL;
 using UniRx;
 using UnityEngine;
 using UnityEngine.AI;
@@ -8,77 +9,6 @@ using Random = UnityEngine.Random;
 
 namespace JYL
 {
-    [Serializable]
-    public class AthleteStats // 선수들의 능력치를 담당하는 값 객체
-    {
-        public int health { get; private set; } // 체력
-        public int quickness { get; private set; } // 순발력
-        public int flexibility { get; private set; } // 유연성
-        public int technic { get; private set; } // 기술
-        public int speed { get; private set; } // 속도
-        public int balance { get; private set; } // 균형감각
-        public int fatigue { get; private set; } // 피로도
-
-        public AthleteStats(int health, int quickness, int flexibility, int technic, int speed, int balance)
-        {   // 생성자
-            this.health = health;
-            this.quickness = quickness;
-            this.flexibility = flexibility;
-            this.technic = technic;
-            this.speed = speed;
-            this.balance = balance;
-            fatigue = 0;
-        }
-
-        public AthleteStats ApplyTrainValue(in Ability ability, int amount, int maxStat)
-        {
-            AthleteStats newStat = new(this.health,this.quickness,this.flexibility,this.technic,this.speed,this.balance);
-            switch (ability)
-            {
-                case Ability.Health:
-                    health += amount;
-                    speed += amount;
-                    if (health >= maxStat) health = maxStat;
-                    if (speed >= maxStat) speed = maxStat;  
-                    break;
-                case Ability.Quickness:
-                    quickness += amount;
-                    health += amount;
-                    if(quickness >= maxStat) quickness = maxStat;
-                    if(health >= maxStat)  health = maxStat;
-                    break;
-                case Ability.Flexibility:
-                    flexibility += amount;
-                    technic += amount;
-                    if (flexibility >= maxStat) flexibility = maxStat;
-                    if (technic >= maxStat) technic = maxStat;
-                    break;
-                case Ability.Balance:
-                    balance += amount;
-                    speed += amount;
-                    if (balance >= maxStat) balance = maxStat;
-                    if (speed >= maxStat) speed = maxStat;
-                    break;
-                // case AthleteStatus.Technic:
-                //     technic += amount;
-                //     if (technic >= maxStat) technic = maxStat;
-                //     break;
-                // case AthleteStatus.Speed:
-                //     speed += amount;
-                //     if (speed >= maxStat) speed = maxStat;
-                //     break;
-            }
-            return newStat;
-        }
-
-        public void SetFatigue(int amount)
-        {
-            fatigue += amount;
-            if(fatigue > 100) fatigue = 100;
-            else if(fatigue < 0) fatigue = 0;
-        }
-    } 
-
 // 캐릭터의 정보를 CSV에서 읽어와서 만드는 캐릭터 정보 객체
 [Serializable]
 public class DomAthEntity : BaseAthEntity
@@ -113,6 +43,7 @@ public class DomAthEntity : BaseAthEntity
         this.retireAge = retireAge;
         stats = new AthleteStats(health, quickness, flexibility, technic, speed, balance);
         curState = AthleteState.Unrecruited;
+        leftInjury = 0;
     }
 
     public void UpdateFromSave(AthleteSave save) //세이브 파일로부터 업데이트
@@ -122,6 +53,7 @@ public class DomAthEntity : BaseAthEntity
         stats = new AthleteStats(save.health, save.quickness, save.flexibility, save.technic, save.speed, save.balance);
         stats.SetFatigue(save.fatigue);
         curState = save.state;
+        leftInjury = save.leftInjury;
     }
     
     public void Recruit() // 선수 영입할 때 쓰는 함수. 재화 나가는건 다른데서 처리해야 함
@@ -152,7 +84,7 @@ public class DomAthEntity : BaseAthEntity
     
     
     // 선수를 훈련 시킬 때 사용하는 함수. 각 능력치가 변화하는 것에 이벤트를 걸 수 있다.
-    public void TrainAthlete(in Ability ability, int amount = 1, int coach = 0) 
+    public bool TrainAthlete(in Ability firstAbility,in Ability secondAbility, int amount = 1, int coach = 0) 
     {
         // 부상 당하면 훈련 실패
         int rand = Random.Range(0, 100);
@@ -173,17 +105,29 @@ public class DomAthEntity : BaseAthEntity
         {
             Debug.Log("부상입음");
             leftInjury = 2;
-            return;
+            return false;
         }
         
         // 부상은 안당했고, 훈련 시작
         int maxStat = ((int)maxGrade + 1) * 100;
-        stats.ApplyTrainValue(ability, amount, maxStat);
+
+        AthleteStats newStat = stats.ApplyTrainValue(firstAbility, secondAbility, amount, maxStat);
+        stats = newStat;
         
         // 훈련 완료 후 피로도 증가. 코치가 있을 경우, 코치 버프만큼 감소
-        stats.SetFatigue(Random.Range(7, 12) + coach);
+        stats.SetFatigue(Random.Range(7, 12) - coach);
+        
+        return true;
     }
-
+    
+    // 선수 특훈 수행 함수
+    public void SpecialTrain(in int times, in int value)
+    {
+        int maxStat = ((int)maxGrade + 1) * 100;
+        AthleteStats newStats = stats.ApplySpecialTrainValue(times, value, maxStat);
+        stats = newStats;
+    }
+    
     public void RecoverAthlete(int amount) // 선수 회복에 쓰이는 함수
     {
         leftInjury -= amount;

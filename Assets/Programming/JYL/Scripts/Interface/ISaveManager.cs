@@ -7,16 +7,20 @@ namespace JYL
 {
     public interface ISaveManager : IInitializable
     {
-        // 세이브
-        void CreateSaveData(string playerName, string clanName, string userId = "testPlayer123");
+        // 세이브 
+        void CreateSaveData(int slotNumber = 0);
+        void CreateAutoSaveData(string playerName, string clanName, string uid = "TestAutoSave123");
         void AutoSave();
-        void SaveProgress(SaveData save);
+        void SaveProgress(SaveData save, int slotNumber);
+        void SaveProgress(int slotNumber);
 
         // 로드
-        void AutoLoad();
+        // void AutoLoad();
         void LoadProgress(SaveData save);
         void LoadProgress(string fileName);
-        SaveData GetCurrentSave();
+        
+        // 파일 삭제
+        void DeleteSaveFile(SaveData save, int inputIndex);
         
         // 선수
         void RecruitAthlete(DomAthEntity entity);
@@ -29,5 +33,14 @@ namespace JYL
         void RetireCoach(CoachEntity entity);
         void OutCoach(CoachEntity entity);
         void UpdateCoachEntity(CoachEntity entity);
+        int[] GetAssignedCoaches();
+        void SetAssignedCoaches(int[] assignedCoaches);
+        
+        // 리스트 추출
+        List<SaveData> GetAllSave();
+        SaveData GetCurrentSave();
+        void SetSlotIndex(int slotIndex);
+        int GetCurrentSlotIndex();
+        SaveData GetAutoSaveData();
     }
 }

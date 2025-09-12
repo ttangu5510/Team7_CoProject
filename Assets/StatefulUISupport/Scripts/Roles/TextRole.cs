@@ -47,5 +47,9 @@ public enum TextRole
     MedalLabel = 1638489267,
     TotalLabel = 1357520602,
     ExplanatioryText = 1619094563,
+    CountLabel = 870194081,
+    PointLabel = 889921322,
+    GroupLabel = -25006791,
+    ButtonLabel = -1212388188,
 
 }
