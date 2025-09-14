@@ -1,49 +1,65 @@
+using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
 using Zenject;
+using UniRx;
 using JYL;
+using SHG;
 
-namespace JWS
-{
-    /// 의료센터 탭: 그냥 바인딩만.
+namespace JWS{
     public class TreatmentRoomTabView : MonoBehaviour
     {
-        [Header("UI")]
-        [SerializeField] private TextMeshProUGUI totalCountText;
-        [SerializeField] private TextMeshProUGUI injuredCountText;
-
-        [Header("Slots (하이어라키 슬롯 오브젝트)")]
-        [SerializeField] private PlayerSlotView[] slots;
-
-        [Inject] private DomAthService domAthService;
+        [SerializeField] private List<TreatmentSlotView> slots; // Slot A~H 순서대로
+        [Inject] private DomAthService athleteService;
+        [Inject] private SHG.IFacilitiesController facilitiesController;
 
         private void OnEnable()
         {
             Refresh();
+            facilitiesController.SelectedFacilityStream
+                .Subscribe(_ => Refresh())
+                .AddTo(this);
+            // 필요 시 MedicalCenter 레벨/슬롯 수 스트림도 구독
         }
 
         public void Refresh()
         {
-            // 1) 전체/부상자 리스트 가져오기
-            var all = domAthService.GetAllRecruitedAthleteList();              // 프로젝트에 이미 있는 함수
-            var injured = all.Where(a => a.curState == AthleteState.Injured)   // 상태 이름은 프로젝트에 맞춰 조정
+            var injured = athleteService
+                .GetAllRecruitedAthleteList()
+                .Where(a => a.curState == AthleteState.Injured)
                 .ToList();
 
-            // 2) 카운트 텍스트
-            if (totalCountText)   totalCountText.text   = all.Count.ToString();
-            if (injuredCountText) injuredCountText.text = injured.Count.ToString();
+            int usable = GetUsableSlots();
+            usable = Mathf.Clamp(usable, 0, slots.Count);
 
-            // 3) 슬롯 채우기
-            //    - 부상자 있으면 앞에서부터 순서대로 Set
-            //    - 남는 슬롯은 Clear
-            for (int i = 0; i < slots.Length; i++)
+            if (injured.Count == 0)
             {
-                if (i < injured.Count && slots[i] != null)
-                    slots[i].Set(injured[i]);
-                else if (slots[i] != null)
-                    slots[i].Clear();
+                // 1) 배치 가능한 선수 없음
+                for (int i = 0; i < slots.Count; i++)
+                {
+                    if (i == 0 && i < usable)      slots[i].ShowNoAvailable();
+                    else if (i < usable)           slots[i].ShowEmpty();
+                    else                           slots[i].ShowLocked();
+                }
+                return;
             }
+
+            // 2) 부상자 존재
+            int bind = Mathf.Min(injured.Count, usable);
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (i < bind)                     slots[i].ShowAssigned(injured[i]);
+                else if (i < usable)              slots[i].ShowEmpty();
+                else                               slots[i].ShowLocked();
+            }
+        }
+
+        private int GetUsableSlots()
+        {
+            var mc = facilitiesController.MedicalCenter;
+            // 예) mc.UsableSlots.Value 사용. 실제 필드로 교체.
+            // return mc.UsableSlots.Value;
+            return slots.Count; // 임시
         }
     }
 }
