@@ -21,6 +21,7 @@ namespace JWS{
                 .AddTo(this);
             // 필요 시 MedicalCenter 레벨/슬롯 수 스트림도 구독
         }
+        
 
         public void Refresh()
         {
@@ -57,9 +58,18 @@ namespace JWS{
         private int GetUsableSlots()
         {
             var mc = facilitiesController.MedicalCenter;
-            // 예) mc.UsableSlots.Value 사용. 실제 필드로 교체.
-            // return mc.UsableSlots.Value;
-            return slots.Count; // 임시
+
+            int level = mc.CurrentStage.Value;
+
+            switch (level)
+            {
+                case 0: return 2; // 2개 개방
+                case 1: return 4; // 4개 개방
+                case 2: return 6; // 6개 개방
+                default: return 8; // 전부 개방
+            }
         }
+
+
     }
 }
