@@ -21,5 +21,12 @@ namespace JYL
     
         // 토스트
         public void ShowToast(string msg);
+
+
+        public void AddHashSet<T>(T manjun);
+
+        public void RemoveHashSet<T>(T manjun);
+
+
     }
 }

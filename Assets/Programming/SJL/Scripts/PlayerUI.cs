@@ -82,7 +82,7 @@ namespace SJL
                 .AddTo(this);
         }
 
-        public void OnInformationButtonClicked()    // 선수 정보
+        private void OnInformationButtonClicked()    // 선수 정보
         {
             Debug.Log("선수 정보 버튼 클릭됨: " + nameText.text);
             if (playerInormationPanel != null && playerData != null)
@@ -100,7 +100,7 @@ namespace SJL
             }
         }
 
-        public void OnRecruitmentButtonClicked()    // 영입
+        private void OnRecruitmentButtonClicked()    // 영입
         {
             //resourceController.SpendMoney(500, ExpensesType.Scout);
             //Debug.Log($"남은 돈: {resourceController.Money}");
