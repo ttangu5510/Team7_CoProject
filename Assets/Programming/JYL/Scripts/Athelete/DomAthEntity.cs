@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using SJL;
 using UniRx;
 using UnityEngine;
 using UnityEngine.AI;
@@ -83,7 +84,7 @@ public class DomAthEntity : BaseAthEntity
     
     
     // 선수를 훈련 시킬 때 사용하는 함수. 각 능력치가 변화하는 것에 이벤트를 걸 수 있다.
-    public bool TrainAthlete(in Ability ability, int amount = 1, int coach = 0) 
+    public bool TrainAthlete(in Ability firstAbility,in Ability secondAbility, int amount = 1, int coach = 0) 
     {
         // 부상 당하면 훈련 실패
         int rand = Random.Range(0, 100);
@@ -109,7 +110,8 @@ public class DomAthEntity : BaseAthEntity
         
         // 부상은 안당했고, 훈련 시작
         int maxStat = ((int)maxGrade + 1) * 100;
-        AthleteStats newStat = stats.ApplyTrainValue(ability, amount, maxStat);
+
+        AthleteStats newStat = stats.ApplyTrainValue(firstAbility, secondAbility, amount, maxStat);
         stats = newStat;
         
         // 훈련 완료 후 피로도 증가. 코치가 있을 경우, 코치 버프만큼 감소

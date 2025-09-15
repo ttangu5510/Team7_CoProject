@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 10, y: 0}
-  m_SizeDelta: {x: -980, y: -860}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &7642022125620107663
 MonoBehaviour:
@@ -318,7 +318,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2171980177702586924
 RectTransform:
   m_ObjectHideFlags: 0
@@ -445,7 +445,6 @@ GameObject:
   - component: {fileID: 5805184376648627805}
   - component: {fileID: 5730805184328613101}
   - component: {fileID: 5211847483381134256}
-  - component: {fileID: 9172589519878560276}
   m_Layer: 5
   m_Name: coachList
   m_TagString: Untagged
@@ -541,23 +540,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &9172589519878560276
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5443416970883961759}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c2cbc3834f75284980e2edcbaedb737, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerRecruitmentButton: {fileID: 3731849145320186350}
-  playerUIPrefab: {fileID: 8003065753254179326, guid: 0247b64478b04d344b30328bed447751,
-    type: 3}
-  playerListPanel: {fileID: 1901990300477924176}
-  playerInformationPanel: {fileID: 0}
 --- !u!1 &5606997674918189574
 GameObject:
   m_ObjectHideFlags: 0

@@ -43,7 +43,8 @@ namespace SHG
       var tabRoles = new InnerComponentRole[] {
         InnerComponentRole.FirstTab,
         InnerComponentRole.SecondTab,
-        InnerComponentRole.ThirdTab
+        InnerComponentRole.ThirdTab,
+        InnerComponentRole.ForthTab,
       };
       this.tabs = Array.ConvertAll(
         tabRoles,
@@ -106,7 +107,8 @@ namespace SHG
             uIManager.AddHashSet(this);
     }
 
-    void Hide()
+    // TODO : 테스트 중. TrainingBox에서 ProgressWeek 함수 이후 UI 닫기 필요.
+    public void Hide()
     {
       this.transform.DOLocalMoveY(
         endValue: -HIDE_Y_OFFSET,
@@ -187,6 +189,9 @@ namespace SHG
           break;
         case 2:
           this.view.SetState((int)StateRole.ThirdTab);
+          break;
+        case 3:
+          this.view.SetState((int)StateRole.ForthTab);
           break;
         default: 
           throw (new ApplicationException($"{nameof(OnClickTabButton)}: index is out of range {index}"));

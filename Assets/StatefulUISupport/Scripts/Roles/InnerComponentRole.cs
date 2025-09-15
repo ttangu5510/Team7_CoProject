@@ -14,5 +14,6 @@ public enum InnerComponentRole
     SecondTab = 1026595839,
     ThirdTab = 1424546666,
     FirstTab = -388534543,
+    ForthTab = 1030529568,
 
 }
