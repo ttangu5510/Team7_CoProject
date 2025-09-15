@@ -10,45 +10,88 @@ namespace JWS
 {
     public class InjureListPanel : MonoBehaviour
     {
-        [SerializeField] private Transform content;               // ScrollView/Viewport/Content
-        [SerializeField] private InjureListItemUI itemPrefab;     // 프리팹
-        [SerializeField] private InjureAthInfoPanel infoPanel;    // 필요 없다면 제거 가능
+        [Header("Header")]
+        [SerializeField] private Button closeButton;             // X (루트 닫기)
 
-        private readonly List<GameObject> _spawned = new();
+        [Header("List")]
+        [SerializeField] private Transform content;              // ScrollView/Viewport/Content
+        [SerializeField] private InjureListItemUI itemPrefab;
+        [SerializeField] private CanvasGroup listCanvasGroup;    // 리스트 입력 차단용
+        [SerializeField] private InjureAthInfoPanel infoPanel;   // 형제 상세 패널
+        [SerializeField] private GameObject injuredAthleteInfoPUI; // 팝업 루트
 
-        // ★ 외부에서 구독할 수 있는 이벤트
         private readonly Subject<DomAthEntity> _onPick = new();
         public IObservable<DomAthEntity> OnPick => _onPick;
 
-        /// <param name="injuredAll">부상자 전체 리스트</param>
-        /// <param name="assignedIds">이미 치료실에 배치된 선수 id 집합</param>
+        private readonly List<GameObject> _spawned = new();
+
+        void Awake()
+        {
+            if (closeButton)
+            {
+                closeButton.OnClickAsObservable()
+                    .Subscribe(_ =>
+                    {
+                        if (injuredAthleteInfoPUI) injuredAthleteInfoPUI.SetActive(false);
+                        else gameObject.SetActive(false);
+                    })
+                    .AddTo(this);
+            }
+        }
+
         public void Open(IEnumerable<DomAthEntity> injuredAll, HashSet<int> assignedIds)
         {
             gameObject.SetActive(true);
+
+            // 리스트 리빌드
             Clear();
 
-            var list = injuredAll?.Where(a => a.curState == AthleteState.Injured).ToList() ?? new();
-            if (list.Count == 0) return;
+            var list = injuredAll?
+                .Where(a => a.curState == AthleteState.Injured)
+                .ToList() ?? new List<DomAthEntity>();
+
+            if (list.Count == 0)
+            {
+                SetListInteractable(true);
+                return;
+            }
 
             foreach (var ath in list)
             {
                 var item = Instantiate(itemPrefab, content);
                 bool isAssigned = assignedIds != null && assignedIds.Contains(ath.id);
-                item.Bind(ath, isAssigned, OnClickAssign);
+                item.Bind(
+                    ath,
+                    isAssigned,
+                    onAssign: a => { _onPick.OnNext(a); }, // 배치하기
+                    onOpenInfo: a => ShowInfo(a)           // 상세 덮기
+                );
                 _spawned.Add(item.gameObject);
             }
+
+            SetListInteractable(true);
         }
 
-        private void OnClickAssign(DomAthEntity ath)
+        private void ShowInfo(DomAthEntity ath)
         {
-            // 외부(TreatmentRoomTabView 등)에 알림
-            _onPick.OnNext(ath);
+            // 리스트 보이되 입력 차단(깜빡임 없음)
+            SetListInteractable(false);
 
-            // 만약 아이템 클릭 시 패널 닫고 싶다면:
-            gameObject.SetActive(false);
+            infoPanel.transform.SetAsLastSibling();
+            infoPanel.Open(ath);
 
-            // 상세 패널 열고 싶다면:
-            // if (infoPanel != null) { infoPanel.Open(ath); }
+            // 상세 X 닫히면 입력 복구 (이 구독은 전환 시점에 1회만 붙임)
+            infoPanel.OnClosed
+                .Take(1)
+                .Subscribe(_ => SetListInteractable(true))
+                .AddTo(this);
+        }
+
+        private void SetListInteractable(bool on)
+        {
+            if (!listCanvasGroup) return;
+            listCanvasGroup.interactable = on;
+            listCanvasGroup.blocksRaycasts = on;
         }
 
         private void Clear()
@@ -57,7 +100,5 @@ namespace JWS
             _spawned.Clear();
         }
     }
-
-    
 }
 

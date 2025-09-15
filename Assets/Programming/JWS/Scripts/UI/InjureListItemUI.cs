@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using JYL;
@@ -10,36 +11,48 @@ namespace JWS
 {
     public class InjureListItemUI : MonoBehaviour
     {
-        [Header("Refs")]
-        [SerializeField] private Button assignButton;      // "배치하기"
-        [SerializeField] private GameObject assignedButton;// "배치중"(비활성 표시용)
-        [SerializeField] private TextMeshProUGUI nameText;
-        [SerializeField] private TextMeshProUGUI fatigueText;
+        [SerializeField] private Button assignButton;        // 배치하기
+        [SerializeField] private GameObject assignedBadge;   // 배치됨 표시
+        [SerializeField] private Button infoButton;          // 상세 보기
+        [SerializeField] private TMP_Text nameText;
+        [SerializeField] private TMP_Text injuryLeftText;
 
         private DomAthEntity _ath;
         private Action<DomAthEntity> _onAssign;
+        private Action<DomAthEntity> _onOpenInfo;
 
-        /// <param name="isAssigned">이미 치료실에 배치된 선수인가?</param>
-        public void Bind(DomAthEntity ath, bool isAssigned, Action<DomAthEntity> onAssign)
+        void Awake()
+        {
+            if (assignButton)
+            {
+                assignButton.OnClickAsObservable()
+                    .Subscribe(_ => _onAssign?.Invoke(_ath))
+                    .AddTo(this);
+            }
+
+            if (infoButton)
+            {
+                infoButton.OnClickAsObservable()
+                    .Subscribe(_ => _onOpenInfo?.Invoke(_ath))
+                    .AddTo(this);
+            }
+        }
+
+        public void Bind(
+            DomAthEntity ath,
+            bool isAssigned,
+            Action<DomAthEntity> onAssign,
+            Action<DomAthEntity> onOpenInfo)
         {
             _ath = ath;
             _onAssign = onAssign;
+            _onOpenInfo = onOpenInfo;
 
-            if (nameText)     nameText.text = $"{ath.entityName} ({ath.curAge.Value}세)";
-            if (fatigueText)  fatigueText.text = $"남은 치료 턴 {ath.leftInjury}";
+            if (nameText)       nameText.text = $"{ath.entityName} ({ath.curAge.Value}세)";
+            if (injuryLeftText) injuryLeftText.text = $"남은 치료 턴 {ath.leftInjury}";
 
-            ToggleAssigned(isAssigned);
-
-            assignButton.onClick.RemoveAllListeners();
-            assignButton.onClick.AddListener(() => _onAssign?.Invoke(_ath));
-        }
-
-        public void ToggleAssigned(bool assigned)
-        {
-            // assigned=true  → "배치중" 표시 / "배치하기" 숨김
-            if (assignedButton) assignedButton.SetActive(assigned);
-            if (assignButton)   assignButton.gameObject.SetActive(!assigned);
-            if (assignButton)   assignButton.interactable = !assigned;
+            if (assignedBadge) assignedBadge.SetActive(isAssigned);
+            if (assignButton)  assignButton.gameObject.SetActive(!isAssigned);
         }
     }
     

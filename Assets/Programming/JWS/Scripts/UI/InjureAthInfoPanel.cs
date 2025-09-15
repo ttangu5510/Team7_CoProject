@@ -11,24 +11,34 @@ namespace JWS
 {
     public class InjureAthInfoPanel : MonoBehaviour
     {
-        [Header("Header")]
-        [SerializeField] private Button closeButton;     // X 버튼
-
-        [Header("Outline Area")]
-        [SerializeField] private Image profileImage;     // 선택 사항
-        [SerializeField] private TMP_Text outlineText;   // 선수 요약 정보
-
-        [Header("Stats Area")]
-        [SerializeField] private StatBar[] statBars;     // 7개 (체력~피로도)
+        [SerializeField] private Button closeButton; // X
+        [SerializeField] private Image profileImage; // 옵션
+        [SerializeField] private TMP_Text outlineText;
+        [SerializeField] private StatBar[] statBars; // 7개
 
         private readonly Subject<Unit> _onClosed = new();
         public IObservable<Unit> OnClosed => _onClosed;
 
-        private DomAthEntity _ath;
+        private CompositeDisposable _cd;
+
+        private void Awake()
+        {
+            if (closeButton)
+            {
+                closeButton.OnClickAsObservable()
+                    .Subscribe(_ =>
+                    {
+                        gameObject.SetActive(false); // 자기 자신만 비활성
+                        _onClosed.OnNext(Unit.Default); // 닫힘 신호
+                    })
+                    .AddTo(this); // 파괴 시 자동 해제
+            }
+        }
 
         public void Open(DomAthEntity ath)
         {
-            _ath = ath;
+            // 덮기
+            transform.SetAsLastSibling();
             gameObject.SetActive(true);
 
             if (outlineText)
@@ -41,26 +51,15 @@ namespace JWS
 
             if (statBars != null && statBars.Length >= 7)
             {
-                statBars[0].Set("체력",     ath.stats.health,      800);
-                statBars[1].Set("순발력",   ath.stats.quickness,   800);
-                statBars[2].Set("유연성",   ath.stats.flexibility, 800);
-                statBars[3].Set("기술",     ath.stats.technic,     800);
-                statBars[4].Set("속도",     ath.stats.speed,       800);
-                statBars[5].Set("균형감각", ath.stats.balance,     800);
-                statBars[6].Set("피로도",   ath.stats.fatigue,     100);
-            }
-
-            if (closeButton)
-            {
-                closeButton.onClick.RemoveAllListeners();
-                closeButton.onClick.AddListener(() =>
-                {
-                    gameObject.SetActive(false);
-                    _onClosed.OnNext(Unit.Default);
-                });
+                statBars[0].Set("체력", ath.stats.health, 100);
+                statBars[1].Set("순발력", ath.stats.quickness, 100);
+                statBars[2].Set("유연성", ath.stats.flexibility, 100);
+                statBars[3].Set("기술", ath.stats.technic, 100);
+                statBars[4].Set("속도", ath.stats.speed, 100);
+                statBars[5].Set("균형감각", ath.stats.balance, 100);
+                statBars[6].Set("피로도", ath.stats.fatigue, 100);
             }
         }
     }
-
 }
 
