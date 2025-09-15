@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using StatefulUI.Runtime.Core;
 using StatefulUI.Runtime.References;
@@ -7,6 +7,7 @@ using UniRx.Triggers;
 using Zenject;
 using DG.Tweening;
 using Cysharp.Threading.Tasks;
+using JYL;
 
 namespace SHG
 {
@@ -30,6 +31,9 @@ namespace SHG
     ITimeFlowController timeFlowController;
     [Inject]
     IMatchController matchController;
+    [Inject]
+     IUiManager uiManager;
+
 
     StatefulComponent view;
     CompositeDisposable disposables;
@@ -74,7 +78,8 @@ namespace SHG
         .Subscribe(_ => {
             this.view.SetState((int)StateRole.PopupHidden);
             this.view.SetState((int)StateRole.Hidden);
-          })
+            uiManager.RemoveHashSet(this);
+        })
         .AddTo(this.disposables);
 
       this.popup.GetItem<ButtonReference>(
@@ -110,7 +115,8 @@ namespace SHG
       }
       this.view.SetState((int)StateRole.PopupHidden);
       this.view.SetState((int)StateRole.Hidden);
-    }
+            uiManager.RemoveHashSet(this);
+        }
 
     void OnClickQuote()
     {
@@ -127,15 +133,18 @@ namespace SHG
             !this.matchController.IsRegistered(match)) {
             this.FillRegisterPopupContent(match);
             this.view.SetState((int)StateRole.PopupShown);
+                        uiManager.AddHashSet(this);
           }
           else {
             this.view.SetState((int)StateRole.Hidden);
+                        uiManager.RemoveHashSet(this);
           }
           break;
         case NotificationType.Opening:
           this.FillOpeningPopupContent();
           this.view.SetState((int)StateRole.PopupShown);
-          break;
+                    uiManager.AddHashSet(this);
+                    break;
       }
     }
 
@@ -210,8 +219,10 @@ namespace SHG
     void UpdateNotification(NotificationType notificationType)
     {
       this.view.SetState((int)StateRole.PopupHidden);
-      if (notificationType == NotificationType.None) {
+            uiManager.RemoveHashSet(this);
+            if (notificationType == NotificationType.None) {
         this.view.SetState((int)StateRole.Hidden);
+
         // 다음 애니메이션을 위해 위치 조정
         this.container.DOLocalMoveY(
           endValue: -800f,
@@ -226,7 +237,8 @@ namespace SHG
           this.FillOpeningContent();
         }
         this.view.SetState((int)StateRole.Shown);
-        this.container.DOLocalMoveY(
+                uiManager.AddHashSet(this);
+                this.container.DOLocalMoveY(
           endValue: -400f,
           duration: 0.5f)
           .SetEase(Ease.InOutSine);

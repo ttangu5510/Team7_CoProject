@@ -12,13 +12,14 @@ namespace SJL
     {
         [SerializeField] Button HiringCoachButton;
 
-        [Inject] private CoachService coachService;
-        [Inject] private IResourceController resourceController;
-        [Inject] private DiContainer container;
 
         [SerializeField] public coachUI coachUIPrefab;
         [SerializeField] public Transform coachListPanel; // 코치 담을 부모 오브젝트
         //[SerializeField] public GameObject playerInformationPanel;
+        
+        [Inject] private DiContainer container;
+        [Inject] private CoachService coachService;
+        [Inject] private IResourceController resourceController;
 
         public List<CoachEntity> coachDataList = new();    // 코치 데이터 리스트
 
@@ -69,7 +70,6 @@ namespace SJL
                 coachUI ui = container.InstantiatePrefabForComponent<coachUI>(coachUIPrefab, coachListPanel);
                 ui.SetPlayer(shuffledList[i]); // 변환 후 전달
                 //ui.playerInormationPanel = playerInformationPanel;
-                ui.coachData = shuffledList[i]; // 필요시 변환 객체도 넣을 수 있음
             }
 
         }

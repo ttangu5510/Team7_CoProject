@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using StatefulUI.Runtime.Core;
 using UnityEngine;
 
 namespace JYL
@@ -8,11 +9,13 @@ namespace JYL
     public interface ICoachRepository
     {
         CoachEntity FindByName(string entityName);
+        CoachEntity FindById(int id);
         
         List<CoachEntity> FindAllCoaches();
         List<CoachEntity> FindAllCanRecruit();
         List<CoachEntity> FindAllRecruited();
         List<CoachEntity> FindAllRetired();
+        int[] FindAllAssigned();
         public void Save(CoachEntity entity);
         public void Delete(CoachEntity entity);
         public void Update(CoachEntity entity);
@@ -22,6 +25,7 @@ namespace JYL
         private Dictionary<string, CoachEntity> coachDict { get; } = new(); // 코치 동적 객체를 이름으로 찾을 때 사용 됨
         private ISaveManager saveManager { get; }
 
+        #region 초기화
         // 레포지토리 생성 시 사용되는 생성자. 세이브 매니저의 종속성을 주입한다.
         public CoachRepository(ISaveManager saveManager)
         {
@@ -30,7 +34,7 @@ namespace JYL
             Init(); //초기화 시작
         }
 
-        public void Init()
+        private void Init()
         {
             coachDict.Clear(); // 딕셔너리 초기화
             
@@ -40,15 +44,23 @@ namespace JYL
                 var entity = CoachFactory.CreateCoachEntityFromCSV(data);
                 if (!coachDict.TryAdd(entity.entityName, entity))
                 {
-                    Debug.LogWarning($"이미 추가된 선수임{entity.entityName}");
+                    Debug.LogWarning($"이미 추가된 코치임{entity.entityName}");
                 }
                 
                 saveManager.UpdateCoachEntity(entity);
             }
         }
+        #endregion
+        
+        #region 검색
         public CoachEntity FindByName(string entityName) // 이름으로 코치 객체 찾기
         {
             return  coachDict.GetValueOrDefault(entityName);
+        }
+
+        public CoachEntity FindById(int id)
+        {
+            return coachDict.FirstOrDefault(c => c.Value.id ==  id).Value;
         }
 
         public List<CoachEntity> FindAllCoaches()
@@ -70,9 +82,15 @@ namespace JYL
             return coachDict.Values.Where(x => x.curState == CoachState.Retired).ToList();
         }
 
+        public int[] FindAllAssigned() // 배치된 코치들 배열
+        {
+            return saveManager.GetAssignedCoaches();
+        }
+        #endregion
+        
+        #region 로직처리
         public void Save(CoachEntity entity) // Service 코치 영입에서 호출
         {
-
             saveManager.RecruitCoach(entity); // 코치 세이브 객체 생성
         }
 
@@ -83,7 +101,9 @@ namespace JYL
 
         public void Update(CoachEntity entity) // Service 코치 업데이트. 동적 객체를 통해 세이브 객체를 최신화 함.
         {
-            saveManager.GetCurrentSave().FindCoach(entity).UpdateStatus(entity); // 세이브 객체도 업데이트함.
+            saveManager.RetireCoach(entity);
+            
         }
+        #endregion
     }
 }
