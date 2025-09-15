@@ -11,7 +11,7 @@ namespace JWS{
     {
         [SerializeField] private List<TreatmentSlotView> slots; // Slot A~H 순서대로
         [Inject] private DomAthService athleteService;
-        [Inject] private SHG.IFacilitiesController facilitiesController;
+        [Inject] private IFacilitiesController facilitiesController;
 
         [SerializeField] private InjureListPanel injureListPanel;
         [SerializeField] private GameObject injuredAthleteInfoPUI; // 팝업 루트
