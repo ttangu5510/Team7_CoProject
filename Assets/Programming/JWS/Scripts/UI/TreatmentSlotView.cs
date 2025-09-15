@@ -30,10 +30,12 @@ namespace JWS
             _ath = ath;
             SetState(player:true);
 
-            if (nameText) nameText.text = ath.entityName;
-            if (timeLeftText) timeLeftText.text = $"남은 치료일 {GetRemainWeeks(ath)}주";
-            // if (athImage) athImage.sprite = ath.portraitSprite;
+            if (nameText)     nameText.text = ath.entityName;
+            if (timeLeftText) timeLeftText.text = $"남은 치료 턴 {ath.leftInjury}";
+            // 이미지는 나중에 확인
+            // if (athImage)  athImage.sprite = ...;
         }
+
 
         public void ShowEmpty()
         {
