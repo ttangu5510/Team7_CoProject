@@ -13,8 +13,12 @@ namespace JWS{
         [Inject] private DomAthService athleteService;
         [Inject] private IFacilitiesController facilitiesController;
 
-        [SerializeField] private InjureListPanel injureListPanel;
         [SerializeField] private GameObject injuredAthleteInfoPUI; // 팝업 루트
+        [SerializeField] private InjureListPanel injureListPanel;
+        [SerializeField] private InjureAthInfoPanel injureAthInfoPanel;
+        
+        CompositeDisposable _enableCd;      // 활성화 기간용
+        readonly CompositeDisposable _wireCd = new(); // 고정 배선용
         
         // 슬롯별 배치 현황(세이브/로드 대상)
         private readonly DomAthEntity[] _assigned = new DomAthEntity[8]; 
@@ -41,17 +45,38 @@ namespace JWS{
             return list;
         }
         
+        private void Awake() // 고정 배선: 슬롯 클릭
+        {
+            for (int i = 0; i < slots.Count; i++)
+            {
+                int idx = i;
+                slots[idx].Clicked
+                    .Subscribe(_ =>
+                    {
+                        if (!slots[idx].IsLocked && !slots[idx].IsNoAvailable)
+                            OpenAssignPanel(idx);
+                    })
+                    .AddTo(_wireCd);
+            }
+        }
+        
         private void OnEnable()
         {
+            _enableCd = new CompositeDisposable();
+            
             Refresh();
             
             var mc = facilitiesController.MedicalCenter;
             
             // 업그레이드 단계나 슬롯 수가 변하면 즉시 UI 새로고침
-            mc.CurrentStage.Subscribe(_ => Refresh()).AddTo(this);
-            mc.NumberOfAthletes.Subscribe(_ => Refresh()).AddTo(this);
+            mc.CurrentStage.Subscribe(_ => Refresh()).AddTo(_enableCd);
+            mc.NumberOfAthletes.Subscribe(_ => Refresh()).AddTo(_enableCd);
         }
         
+        private void OnDisable()
+        {
+            _enableCd?.Dispose();
+        }
 
         /// <summary>
         /// UI 전체 갱신
@@ -139,16 +164,20 @@ namespace JWS{
 
             if (injuredAll.Count == 0) { ShowNoCandidateHint(); return; }
 
-            injuredAthleteInfoPUI.SetActive(true);
+            // 패널 상태 전환
+            injuredAthleteInfoPUI.SetActive(true);        // 루트 켜기
+            injureListPanel.gameObject.SetActive(true);   // 리스트 패널 켜기
+            injureAthInfoPanel.gameObject.SetActive(false); // 상세 패널 끄기
+
+            // 리스트 패널 열기
             injureListPanel.Open(injuredAll, GetAssignedIdSet());
 
             injureListPanel.OnPick
                 .Take(1)
                 .Subscribe(ath =>
                 {
-                    _assigned[slotIndex] = ath; // 선택 선수 꽂기
-                    // 저장 id 갱신 필요 시 여기서 처리
-                    Refresh();                  // 슬롯 UI 갱신
+                    _assigned[slotIndex] = ath;
+                    Refresh();
                 })
                 .AddTo(this);
         }
