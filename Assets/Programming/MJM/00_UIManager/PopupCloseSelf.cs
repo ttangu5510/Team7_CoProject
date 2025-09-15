@@ -6,6 +6,7 @@ public class PopupCloseSelf : MonoBehaviour
 {
     [Tooltip("비워두면 자동으로 가장 가까운 팝업 루트를 찾습니다.")]
     [SerializeField] private GameObject popupRoot;
+    UIManager manager;
 
     void Awake()
     {
@@ -16,8 +17,8 @@ public class PopupCloseSelf : MonoBehaviour
         var btn = GetComponent<Button>();
         btn.onClick.AddListener(() =>
         {
-            if (UIManager.Instance != null && popupRoot != null)
-                UIManager.Instance.CloseSpecificPopup(popupRoot);
+            if (manager != null && popupRoot != null)
+                manager.CloseSpecificPopup(popupRoot);
         });
     }
 }

@@ -18,8 +18,8 @@ public class UIManager : MonoBehaviour, IUiManager
 
     public static HashSet<string> isUIOpen { get; private set; }
 
-    private static UIManager instance;
-    public static UIManager Instance => instance;
+   // private static UIManager instance;
+   // public static UIManager Instance => instance;
 
     [Header("Auto-Bind Roots")]
     [SerializeField] private Transform panelsRoot;                       // 패널 루트
@@ -60,8 +60,8 @@ public class UIManager : MonoBehaviour, IUiManager
     private void Awake()
     {
         // 싱글톤 보장 & 파괴 금지
-        if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
-        else { Destroy(gameObject); return; }
+       // if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
+       // else { Destroy(gameObject); return; }
 
         isUIOpen = new();
         // 초기 바인딩
