@@ -13,6 +13,9 @@ namespace JWS{
         [Inject] private DomAthService athleteService;
         [Inject] private SHG.IFacilitiesController facilitiesController;
 
+        [SerializeField] private InjureListPanel injureListPanel;
+        [SerializeField] private GameObject injuredAthleteInfoPUI; // 팝업 루트
+        
         // 슬롯별 배치 현황(세이브/로드 대상)
         private readonly DomAthEntity[] _assigned = new DomAthEntity[8]; 
         
@@ -119,7 +122,35 @@ namespace JWS{
                 default: return 8; // 전부 개방
             }
         }
+        
+        private HashSet<int> GetAssignedIdSet()
+            => _assigned.Where(a => a != null).Select(a => a.id).ToHashSet();
+        
+        private void ShowNoCandidateHint()
+        {
+            Debug.Log("배치 가능한 부상 선수가 없습니다.");
+        }
 
+        private void OpenAssignPanel(int slotIndex)
+        {
+            var injuredAll = athleteService.GetAllRecruitedAthleteList()
+                .Where(a => a.curState == AthleteState.Injured)
+                .ToList();
 
+            if (injuredAll.Count == 0) { ShowNoCandidateHint(); return; }
+
+            injuredAthleteInfoPUI.SetActive(true);
+            injureListPanel.Open(injuredAll, GetAssignedIdSet());
+
+            injureListPanel.OnPick
+                .Take(1)
+                .Subscribe(ath =>
+                {
+                    _assigned[slotIndex] = ath; // 선택 선수 꽂기
+                    // 저장 id 갱신 필요 시 여기서 처리
+                    Refresh();                  // 슬롯 UI 갱신
+                })
+                .AddTo(this);
+        }
     }
 }

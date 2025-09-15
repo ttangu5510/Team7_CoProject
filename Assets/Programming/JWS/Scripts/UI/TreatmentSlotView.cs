@@ -10,7 +10,7 @@ namespace JWS
 public class TreatmentSlotView : MonoBehaviour
     {
         [Header("Click")]
-        [SerializeField] private Button clickArea;   // ★ Slot 루트에 단 Button
+        [SerializeField] private Button clickArea;
 
         [Header("Player Slot UI")]
         [SerializeField] private GameObject playerSlot;
