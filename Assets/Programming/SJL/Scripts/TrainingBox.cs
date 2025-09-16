@@ -100,8 +100,8 @@ namespace SJL
             startTrainingButton.OnClickAsObservable()
                 .Subscribe(_ => CheckAllAssign()).AddTo(this);
             
-            trainingCloseButton.OnClickAsObservable()
-                .Subscribe(_ => UpdateAllAssignment()).AddTo(this);
+            //trainingCloseButton.OnClickAsObservable()
+                //.Subscribe(_ => UpdateAllAssignment()).AddTo(this);
            
             // 텍스트 세팅
             puiString = new string[2] { "아직 배치되지 않은 슬롯이 있습니다.\n훈련을 진행하시겠습니까?",""};
