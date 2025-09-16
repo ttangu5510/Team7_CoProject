@@ -5,6 +5,7 @@ using UnityEngine;
 public class PopupCloseButton : MonoBehaviour
 {
     [SerializeField] private GameObject popupRoot; // Popup.Test 루트
+    UIManager manager;
 
     private void Reset()
     {
@@ -14,6 +15,6 @@ public class PopupCloseButton : MonoBehaviour
 
     public void Close()
     {
-        UIManager.Instance.CloseSpecificPopup(popupRoot);
+        manager.CloseSpecificPopup(popupRoot);
     }
 }
