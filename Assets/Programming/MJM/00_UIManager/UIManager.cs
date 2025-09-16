@@ -18,8 +18,8 @@ public class UIManager : MonoBehaviour, IUiManager
 
     public static HashSet<string> isUIOpen { get; private set; }
 
-    private static UIManager instance;
-    public static UIManager Instance => instance;
+   // private static UIManager instance;
+   // public static UIManager Instance => instance;
 
     [Header("Auto-Bind Roots")]
     [SerializeField] private Transform panelsRoot;                       // 패널 루트
@@ -60,8 +60,8 @@ public class UIManager : MonoBehaviour, IUiManager
     private void Awake()
     {
         // 싱글톤 보장 & 파괴 금지
-        if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
-        else { Destroy(gameObject); return; }
+       // if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
+       // else { Destroy(gameObject); return; }
 
         isUIOpen = new();
         // 초기 바인딩
@@ -368,10 +368,34 @@ public class UIManager : MonoBehaviour, IUiManager
 
     private void HandleBack()
     {
+        // 1) 팝업 우선 처리
         PruneDeadPopups();
-        if (popupStack.Count > 0) { CloseTopPopup(); return; }
+        if (popupStack.Count > 0)
+        {
+            var top = popupStack.Peek();
+            if (top)
+            {
+                var policy = top.GetComponent<UIClosePolicy>();
+                if (policy == null || policy.closeOnBack)   // 정책이 없거나, 허용일 때만 닫기
+                {
+                    CloseTopPopup();
+                }
+            }
+            return;
+        }
 
-        if (!string.IsNullOrEmpty(currentPanelKey)) { CloseAllPanels(); return; }
+        // 2) 패널 처리
+        if (!string.IsNullOrEmpty(currentPanelKey) && panels.TryGetValue(currentPanelKey, out var panel) && panel)
+        {
+            var policy = panel.GetComponent<UIClosePolicy>();
+            if (policy == null || policy.closeOnBack)
+            {
+                CloseAllPanels();
+            }
+            return;
+        }
+        CloseAllPanels();
+            return;
 
         // TODO: 기본 동작 (예: 종료 팝업 등)
     }
