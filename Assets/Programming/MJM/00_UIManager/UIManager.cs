@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 using System.Collections;
+using DG.Tweening;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -178,27 +179,93 @@ public class UIManager : MonoBehaviour, IUiManager
             return;
         }
 
+        // 같은 패널이면 토글 닫기(애니메이션 아웃)
         if (!string.IsNullOrEmpty(currentPanelKey) && currentPanelKey == key)
         {
-            if (toggleIfSame) CloseAllPanels();
-            else UpdateUIState();
+            if (toggleIfSame)
+            {
+                AnimateClosePanel(key, onClosed: () => {
+                    currentPanelKey = null;
+                    UpdateUIState();
+                });
+            }
+            else
+            {
+                UpdateUIState();
+            }
             return;
         }
 
+        // 기존 열려있는 패널은 애니메이션 아웃
+        if (!string.IsNullOrEmpty(currentPanelKey) && panels.TryGetValue(currentPanelKey, out var prev) && prev)
+        {
+            AnimateClosePanel(currentPanelKey, onClosed: null); // 그냥 닫고 비활성화
+        }
+
+        // 타깃만 활성화 후 애니메이션 인
         foreach (var kv in panels)
-            kv.Value?.SetActive(kv.Key == key);
+            if (kv.Value) kv.Value.SetActive(kv.Key == key);
 
         currentPanelKey = key;
-        //isUIOpen.Add(key);
+
+        var anim = target.GetComponent<PanelAnimator>();
+        if (anim != null)
+        {
+            // 시작 시 알파/스케일 초기값을 둬야 하므로 SetActive(true) 후 PlayIn
+            anim.PlayIn();
+        }
+
         UpdateUIState();
     }
 
     public void CloseAllPanels()
     {
-        foreach (var go in panels.Values) go?.SetActive(false);
-        currentPanelKey = null;
-        UpdateUIState();
+        if (!string.IsNullOrEmpty(currentPanelKey))
+        {
+            var key = currentPanelKey;
+            AnimateClosePanel(key, onClosed: () => {
+                foreach (var go in panels.Values) if (go) go.SetActive(false);
+                currentPanelKey = null;
+                UpdateUIState();
+            });
+        }
+        else
+        {
+            foreach (var go in panels.Values) if (go) go.SetActive(false);
+            currentPanelKey = null;
+            UpdateUIState();
+        }
     }
+
+    private void AnimateClosePanel(string key, System.Action onClosed)
+    {
+        if (!panels.TryGetValue(key, out var go) || !go) { onClosed?.Invoke(); return; }
+
+        var anim = go.GetComponent<PanelAnimator>();
+        if (anim == null)
+        {
+            // 애니메이터가 없으면 즉시 비활성화
+            go.SetActive(false);
+            onClosed?.Invoke();
+            return;
+        }
+
+        var tween = anim.PlayOut();
+        if (tween == null)
+        {
+            go.SetActive(false);
+            onClosed?.Invoke();
+            return;
+        }
+
+        tween.OnComplete(() => {
+            if (go) go.SetActive(false);
+            onClosed?.Invoke();
+        });
+    }
+
+
+
     #endregion
 
     #region 팝업 제어
