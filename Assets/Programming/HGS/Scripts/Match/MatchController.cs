@@ -32,7 +32,6 @@ namespace SHG
       this.NextMatch = new (null);
     }
 
-    //TODO: Load save data
     [Inject]
     public void Init(
       ITimeFlowController timeFlowController, 
