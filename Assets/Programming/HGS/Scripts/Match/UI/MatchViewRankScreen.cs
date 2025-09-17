@@ -79,12 +79,12 @@ namespace SHG
 
     void PrepareFlagIcon(Image flagIcon, IContender athlete, Match match)
     {
-      //TODO: team image
-      if (match.Data.IsDomestic) {
+      if (match.Data.IsDomestic ||
+      athlete.Group == ConvertedDomesticAthlete.USER_TEAM
+      ) {
         flagIcon.sprite = ContendersController.FLAG_ICONS["korea"];
-      }
-      else if (ContendersController.FLAG_ICONS.TryGetValue(
-          athlete.Group.Name, out Sprite sprite)) {
+      } else if (ContendersController.FLAG_ICONS.TryGetValue(
+            athlete.Group.Name, out Sprite sprite)) {
         flagIcon.sprite = sprite; 
       }
       var rect = flagIcon.transform as RectTransform;
