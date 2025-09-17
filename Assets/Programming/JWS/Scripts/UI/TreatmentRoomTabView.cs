@@ -25,6 +25,7 @@ namespace JWS
         [SerializeField] private List<TreatmentSlotView> slots; // Slot A~H 순서대로
         [Inject] private DomAthService athleteService;
         [Inject] private IFacilitiesController facilitiesController;
+        [Inject] private SaveManager saveManager;
 
         [SerializeField] private GameObject injuredAthleteInfoPUI; // 팝업 루트
         [SerializeField] private InjureListPanel injureListPanel;  // 부상자 목록 패널
@@ -265,11 +266,19 @@ namespace JWS
             injureListPanel.OnRequestConfirm
                 .Subscribe(_ =>
                 {
-                    // 저장 훅 (원하면 여기서 세이브 호출)
-                    // Save(GetAssignedIdsForSave());
-                    injuredAthleteInfoPUI.SetActive(false); // 닫기
+                    // 현재 슬롯 상태 저장
+                    var ids = GetAssignedIdsForSave().ToArray();
+                    saveManager.SetAssignedTreatmentAthletes(ids);
+                    
+                    // 세이브 파일 쓰기 (현재 슬롯 기준)
+                    saveManager.SaveProgress(saveManager.GetCurrentSlotIndex());
+
+                    // 팝업 닫기
+                    if (injuredAthleteInfoPUI) 
+                        injuredAthleteInfoPUI.SetActive(false);
                 })
                 .AddTo(cd);
+
 
             _panelSubs = cd;
         }
