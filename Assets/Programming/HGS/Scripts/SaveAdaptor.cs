@@ -6,11 +6,13 @@ using UniRx.Triggers;
 using Zenject;
 using EditorAttributes;
 using JYL;
+using Cysharp.Threading.Tasks;
 
 namespace SHG
 {
   public class SaveAdaptor : MonoBehaviour
   {
+    const float SAVE_DELAY = 1.5f;
     [Inject]
     ISaveManager saveManager;
     [Inject]
@@ -31,9 +33,6 @@ namespace SHG
 
     void Start()
     {
-      this.timeFlowController.BeforeProgress += this.SaveProgress;
-      this.OnDestroyAsObservable()
-        .Subscribe(_ => this.timeFlowController.BeforeProgress -= this.SaveProgress);
       this.resourceController.Money
         .Subscribe(money => 
             this.saveManager.GetCurrentSave().currencies.gold = money)
@@ -47,8 +46,12 @@ namespace SHG
           this.saveManager.GetCurrentSave().currencies.trainingCoin = coin)
         .AddTo(this);
       this.timeFlowController.WeekInYear
-        .Subscribe(week =>
-          this.saveManager.GetCurrentSave().time.week = week)
+        .Subscribe(week => {
+          var currentSave = this.saveManager.GetCurrentSave();
+          currentSave.time.week = week;
+          currentSave.time.yearCycle = this.timeFlowController.Year.Value - ITimeFlowController.START_YEAR + 1;
+          this.SaveProgress();
+          })
         .AddTo(this);
       this.timeFlowController.CurrentSeason
         .Subscribe(season => this.saveManager.GetCurrentSave().time.season = (JWS.Season)season);
@@ -97,8 +100,9 @@ namespace SHG
       }
     }
 
-    void SaveProgress()
+    async void SaveProgress()
     {
+      await UniTask.WaitForSeconds(SAVE_DELAY);
       this.saveManager.AutoSave();
     }
   }
