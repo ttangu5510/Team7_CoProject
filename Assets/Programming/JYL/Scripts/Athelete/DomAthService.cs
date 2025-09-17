@@ -148,9 +148,8 @@ namespace JYL
         
         #region 선수 회복
         // 선수가 회복하는 함수. 파라매터만 변경 하는 것이기 때문에, 결과 처리는 UI에서 필요함. 마찬가지로, 부상 상태가 아니면 수행 못하게 해야함
-        public void RecoverAthlete(in string athleteName, int  amount = 1)
+        public void RecoverAthlete(DomAthEntity athlete, int  amount = 1)
         {
-            DomAthEntity athlete = repository.FindByName(athleteName);
             if (athlete.curState == AthleteState.Injured && athlete.leftInjury > 0)
             {
                 athlete.RecoverAthlete(amount); // 리커버리. 부상을 한 턴 감소.
