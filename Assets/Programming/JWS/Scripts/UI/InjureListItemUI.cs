@@ -23,11 +23,16 @@ namespace JWS
         [SerializeField] private TextMeshProUGUI fatigueText;
         [SerializeField] private Image profileImage;          // (옵션)
 
+        public DomAthEntity RefAth => _ath;
         private DomAthEntity _ath;
 
         // 이벤트
         private readonly Subject<DomAthEntity> _onAssign = new();
         public IObservable<DomAthEntity> OnAssign => _onAssign;
+        
+        private readonly Subject<DomAthEntity> _onUnassign = new();
+        public IObservable<DomAthEntity> OnUnassign => _onUnassign;
+
 
         private readonly Subject<DomAthEntity> _onOpenInfo = new();
         public IObservable<DomAthEntity> OnOpenInfo => _onOpenInfo;
@@ -36,18 +41,18 @@ namespace JWS
         {
             if (rootButton)
                 rootButton.OnClickAsObservable()
-                    .TakeUntilDestroy(this)
                     .Subscribe(_ => { if (_ath != null) _onOpenInfo.OnNext(_ath); })
                     .AddTo(this);
 
             if (assignButton)
                 assignButton.OnClickAsObservable()
-                    .TakeUntilDestroy(this)
                     .Subscribe(_ => { if (_ath != null) _onAssign.OnNext(_ath); })
                     .AddTo(this);
 
             if (assignedButton)
-                assignedButton.interactable = false; // 표시 전용
+                assignedButton.OnClickAsObservable()
+                    .Subscribe(_ => { if (_ath != null) _onUnassign.OnNext(_ath); }) // ← 해제 요청
+                    .AddTo(this);
         }
 
         public void Bind(DomAthEntity ath, bool isAssigned)
@@ -68,6 +73,24 @@ namespace JWS
         {
             if (assignButton)   assignButton.gameObject.SetActive(!assigned);
             if (assignedButton) assignedButton.gameObject.SetActive(assigned);
+        }
+        
+        public void NudgeAssignButton()
+        {
+            var btn = assignButton ? assignButton.transform : transform;
+            StartCoroutine(NudgeCo(btn));
+        }
+
+        private System.Collections.IEnumerator NudgeCo(Transform t)
+        {
+            var basePos = t.localPosition;
+            float d = 6f, dur = 0.08f;
+            for (int i = 0; i < 3; i++)
+            {
+                t.localPosition = basePos + Vector3.right * d; yield return new WaitForSeconds(dur);
+                t.localPosition = basePos - Vector3.right * d; yield return new WaitForSeconds(dur);
+            }
+            t.localPosition = basePos;
         }
     }
 }

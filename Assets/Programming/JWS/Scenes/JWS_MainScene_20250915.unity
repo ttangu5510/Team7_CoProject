@@ -2123,6 +2123,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Injured Athlete Item
       objectReference: {fileID: 0}
+    - target: {fileID: 8013264608626302240, guid: e7e8701b3b89dda40abad16de3affeae,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3676,7 +3681,9 @@ MonoBehaviour:
   content: {fileID: 1297043045}
   itemPrefab: {fileID: 981470227}
   infoPanel: {fileID: 760375552}
-  injuredAthleteInfoPui: {fileID: 0}
+  injuredAthleteInfoPui: {fileID: 1421880251}
+  confirmButton: {fileID: 2100820545}
+  resetButton: {fileID: 697123389}
 --- !u!114 &472473713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32707,7 +32714,7 @@ PrefabInstance:
     - target: {fileID: 3504317524282162260, guid: 338fd2708fba02643b10be8686553766,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000061035156
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3557518042474429634, guid: 338fd2708fba02643b10be8686553766,
         type: 3}

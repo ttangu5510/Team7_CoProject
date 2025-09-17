@@ -15,6 +15,7 @@ namespace JWS
     /// - 빈 슬롯: 부상자 목록(배치) 패널 오픈
     /// - 배치된 슬롯: 남은 기간이 1주 이내면 교체 패널 오픈, 아니면 무반응
     /// - MedicalCenter 단계/슬롯수 변화에 따라 UI 자동 갱신
+    /// - InjureListPanel과 이벤트 연동 (배치하기 / 해제 / 리셋 / 확정)
     /// </summary>
     public class TreatmentRoomTabView : MonoBehaviour
     {
@@ -31,7 +32,7 @@ namespace JWS
 
         private CompositeDisposable _enableCd;                 // 활성화 기간 구독 모음
         private readonly CompositeDisposable _wireCd = new();  // 고정 배선(슬롯 클릭 등) 구독 모음
-        private IDisposable _pickSub;                          // 리스트 OnPick(선수 선택) 단일 구독 레퍼런스
+        private IDisposable _panelSubs;                        // 부상자 목록 패널 이벤트 구독 모음
 
         // 슬롯별 배치 현황(세이브/로드 대상)
         private readonly DomAthEntity[] _assigned = new DomAthEntity[8];
@@ -39,13 +40,12 @@ namespace JWS
         // 세이브/로드 용: 슬롯에 배치된 선수 id들 (A→H 순)
         private List<int> _savedAssignedIds = new();
 
-        // ------------------------------
-        // [1] 고정 배선: 슬롯 클릭 구독 → 플로우 진입점
-        //     - 게임 실행 중 한 번만 연결
-        //     - 슬롯 클릭 시, 빈/배치 여부로 분기
-        // ------------------------------
+        // ============================================================
+        // [1] 고정 배선: Awake()
+        // ============================================================
         private void Awake()
         {
+            // 슬롯 클릭 → 빈 슬롯 / 배치 슬롯 분기 처리
             for (int i = 0; i < slots.Count; i++)
             {
                 int idx = i; // 클로저 캡처
@@ -55,14 +55,14 @@ namespace JWS
                         // 잠금/배치 불가 상태는 무시
                         if (slots[idx].IsLocked || slots[idx].IsNoAvailable) return;
 
-                        // 빈 슬롯 → 배치 패널
+                        // 빈 슬롯 클릭 → 배치 패널 열기
                         if (_assigned[idx] == null)
                         {
                             OpenAssignPanel(idx);
                         }
+                        // 배치된 슬롯 클릭 → 남은 치료 기간 확인 후 교체 여부 판단
                         else
                         {
-                            // 배치된 슬롯 → 남은 치료 기간 체크
                             HandleAssignedSlot(idx);
                         }
                     })
@@ -70,78 +70,58 @@ namespace JWS
             }
         }
 
-        // ------------------------------
-        // [2] 패널 활성 시 초기화 + 데이터 구독
-        //     - 팝업 루트/리스트/상세 패널 초기 상태 OFF
-        //     - MedicalCenter 변화 구독 → Refresh()
-        // ------------------------------
+        // ============================================================
+        // [2] OnEnable() : 탭이 열릴 때 초기화
+        // ============================================================
         private void OnEnable()
         {
             _enableCd = new CompositeDisposable();
 
-            // 초기 UI 상태 리셋 (뚜껑 열린 채로 남는 것 방지)
+            // 초기 UI 상태 리셋 (팝업/리스트/상세 패널 모두 OFF)
             if (injuredAthleteInfoPUI) injuredAthleteInfoPUI.SetActive(false);
             if (injureListPanel)       injureListPanel.gameObject.SetActive(false);
             if (injureAthInfoPanel)    injureAthInfoPanel.gameObject.SetActive(false);
 
-            // 최초 갱신
+            // 슬롯 UI 최초 갱신
             Refresh();
 
-            // 업그레이드 단계/수용 인원 변화 → 즉시 갱신
+            // MedicalCenter 단계/수용 인원 변화시 즉시 Refresh()
             var mc = facilitiesController.MedicalCenter;
             mc.CurrentStage     .Subscribe(_ => Refresh()).AddTo(_enableCd);
             mc.NumberOfAthletes .Subscribe(_ => Refresh()).AddTo(_enableCd);
         }
 
-        // ------------------------------
+        // ============================================================
         // [3] 빈 슬롯 클릭 → 배치 패널 열기
-        //     - InjureListPanel.Open(injuredAll, assignedSet)
-        //     - OnPick(선수 선택) 1회만 받아서 슬롯에 배치 후 Refresh()
-        // ------------------------------
+        // ============================================================
         private void OpenAssignPanel(int slotIndex)
         {
-            // 전체 부상자 목록 수집
             var injuredAll = athleteService.GetAllRecruitedAthleteList()
-                .Where(a => a.curState == AthleteState.Injured)
-                .ToList();
-
+                .Where(a => a.curState == AthleteState.Injured).ToList();
             if (injuredAll.Count == 0) { ShowNoCandidateHint(); return; }
 
-            // 팝업 루트/리스트 표시, 상세는 OFF
-            if (injuredAthleteInfoPUI) injuredAthleteInfoPUI.SetActive(true);
-            if (injureListPanel)       injureListPanel.gameObject.SetActive(true);
-            if (injureAthInfoPanel)    injureAthInfoPanel.gameObject.SetActive(false);
+            injuredAthleteInfoPUI.SetActive(true);      // 팝업 루트(=블로커) 켜기
+            injureListPanel.gameObject.SetActive(true);
+            if (injureAthInfoPanel) injureAthInfoPanel.gameObject.SetActive(false);
 
-            // 이미 배치된 선수 보호 세트(리스트에서 '배치됨' 비활성 표시 용)
-            var assignedSet = GetAssignedIdSet();
-
-            // 리스트 오픈 + 재구독 전 기존 구독 해제(누적 방지)
-            injureListPanel.Open(injuredAll, assignedSet);
-            _pickSub?.Dispose();
-            _pickSub = injureListPanel.OnPick
-                .Take(1)
-                .Subscribe(ath =>
-                {
-                    _assigned[slotIndex] = ath; // 배치
-                    Refresh();
-                    // 필요 시: 리스트/루트 닫기, 상세로 전환 등 추가 가능
-                });
+            // 리스트 패널 열기 (현재 배치된 선수들은 배치중 상태로 표시됨)
+            injureListPanel.Open(injuredAll, GetAssignedIdSet());
+            
+            // 패널 이벤트 핸들러 연결
+            WireListPanelHandlers(); // ★ 여기
         }
 
-        // ------------------------------
+        // ============================================================
         // [4] 배치된 슬롯 클릭 → 남은 치료 기간 분기
-        //     - 남은 기간 ≥ 2주 → 무반응
-        //     - 남은 기간 ≤ 1주 → 교체 패널 오픈
-        // ------------------------------
+        // ============================================================
         private void HandleAssignedSlot(int slotIndex)
         {
             var ath = _assigned[slotIndex];
             if (ath == null) return;
 
-            // leftInjury 단위가 "주" 기준: 2주 이상이면 교체 불가
+            // 치료기간이 2주 이상 남으면 교체 불가
             if (ath.leftInjury > 1)
             {
-                // 필요하면 토스트/사운드/UI 힌트 출력
                 Debug.Log("남은 치료 기간이 2주 이상 → 교체 불가");
                 return;
             }
@@ -152,33 +132,19 @@ namespace JWS
 
         // ------------------------------
         // [5] 교체 패널 열기 (배치 패널과 동일 흐름, 선택 시 교체)
-        //     - InjureListPanel.Open(injuredAll, assignedSet)
-        //     - OnPick(새 선수) 1회만 받아서 해당 슬롯에 교체 후 Refresh()
         // ------------------------------
         private void OpenReplacePanel(int slotIndex)
         {
             var injuredAll = athleteService.GetAllRecruitedAthleteList()
-                .Where(a => a.curState == AthleteState.Injured)
-                .ToList();
-
+                .Where(a => a.curState == AthleteState.Injured).ToList();
             if (injuredAll.Count == 0) { ShowNoCandidateHint(); return; }
 
-            if (injuredAthleteInfoPUI) injuredAthleteInfoPUI.SetActive(true);
-            if (injureListPanel)       injureListPanel.gameObject.SetActive(true);
-            if (injureAthInfoPanel)    injureAthInfoPanel.gameObject.SetActive(false);
+            injuredAthleteInfoPUI.SetActive(true);
+            injureListPanel.gameObject.SetActive(true);
+            if (injureAthInfoPanel) injureAthInfoPanel.gameObject.SetActive(false);
 
-            var assignedSet = GetAssignedIdSet();
-
-            injureListPanel.Open(injuredAll, assignedSet);
-            _pickSub?.Dispose();
-            _pickSub = injureListPanel.OnPick
-                .Take(1)
-                .Subscribe(newAth =>
-                {
-                    _assigned[slotIndex] = newAth; // 교체
-                    Refresh();
-                    // 필요 시: 패널 닫기/상세 전환 추가 가능
-                });
+            injureListPanel.Open(injuredAll, GetAssignedIdSet());
+            WireListPanelHandlers();
         }
 
         // ------------------------------
@@ -223,7 +189,7 @@ namespace JWS
                 slots[write].ShowAssigned(ent);
             }
 
-            // 3) 남은 usable 슬롯 처리
+            // 3) 남은 슬롯 처리
             int unassignedInjuredCount = injuredAll.Count - picked.Count;
             for (int i = write; i < usable; i++)
             {
@@ -235,26 +201,110 @@ namespace JWS
                     slots[i].ShowEmpty();       // 부상자 있음 → 빈 슬롯
             }
         }
+        
+        // ============================================================
+        // [7] InjureListPanel과 이벤트 연결
+        // ============================================================
+        private void WireListPanelHandlers()
+        {
+            _panelSubs?.Dispose();
+            var cd = new CompositeDisposable();
 
-        // ------------------------------
-        // [7] 활성화 기간 끝 → 구독 정리
-        // ------------------------------
+            // "배치하기"
+            injureListPanel.OnRequestAssign
+                .Subscribe(ath =>
+                {
+                    int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
+                    int firstEmpty = -1;
+                    for (int i = 0; i < usable; i++)
+                        if (_assigned[i] == null) { firstEmpty = i; break; }
+
+                    if (firstEmpty < 0)
+                    {
+                        // 슬롯 꽉참 → 이펙트
+                        injureListPanel.NudgeAssignButton(ath.id);
+                        return;
+                    }
+
+                    // 이미 다른 슬롯에 들어있다면 해제
+                    int cur = FindSlotIndexByAthleteId(ath.id);
+                    if (cur >= 0) _assigned[cur] = null;
+
+                    _assigned[firstEmpty] = ath;       // 첫 빈 슬롯에 배치
+                    Refresh();
+                    injureListPanel.UpdateItemAssigned(ath.id, true);
+                })
+                .AddTo(cd);
+
+            // "배치중 → 해제"
+            injureListPanel.OnRequestUnassign
+                .Subscribe(ath =>
+                {
+                    int idx = FindSlotIndexByAthleteId(ath.id);
+                    if (idx >= 0)
+                    {
+                        _assigned[idx] = null;
+                        Refresh();
+                        injureListPanel.UpdateItemAssigned(ath.id, false);
+                    }
+                })
+                .AddTo(cd);
+
+            // "리셋"
+            injureListPanel.OnRequestReset
+                .Subscribe(_ =>
+                {
+                    int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
+                    for (int i = 0; i < usable; i++) _assigned[i] = null;
+                    Refresh();
+                    injureListPanel.UpdateAllAssignedFalse();
+                })
+                .AddTo(cd);
+
+            // "확정"
+            injureListPanel.OnRequestConfirm
+                .Subscribe(_ =>
+                {
+                    // 저장 훅 (원하면 여기서 세이브 호출)
+                    // Save(GetAssignedIdsForSave());
+                    injuredAthleteInfoPUI.SetActive(false); // 닫기
+                })
+                .AddTo(cd);
+
+            _panelSubs = cd;
+        }
+        
+        
+
+        // ============================================================
+        // [8] OnDisable / OnDestroy : 구독 정리
+        // ============================================================
         private void OnDisable()
         {
+            _panelSubs?.Dispose();
             _enableCd?.Dispose();
         }
-
-        // ------------------------------
-        // [8] 오브젝트 파괴 시 → 고정 배선/단일 구독 정리
-        // ------------------------------
+        
         private void OnDestroy()
         {
             _wireCd.Dispose();
-            _pickSub?.Dispose();
+            _panelSubs?.Dispose();
         }
+        
 
         // ------------------------------
-        // 개방 가능한 슬롯 수 계산 (MedicalCenter 단계 기준)
+        // 선수 아이디로 슬롯 인덱스 찾기
+        // ------------------------------
+        private int FindSlotIndexByAthleteId(int athId)
+        {
+            for (int i = 0; i < _assigned.Length; i++)
+                if (_assigned[i]?.id == athId) return i;
+            return -1;
+        }
+
+
+        // ------------------------------
+        // 개방 가능한 슬롯 수 계산
         // ------------------------------
         private int GetUsableSlots()
         {
