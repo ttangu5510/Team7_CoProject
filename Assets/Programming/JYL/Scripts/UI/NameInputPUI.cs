@@ -12,6 +12,9 @@ namespace JYL
 {
     public class NameInputPUI : MonoBehaviour
     {
+        [Header("Set UI Manager")] 
+        [SerializeField] private UIManager uiManager;
+        
         [Header("Panels")]
         [SerializeField] private GameObject errorPopup;   // 에러 팝업 (비활성 시작 권장)
     
@@ -43,7 +46,7 @@ namespace JYL
     
         void OnConfirm()
         {
-            // 주인공 이름 검사
+            // 주인공 이름 검사. 안되면 넘김
             if (!NameRules.TryValidate(nameField.text, out var reason1))
             {
                 ShowError($"<color=#ff3b30>{reason1}</color>\n이름 조건 : 2~8자, 공백/특수문자 불가");
@@ -51,7 +54,7 @@ namespace JYL
                 return;
             }
     
-            // 팀 이름 검사
+            // 팀 이름 검사. 안되면 넘김
             if (!NameRules.TryValidate(teamNameField.text, out var reason2))
             {
                 ShowError($"<color=#ff3b30>{reason2}</color>\n이름 조건 : 2~8자, 공백/특수문자 불가");
@@ -65,9 +68,8 @@ namespace JYL
             
             // TODO : UID 들어오면 여기서 추가
             saveManager.CreateAutoSaveData(protagonistName,teamName,"testUid123"); 
-    
-            // 씬전환
-            SceneManager.LoadSceneAsync("JYL_MainScene");
+            
+            uiManager.OpenPanel("loading");
         }
     
         void ShowError(string message)

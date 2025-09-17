@@ -9,6 +9,7 @@ using Path = System.IO.Path;
 
 namespace JYL.AchievementTest02
 {
+    #if UNITY_EDITOR
     [CustomEditor(typeof(AchievementDatabase))]
     public class AchievementDBEditor : Editor
     {
@@ -48,5 +49,6 @@ namespace JYL.AchievementTest02
             AssetDatabase.ImportAsset(fullPath);
         }
     }
+    #endif
 }
 
