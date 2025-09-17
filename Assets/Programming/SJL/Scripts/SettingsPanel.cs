@@ -34,6 +34,8 @@ namespace SJL
         [Header("오디오 믹서")]
         [SerializeField] private AudioMixer audioMixer;
 
+        SoundManager soundManager;
+
         private void Awake()
         {
             // 볼륨 슬라이더/토글 이벤트 연결
@@ -67,26 +69,23 @@ namespace SJL
             versionText.text = "버전. v1.0.0";
 
             // 슬라이더 값 초기화(필요 시 저장값에서 불러올 것)
-            masterVolumeSlider.value = 50;
-            musicVolumeSlider.value = 50;
-            sfxVolumeSlider.value = 50;
+            //masterVolumeSlider.value = 50;
+            //musicVolumeSlider.value = 50;
+            //sfxVolumeSlider.value = 50;
         }
 
         // 볼륨 슬라이더 연동 (AudioMixer Exposed Parameters와 연동 권장)
         private void OnMasterVolumeChanged(float value)
         {
-            float dB = Mathf.Log10(Mathf.Max(value, 0.0001f)) * 20f;
-            audioMixer.SetFloat("MasterVolume", dB);
+            SoundManager.Instance.SetMasterVolume(value);
         }
         private void OnMusicVolumeChanged(float value)
         {
-            float dB = Mathf.Log10(Mathf.Max(value, 0.0001f)) * 20f;
-            audioMixer.SetFloat("MusicVolume", dB);
+            SoundManager.Instance.SetMusicVolume(value);
         }
         private void OnSfxVolumeChanged(float value)
         {
-            float dB = Mathf.Log10(Mathf.Max(value, 0.0001f)) * 20f;
-            audioMixer.SetFloat("SfxVolume", dB);
+            SoundManager.Instance.SetSFXVolume(value);
         }
         private void OnMasterMuteChanged(bool mute)
         {
