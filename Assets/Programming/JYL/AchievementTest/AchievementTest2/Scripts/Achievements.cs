@@ -1,0 +1,1 @@
+public enum Achievements{firstAchievement,secondAchievement,}
