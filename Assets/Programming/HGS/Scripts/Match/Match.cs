@@ -261,7 +261,6 @@ namespace SHG
       this.ContenderAthletesBySport[sportType] = new (contenders);
     }
 
-    // TODO: 상대 선수 선택 알고리즘
     IContender SelectContender(SportType sportType, IGroup group)
     {
       var rand = new System.Random();

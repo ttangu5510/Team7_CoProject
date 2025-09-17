@@ -237,8 +237,7 @@ namespace SHG
           this.athleteSelectionScreen.UpdateList(
             match: match,
             sportType: this.selectedSport.Value.Value,
-            athletes: recruitedAthletes.Count > 0 ? recruitedAthletes: 
-            this.athleteController.Athletes.Take(5).ToList(),
+            athletes: recruitedAthletes,
             registeredAthletes: match.UserAthletes);
           break;
       } 
