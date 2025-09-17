@@ -449,12 +449,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 687341652bfd732479536644dd79daf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  preset: 3
   inDuration: 0.25
   outDuration: 0.2
-  inEase: 9
-  outEase: 8
+  inEase: 24
+  outEase: 26
   useScale: 1
-  inStartScale: 0.95
+  inStartScale: 1.1
   useAlpha: 1
   inStartAlpha: 0
 --- !u!1 &408810577
@@ -692,12 +693,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 687341652bfd732479536644dd79daf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inDuration: 0.25
+  preset: 1
+  inDuration: 0.3
   outDuration: 0.2
-  inEase: 9
-  outEase: 8
+  inEase: 27
+  outEase: 26
   useScale: 1
-  inStartScale: 0.95
+  inStartScale: 0.7
   useAlpha: 1
   inStartAlpha: 0
 --- !u!1001 &685795829
@@ -1257,6 +1259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 687341652bfd732479536644dd79daf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  preset: 0
   inDuration: 0.25
   outDuration: 0.2
   inEase: 9
@@ -2475,11 +2478,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 687341652bfd732479536644dd79daf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inDuration: 0.25
-  outDuration: 0.2
-  inEase: 9
-  outEase: 8
-  useScale: 1
+  preset: 2
+  inDuration: 0.15
+  outDuration: 0.15
+  inEase: 1
+  outEase: 1
+  useScale: 0
   inStartScale: 0.95
   useAlpha: 1
   inStartAlpha: 0
@@ -19045,7 +19049,7 @@ PrefabInstance:
     - target: {fileID: 8113155378474648867, guid: 12627e09bcd56fd43962ee7bd9123453,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -124.83315
+      value: -123.405136
       objectReference: {fileID: 0}
     - target: {fileID: 8227043469887992878, guid: 12627e09bcd56fd43962ee7bd9123453,
         type: 3}
