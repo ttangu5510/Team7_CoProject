@@ -208,7 +208,7 @@ public class UIManager : MonoBehaviour, IUiManager
 
         currentPanelKey = key;
 
-        var anim = target.GetComponent<PanelAnimator>();
+        var anim = target.GetComponent<UIAnimator>();
         if (anim != null)
         {
             // 시작 시 알파/스케일 초기값을 둬야 하므로 SetActive(true) 후 PlayIn
@@ -241,7 +241,7 @@ public class UIManager : MonoBehaviour, IUiManager
     {
         if (!panels.TryGetValue(key, out var go) || !go) { onClosed?.Invoke(); return; }
 
-        var anim = go.GetComponent<PanelAnimator>();
+        var anim = go.GetComponent<UIAnimator>();
         if (anim == null)
         {
             // 애니메이터가 없으면 즉시 비활성화
@@ -286,6 +286,7 @@ public class UIManager : MonoBehaviour, IUiManager
 
 
     // GameObject 버전
+    // 1) 켤 때: SetActive(true) 후 PlayIn()
     private void ShowPopupInternal(GameObject popup, int rootIndex)
     {
         if (!popup) return;
@@ -295,24 +296,44 @@ public class UIManager : MonoBehaviour, IUiManager
         popup.SetActive(true);
         popupStack.Push(popup);
 
+        var anim = popup.GetComponent<UIAnimator>();
+        if (anim != null) anim.ApplyPreset();   // 에디터 밖에서도 안전하게
+        anim?.PlayIn();
+
         UpdateUIState();
     }
 
+    // 2) 가장 위 팝업 닫기: PlayOut 완료 후 비활성 + 파괴
     public void CloseTopPopup()
     {
         PruneDeadPopups();
         if (popupStack.Count == 0) return;
 
         var top = popupStack.Pop();
-        if (top)
+        if (!top) { UpdateUIState(); return; }
+
+        var anim = top.GetComponent<UIAnimator>();
+        if (anim != null)
         {
-            // var p = top.GetComponent<IPopup>(); p?.OnClose();
+            anim.PlayOut().OnComplete(() =>
+            {
+                if (top)
+                {
+                    top.SetActive(false);
+                    SafeDestroy(top);
+                    UpdateUIState();
+                }
+            });
+        }
+        else
+        {
             top.SetActive(false);
             SafeDestroy(top);
+            UpdateUIState();
         }
-        UpdateUIState();
     }
 
+    // 3) 특정 팝업 닫기: 스택에서 빼서 PlayOut 후 정리
     public void CloseSpecificPopup(GameObject popup)
     {
         PruneDeadPopups();
@@ -326,11 +347,24 @@ public class UIManager : MonoBehaviour, IUiManager
             var p = popupStack.Pop();
             if (!closed && p == popup)
             {
-                if (p)
+                var anim = p.GetComponent<UIAnimator>();
+                if (anim != null)
                 {
-                    // var ip = p.GetComponent<IPopup>(); ip?.OnClose();
+                    anim.PlayOut().OnComplete(() =>
+                    {
+                        if (p)
+                        {
+                            p.SetActive(false);
+                            SafeDestroy(p);
+                            UpdateUIState();
+                        }
+                    });
+                }
+                else
+                {
                     p.SetActive(false);
                     SafeDestroy(p);
+                    UpdateUIState();
                 }
                 closed = true;
                 continue;
@@ -338,8 +372,7 @@ public class UIManager : MonoBehaviour, IUiManager
             temp.Push(p);
         }
         while (temp.Count > 0) popupStack.Push(temp.Pop());
-
-        UpdateUIState();
+        if (!closed) UpdateUIState();
     }
 
     // 유틸
