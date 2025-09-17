@@ -4,6 +4,7 @@ using StatefulUI.Runtime.References;
 using UniRx;
 using Zenject;
 using DG.Tweening;
+using JYL;
 
 namespace SHG
 {
@@ -23,6 +24,8 @@ namespace SHG
     IMatchController matchController;
     [Inject]
     IResourceController resourceController;
+    [Inject]
+    IUiManager uiManager;
 
     MatchViewRecordScreen recordScreen;
     MatchViewRankScreen rankScreen;
@@ -91,9 +94,11 @@ namespace SHG
       if (state != ViewState.None) {
         this.view.SetState((int)state);
         this.view.SetState((int)StateRole.Shown);
+        this.uiManager.AddHashSet(this);
       }
       else {
         this.view.SetState((int)StateRole.Hidden);
+        this.uiManager.RemoveHashSet(this);
       }
       switch (state) {
         case (ViewState.Record):

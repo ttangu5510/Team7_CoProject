@@ -100,9 +100,16 @@ namespace SHG
         (int)TextRole.RankLabel, rank > 0 ?
         $"{rank}위": string.Empty);
 
-      view.SetRawTextByRole(
-        (int)TextRole.GroupLabel, 
-        athlete.Group.Name);
+      if (!match.Data.IsDomestic &&
+        athlete.Group == ConvertedDomesticAthlete.USER_TEAM) {
+        view.SetRawTextByRole(
+          (int)TextRole.GroupLabel,
+          "korea");
+      } else {
+        view.SetRawTextByRole(
+          (int)TextRole.GroupLabel,
+          athlete.Group.Name);
+      }
 
       view.SetRawTextByRole(
         (int)TextRole.AthleteNameLabel,

@@ -313,13 +313,6 @@ namespace JYL
         public void RetireCoach(CoachEntity entity) // Repository에서 사용. 코치 세이브 객체를 찾은 후, 은퇴로 상태 변경
         {
             curSave.FindCoach(entity).state = CoachState.Retired;
-            for (int i = 0; i < curSave.coachAssign.Length; i++)
-            {
-                if (curSave.coachAssign[i] == entity.id)
-                {
-                    curSave.coachAssign[i] = -1;
-                }
-            }
             // 배치 중이면 배치 해제
             for (int i = 0; i < curSave.coachAssign.Length; i++)
             {
