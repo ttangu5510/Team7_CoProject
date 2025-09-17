@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
 
 namespace SJL
 {
@@ -18,8 +20,6 @@ namespace SJL
         [SerializeField] private Toggle masterMuteToggle;
         [SerializeField] private Toggle musicMuteToggle;
         [SerializeField] private Toggle sfxMuteToggle;
-        [Header("오디오 믹서")]
-        //[SerializeField] private AudioMixer audioMixer;
         [Header("그래픽/데이터")]
         [SerializeField] private TMP_Dropdown graphicsDropdown;
         [SerializeField] private Button resetDataButton;
@@ -30,7 +30,9 @@ namespace SJL
         [SerializeField] private TextMeshProUGUI versionText;
         [SerializeField] private Button saveButton;
         [SerializeField] private Button loadButton;
-        [SerializeField] private Button toTitleButton;
+        [SerializeField] private Button returnTitleButton;
+        [Header("오디오 믹서")]
+        [SerializeField] private AudioMixer audioMixer;
 
         private void Awake()
         {
@@ -52,7 +54,7 @@ namespace SJL
             // 하단 기능
             saveButton.onClick.AddListener(OnSave);
             loadButton.onClick.AddListener(OnLoad);
-            toTitleButton.onClick.AddListener(OnGotoTitle);
+            returnTitleButton.onClick.AddListener(OnGotoTitle);
 
             // 가이드/크레딧
             guideButton.onClick.AddListener(OnShowGuide);
@@ -68,44 +70,35 @@ namespace SJL
             masterVolumeSlider.value = 50;
             musicVolumeSlider.value = 50;
             sfxVolumeSlider.value = 50;
-            UpdateVolume();
         }
 
-        // ---- 볼륨 기능 (AudioMixer 기준) ----
-        private void OnMasterVolumeChanged(float value) //전체 볼륨
+        // 볼륨 슬라이더 연동 (AudioMixer Exposed Parameters와 연동 권장)
+        private void OnMasterVolumeChanged(float value)
         {
-            // 슬라이더 (0~100) → AudioMixer (-80~0 dB)
-            float volume = Mathf.Lerp(-80f, 0f, value / 100f);
-            //audioMixer.SetFloat("MasterVolume", volume);
-            UpdateVolume();
+            float dB = Mathf.Log10(Mathf.Max(value, 0.0001f)) * 20f;
+            audioMixer.SetFloat("MasterVolume", dB);
         }
-        private void OnMusicVolumeChanged(float value)  //음악 볼륨
+        private void OnMusicVolumeChanged(float value)
         {
-            float volume = Mathf.Lerp(-80f, 0f, value / 100f);
-            //audioMixer.SetFloat("MusicVolume", volume);
-            UpdateVolume();
+            float dB = Mathf.Log10(Mathf.Max(value, 0.0001f)) * 20f;
+            audioMixer.SetFloat("MusicVolume", dB);
         }
-        private void OnSfxVolumeChanged(float value)    //효과음 볼륨
+        private void OnSfxVolumeChanged(float value)
         {
-            float volume = Mathf.Lerp(-80f, 0f, value / 100f);
-            //audioMixer.SetFloat("SfxVolume", volume);
-            UpdateVolume();
+            float dB = Mathf.Log10(Mathf.Max(value, 0.0001f)) * 20f;
+            audioMixer.SetFloat("SfxVolume", dB);
         }
-        private void UpdateVolume() //볼륨 업데이트
+        private void OnMasterMuteChanged(bool mute)
         {
-
+            audioMixer.SetFloat("MasterVolume", mute ? -80f : Mathf.Log10(Mathf.Max(masterVolumeSlider.value, 0.0001f)) * 20f);
         }
-        private void OnMasterMuteChanged(bool mute) //전체 음소거
+        private void OnMusicMuteChanged(bool mute)
         {
-            //audioMixer.SetFloat("MasterVolume", mute ? -80f : Mathf.Lerp(-80f, 0f, masterVolumeSlider.value / 100f));
+            audioMixer.SetFloat("MusicVolume", mute ? -80f : Mathf.Log10(Mathf.Max(musicVolumeSlider.value, 0.0001f)) * 20f);
         }
-        private void OnMusicMuteChanged(bool mute)  //음악 음소거
+        private void OnSfxMuteChanged(bool mute)
         {
-            //audioMixer.SetFloat("MusicVolume", mute ? -80f : Mathf.Lerp(-80f, 0f, musicVolumeSlider.value / 100f));
-        }
-        private void OnSfxMuteChanged(bool mute)    //효과음 음소거
-        {
-            //audioMixer.SetFloat("SfxVolume", mute ? -80f : Mathf.Lerp(-80f, 0f, sfxVolumeSlider.value / 100f));
+            audioMixer.SetFloat("SfxVolume", mute ? -80f : Mathf.Log10(Mathf.Max(sfxVolumeSlider.value, 0.0001f)) * 20f);
         }
 
         // ---- 그래픽/데이터 ----
@@ -116,7 +109,7 @@ namespace SJL
         }
         private void OnResetData()
         {
-            // 데이터 초기화 구현 (PlayerPrefs.DeleteAll 등)
+            // 데이터 초기화
             Debug.Log("데이터 리셋됨");
         }
 
@@ -135,6 +128,7 @@ namespace SJL
         {
             // 타이틀 화면 이동
             Debug.Log("타이틀 화면 이동!");
+            
         }
 
         // ---- 팝업 ----
