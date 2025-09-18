@@ -103,6 +103,7 @@ namespace SHG
     async void SaveProgress()
     {
       await UniTask.WaitForSeconds(SAVE_DELAY);
+      await UniTask.SwitchToMainThread();
       this.saveManager.AutoSave();
     }
   }
