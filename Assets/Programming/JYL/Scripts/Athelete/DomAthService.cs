@@ -39,7 +39,6 @@ namespace JYL
             
             // TODO : 테스트 리스트
             testList = GetAllRecruitedAthleteList();
-
         }
 
         #region 선수 목록
@@ -148,18 +147,21 @@ namespace JYL
         
         #region 선수 회복
         // 선수가 회복하는 함수. 파라매터만 변경 하는 것이기 때문에, 결과 처리는 UI에서 필요함. 마찬가지로, 부상 상태가 아니면 수행 못하게 해야함
-        public void RecoverAthlete(in string athleteName, int  amount = 1)
+        public void RecoverAthlete(int[] assignArray, int  amount = 1)
         {
-            DomAthEntity athlete = repository.FindByName(athleteName);
-            if (athlete.curState == AthleteState.Injured && athlete.leftInjury > 0)
+            foreach (var n in assignArray)
             {
-                athlete.RecoverAthlete(amount); // 리커버리. 부상을 한 턴 감소.
-                repository.Update(athlete); // 진행상황을 선수의 세이브 객체에 반영
-                Debug.Log($"{athlete.entityName} 부상 회복");
-            }
-            else
-            {
-                Debug.LogWarning($"해당 선수는 부상당한 상태가 아님!{athlete.entityName}_isInjured={athlete.curState == AthleteState.Injured}");
+                DomAthEntity athlete = repository.FindById(n);
+                if (athlete.curState == AthleteState.Injured && athlete.leftInjury > 0)
+                {
+                    athlete.RecoverAthlete(amount); // 리커버리. 부상을 한 턴 감소.
+                    repository.Update(athlete); // 진행상황을 선수의 세이브 객체에 반영
+                    Debug.Log($"{athlete.entityName} 부상 회복");
+                }
+                else
+                {
+                    Debug.LogWarning($"해당 선수는 부상당한 상태가 아님!{athlete.entityName}_isInjured={athlete.curState == AthleteState.Injured}");
+                }
             }
         }
         #endregion

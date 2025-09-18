@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
@@ -19,6 +20,8 @@ namespace SHG
     ITimeFlowController timeFlowController;
     [Inject] 
     IFacilitiesController facilityController;
+    [Inject]
+    DomAthService domAthService;
 
     void Awake()
     {
@@ -32,6 +35,7 @@ namespace SHG
     void Start()
     {
       this.timeFlowController.BeforeProgress += this.SaveProgress;
+      this.timeFlowController.BeforeProgress += this.RecoverAthletes;
       this.OnDestroyAsObservable()
         .Subscribe(_ => this.timeFlowController.BeforeProgress -= this.SaveProgress);
       this.resourceController.Money
@@ -97,6 +101,10 @@ namespace SHG
       }
     }
 
+    void RecoverAthletes()
+    {
+      this.domAthService.RecoverAthlete(saveManager.GetCurrentSave().treatmentAssign);
+    }
     void SaveProgress()
     {
       this.saveManager.AutoSave();
