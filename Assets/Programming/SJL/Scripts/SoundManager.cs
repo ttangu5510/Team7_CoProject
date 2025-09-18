@@ -13,10 +13,11 @@ namespace SJL
         [SerializeField] private AudioMixer audioMixer; // Exposed된 Mixer
         [SerializeField] private AudioSource musicSource;
         [SerializeField] private AudioSource sfxSource;
-
         [Header("클립들")]
         [SerializeField] private AudioClip[] musicClips; // 배경음 모음
         [SerializeField] private AudioClip[] sfxClips;   // 효과음 모음
+
+        [SerializeField] public int currentMusicIndex = 0; // 현재 재생중인 배경음 인덱스
 
         private void Awake()
         {
@@ -33,27 +34,33 @@ namespace SJL
         public void Start()
         {
             // 시작시 기본 볼륨 설정
-            SetMasterVolume(1f);
-            SetMusicVolume(1f);
-            SetSFXVolume(1f);
+            //SetMasterVolume(0.5f);
+            //SetMusicVolume(0.5f);
+            //SetSFXVolume(0.5f);
 
-            musicSource = GetComponent<AudioSource>();
-            sfxSource = GetComponent<AudioSource>();
-            PlayMusic(1); // 인덱스 0번 배경음 재생
+            // AudioSource는 Inspector에서 할당! (중복 할당 주의)
+            //musicSource = GetComponent<AudioSource>();
+            //sfxSource = GetComponent<AudioSource>();
+            //PlayMusic(currentMusicIndex); // 인덱스 번호로 배경음 재생
         }
 
-        // Mixer 파라미터 → dB 변환식 활용
-        public void SetMasterVolume(float value)
+
+        //Mixer 파라미터 → dB 변환식 활용
+        public void SetMasterVolume(float sliderValue)
         {
-            audioMixer.SetFloat("MasterVolume", Mathf.Log10(Mathf.Max(value, 0.0001f)) * 20f);
+            float dB = Mathf.Log10(Mathf.Max(sliderValue, 0.0001f)) * 20f; // -80 ~ 0dB
+            audioMixer.SetFloat("MasterVolume", dB);
+            Debug.Log($"SetMasterVolume: value={sliderValue}, dB={dB}");
         }
-        public void SetMusicVolume(float value)
+        public void SetMusicVolume(float sliderValue)
         {
-            audioMixer.SetFloat("MusicVolume", Mathf.Log10(Mathf.Max(value, 0.0001f)) * 20f);
+            float dB = Mathf.Log10(Mathf.Max(sliderValue, 0.0001f)) * 20f;
+            audioMixer.SetFloat("MusicVolume", dB);
         }
-        public void SetSFXVolume(float value)
+        public void SetSFXVolume(float sliderValue)
         {
-            audioMixer.SetFloat("SfxVolume", Mathf.Log10(Mathf.Max(value, 0.0001f)) * 20f);
+            float dB = Mathf.Log10(Mathf.Max(sliderValue, 0.0001f)) * 20f;
+            audioMixer.SetFloat("SfxVolume", dB);
         }
 
         // 배경음 변경/재생
@@ -63,6 +70,7 @@ namespace SJL
             musicSource.clip = musicClips[index];
             musicSource.loop = true;
             musicSource.Play();
+            currentMusicIndex = index;
         }
 
         // 효과음 재생

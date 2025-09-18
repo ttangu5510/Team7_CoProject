@@ -25,7 +25,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: SFX
+  m_Name: SoundFX
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: 3d45341b30eec2548bf3397994396825
   m_Children: []
@@ -58,7 +58,7 @@ AudioMixerController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: NewAudioMixer
+  m_Name: MainMixer
   m_OutputGroup: {fileID: 0}
   m_MasterGroup: {fileID: 24300002}
   m_Snapshots:
@@ -67,7 +67,13 @@ AudioMixerController:
   m_SuspendThreshold: -80
   m_EnableSuspend: 1
   m_UpdateMode: 0
-  m_ExposedParameters: []
+  m_ExposedParameters:
+  - guid: 18e98561b3c559c499b00b1a3192e759
+    name: masterVolume
+  - guid: bffe7c80a51fb664fada4ff476cb49da
+    name: musicVolume
+  - guid: 9fb8803e0d0fd3f4bae3feffe6bd1cdb
+    name: sfxVolume
   m_AudioMixerGroupViews:
   - guids:
     - 561216ac08d97c847a96902750ac0371
