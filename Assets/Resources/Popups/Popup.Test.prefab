@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2157351750851601613}
   - component: {fileID: 7452476317123249538}
   - component: {fileID: 5881615340974085868}
+  - component: {fileID: 2542785772389837350}
   m_Layer: 5
   m_Name: Popup.Test
   m_TagString: Untagged
@@ -121,6 +122,35 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &2542785772389837350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1391531120234217729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 687341652bfd732479536644dd79daf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  preset: 4
+  inDuration: 0.25
+  outDuration: 0.2
+  inEase: 9
+  outEase: 8
+  useScale: 0
+  inStartScale: 0.7
+  useAlpha: 1
+  inStartAlpha: 0
+  overlayMode: 2
+  autoCreateOverlay: 1
+  overlay: {fileID: 0}
+  overlayAlpha: 0.6
+  overlayColor: {r: 0, g: 0, b: 0, a: 1}
+  overlayBlocksRaycasts: 1
+  overlayRaycastTarget: 1
+  clickOverlayToClose: 0
 --- !u!1 &1452670855383046146
 GameObject:
   m_ObjectHideFlags: 0
