@@ -41,8 +41,7 @@ namespace JYL.AchievementTest02
             {
                 if (item)
                 {
-                    if(item.gameObject != null) DestroyImmediate(item.gameObject);
-                    
+                    if (item.gameObject != null) DestroyImmediate(item.gameObject);
                 }
             }
             itemList.Clear();
