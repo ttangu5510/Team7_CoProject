@@ -7,13 +7,15 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SJL
+namespace MMJ
 {
-    public class AthleteInfoPanel : MonoBehaviour
+    public class PlayerInfoPanel : MonoBehaviour
     {
         [Header("Button")]
         [SerializeField] Button closeButton;
-         
+        [SerializeField] Button fireButton;
+        [SerializeField] GameObject playerFirePanel;
+
         [Header("Player Information")]
         [SerializeField] private Image athleteIcon;
         [SerializeField] private TextMeshProUGUI nameText;
@@ -22,7 +24,7 @@ namespace SJL
         [SerializeField] private TextMeshProUGUI typeText;
         [SerializeField] private TextMeshProUGUI growthPotentialText;
         [SerializeField] private TextMeshProUGUI retreatText;
-        
+
         [Header("Player Attributes")]
         [SerializeField] private float maxValue = 600f;
         [SerializeField] private Slider staminaSlider;
@@ -32,7 +34,7 @@ namespace SJL
         [SerializeField] private Slider speedSlider;
         [SerializeField] private Slider balanceSlider;
         [SerializeField] private Slider fatigueSlider;
-        
+
         [Header("Player Rating")]
         [SerializeField] private TextMeshProUGUI staminaRatingText;
         [SerializeField] private TextMeshProUGUI agilityRatingText;
@@ -48,10 +50,12 @@ namespace SJL
         {
             // 버튼 이벤트 설정
             closeButton.OnClickAsObservable()
-                .Subscribe(_=>OnCloseButtonClicked())
+                .Subscribe(_ => OnCloseButtonClicked())
                 .AddTo(this);
+
+            fireButton.onClick.AddListener(FirePlayer);
         }
-        
+
         public void SetInfo(DomAthEntity athlete)
         {
             // 선수 정보 설정
@@ -63,7 +67,7 @@ namespace SJL
             typeText.text = athlete.maxGrade.ToString();
             growthPotentialText.text = $"최대 성장 가능성 : {athlete.maxGrade.ToString()}";
             //retreatText.text = "은퇴까지 N년 N주";
-            
+
             // 슬라이더 값 설정
             staminaSlider.value = athlete.stats.health / maxValue;
             agilitySlider.value = athlete.stats.quickness / maxValue;
@@ -72,7 +76,7 @@ namespace SJL
             speedSlider.value = athlete.stats.speed / maxValue;
             balanceSlider.value = athlete.stats.balance / maxValue;
             fatigueSlider.value = athlete.stats.fatigue / maxValue;
-            
+
             // 등급 텍스트 설정
             staminaRatingText.text = GetRating(athlete.stats.health);
             agilityRatingText.text = GetRating(athlete.stats.quickness);
@@ -81,12 +85,18 @@ namespace SJL
             speedRatingText.text = GetRating(athlete.stats.speed);
             balanceRatingText.text = GetRating(athlete.stats.balance);
             fatigueRatingText.text = athlete.stats.fatigue.ToString();
-        } 
+        }
         private void OnCloseButtonClicked()
         {
             // 정보 패널 닫기
             Debug.Log("정보 패널 닫힘");
             Destroy(gameObject);
+        }
+
+        private void FirePlayer()
+        {
+            playerFirePanel.SetActive(true);
+            //todo
         }
 
         private string GetRating(int value) // 등급 계산
