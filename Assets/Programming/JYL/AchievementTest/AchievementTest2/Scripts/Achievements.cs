@@ -1,1 +1,1 @@
-public enum Achievements{firstAchievement,secondAchievement,}
+public enum Achievements{firstAchievement,secondAchievement,thirdAchievement,fourAchievement,}
