@@ -15,7 +15,7 @@ namespace JWS
 
         [Header("List")]
         [SerializeField] private Transform content;                  // ScrollView/Viewport/Content
-        [SerializeField] private InjureListItemUI itemPrefab;
+        [SerializeField] private InjuredAthleteItem itemPrefab;
         [SerializeField] private InjureAthInfoPanel infoPanel;       // 형제 상세 패널
         [SerializeField] private GameObject injuredAthleteInfoPui;   // 팝업 루트
         
@@ -33,8 +33,8 @@ namespace JWS
         public IObservable<Unit>         OnRequestReset    => _reqReset;
         public IObservable<Unit>         OnRequestConfirm  => _reqConfirm;
 
-        private readonly List<InjureListItemUI> _items = new();
-        private readonly Dictionary<int, InjureListItemUI> _itemById = new();
+        private readonly List<InjuredAthleteItem> _items = new();
+        private readonly Dictionary<int, InjuredAthleteItem> _itemById = new();
         private readonly List<GameObject> _spawned = new();
 
         private void Awake()

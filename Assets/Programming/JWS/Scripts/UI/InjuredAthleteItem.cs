@@ -9,7 +9,7 @@ using JYL;
 
 namespace JWS
 {
-    public class InjureListItemUI : MonoBehaviour
+    public class InjuredAthleteItem : MonoBehaviour
     {
          [Header("Root Button (아이템 전체)")]
         [SerializeField] private Button rootButton;           // 아이템 전체 클릭 → 상세보기
