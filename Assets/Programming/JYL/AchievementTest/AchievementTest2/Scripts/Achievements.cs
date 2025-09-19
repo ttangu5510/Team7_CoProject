@@ -1,4 +1,4 @@
-public enum Achievements
+public enum  Achievements
 {
     firstAchievement,
     secondAchievement,

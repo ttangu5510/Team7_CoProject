@@ -27,7 +27,9 @@ namespace JYL
 
         private int slotIndex = -1; // 현재 선택중인 세이브데이터의 인덱스
         private long PlayTimeTick = 0; // 실제 플레이 타임 재는 타이머
-            
+
+        
+        
         #region 초기화
         public void Initialize() // IInitializable 인터페이스 구현 함수
         {
@@ -63,15 +65,6 @@ namespace JYL
         #endregion
 
         #region 세이브
-        // public void CreateSaveData(string playerName, string clanName, string uid) // 게임을 새로 시작할 때 사용함. UI에서 사용할 함수.
-        // {
-        //     SaveData save = new SaveData();
-        //     save.Init(uid,playerName,clanName);
-        //     saves.Add(save);
-        //     curSave = save;
-        //     AutoSave(); // 게임 맨 처음 시작한 것은 오토세이브로 넘어감
-        // }
-
         public void CreateSaveData(int slotNumber) // 슬롯 넘버 기반 세이브파일 생성. 인게임 UI에서 사용함
         {
             if (slotNumber == 0)
@@ -127,33 +120,6 @@ namespace JYL
             Debug.Log($"자동 저장됨{path}");
         }
         
-        // public void SaveProgress(SaveData save) // 현재 사용중인 세이브 객체를 세이브 파일로 저장함.
-        // {
-        //     if (!Directory.Exists(savePath))
-        //     {
-        //         Directory.CreateDirectory(savePath);
-        //     }
-        //     string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
-        //     string fileName = $"Save_{save.playerName}_{timestamp}.json";
-        //     
-        //     savedTime[fileName] = DateTime.UtcNow;
-        //     saveDataByName[fileName] = save;
-        //     
-        //     // 현재까지의 플레이 시간 저장
-        //     DateTime lastSavedTime = DateTime.TryParse(save.time.lastSaveUtcIso, out DateTime lastSaved) ? lastSaved : DateTime.Now;
-        //     PlayTimeTick = DateTime.UtcNow.Ticks - lastSavedTime.Ticks;
-        //     save.time.playTick =  PlayTimeTick;
-        //     
-        //     // 마지막 저장시간 최신화
-        //     save.time.lastSaveUtcIso = timestamp;
-        //     
-        //     string path = Path.Combine(savePath, fileName);
-        //     string json = JsonUtility.ToJson(save,true);
-        //     File.WriteAllText(path,json);
-        //     
-        //     Debug.Log($"세이브 파일 저장됨{path}");
-        // }
-        
         public void SaveProgress(int slotNumber) // 현재 사용중인 세이브 객체를 저장할 때 사용하는 함수
         {
             SaveProgress(curSave, slotNumber);
@@ -204,19 +170,6 @@ namespace JYL
         #endregion
         
         #region 로드
-
-        // public void AutoLoad() // 자동 저장 된 파일들 중에서 자동 불러오기에 사용됨
-        // {
-        //     if (saveDataByName.TryGetValue("AutoSave.json", out var value))
-        //     {
-        //         curSave = value; // 전체 파일을 불러오는 과정이 선행되기 때문에 가능함
-        //     }
-        //     else
-        //     {
-        //         Debug.LogWarning("저장된 세이브 파일이 없음_AutoSave.json");
-        //     }
-        // }
-
         public void LoadProgress(SaveData save) // 현재 선택중인 세이브 파일을 변경함
         {
             SaveData newSave = save.CloneSave();
@@ -359,7 +312,6 @@ namespace JYL
 
         public void UpdateCoachEntity(CoachEntity entity) // 세이브 객체를 통해 코치 동적 객체를 최신화 함
         {
-
             if (curSave == null) return;
             CoachSave save;
             save = curSave.FindCoach(entity); // 세이브 객체 찾기
