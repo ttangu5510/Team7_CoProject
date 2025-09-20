@@ -50,13 +50,13 @@ namespace SJL
         {
             // 현재 코치 배치 상황 업데이트
             assignedCoaches = saveManager.GetAssignedCoaches();
+            assignedCoachDict.Clear();
 
             for (int i = 0; i < assignedCoaches.Length; i++)
             {
                 if (assignedCoaches[i] > 0)
                 {
                     assignedCoachDict[i] = coachService.FindCoachById(assignedCoaches[i]); // id로 객체 찾은다음 딕셔너리에 저장.
-                    Debug.Log($"현재 코치 아이디{assignedCoaches[i]}");
                 }
             }
             UpdateUI();
