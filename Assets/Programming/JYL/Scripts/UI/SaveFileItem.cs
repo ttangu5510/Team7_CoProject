@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -93,7 +93,7 @@ namespace JYL
                 Debug.Log("이거 널임");
             }
             saveManager.LoadProgress(save);
-            SceneManager.LoadSceneAsync("JYL_MainScene");
+            SceneManager.LoadSceneAsync("MMJ_MainScene");
         }
 
         private void OnClickDeleteButton(SaveData save)

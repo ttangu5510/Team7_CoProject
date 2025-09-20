@@ -1,20 +1,19 @@
-﻿using SJL;
-using System.Collections;
-using System.Collections.Generic;
-using JYL;
+﻿using JYL;
+using SJL;
 using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace MMJ
 {
-    public class PlayerInfoPanel : MonoBehaviour
+    public class PlayerInfoPanelMMJ : MonoBehaviour
     {
         [Header("Button")]
-        [SerializeField] Button closeButton;
-        [SerializeField] Button fireButton;
-        [SerializeField] GameObject playerFirePanel;
+        [SerializeField] private Button closeButton;
+        [SerializeField] private Button fireButton;
+        [SerializeField] private PlayerFirePanelMMJ playerFirePanel;   // GameObject → PlayerFirePanelMMJ로 교체
 
         [Header("Player Information")]
         [SerializeField] private Image athleteIcon;
@@ -44,31 +43,40 @@ namespace MMJ
         [SerializeField] private TextMeshProUGUI balanceRatingText;
         [SerializeField] private TextMeshProUGUI fatigueRatingText;
 
-        private string iconPath = "AthleteIcon/";
+        // ▶ 상위 화면이 듣는 이벤트
+        public event System.Action<DomAthEntity> OnFired;
+
+        // 내부 상태
+        private DomAthEntity current;
+        private Sprite currentPortrait;
+
+        [Inject] private JYL.DomAthService domAthService;
 
         private void Awake()
         {
-            // 버튼 이벤트 설정
+            gameObject.SetActive(false); // 기본 비활성
+
             closeButton.OnClickAsObservable()
-                .Subscribe(_ => OnCloseButtonClicked())
+                .Subscribe(_ => gameObject.SetActive(false)) // Destroy → SetActive(false)
                 .AddTo(this);
 
-            fireButton.onClick.AddListener(FirePlayer);
+            fireButton.OnClickAsObservable()
+                .Subscribe(_ => FirePlayer())
+                .AddTo(this);
         }
 
-        public void SetInfo(DomAthEntity athlete)
+        public void SetInfo(DomAthEntity athlete, Sprite portrait = null)
         {
-            // 선수 정보 설정
-            // TODO : 선수 스프라이트
-            // athleteIcon.sprite = Resources.Load<Sprite>($"{iconPath}{athlete.id}");
+            current = athlete;
+            currentPortrait = portrait;
+
+            // UI 채우기
             nameText.text = athlete.entityName;
             gradeText.text = athlete.affiliation.ToString();
-            ageText.text = athlete.recruitAge.ToString();
+            ageText.text = athlete.curAge.Value.ToString();
             typeText.text = athlete.maxGrade.ToString();
-            growthPotentialText.text = $"최대 성장 가능성 : {athlete.maxGrade.ToString()}";
-            //retreatText.text = "은퇴까지 N년 N주";
+            growthPotentialText.text = $"최대 성장 가능성 : {athlete.maxGrade}";
 
-            // 슬라이더 값 설정
             staminaSlider.value = athlete.stats.health / maxValue;
             agilitySlider.value = athlete.stats.quickness / maxValue;
             flexibilitySlider.value = athlete.stats.flexibility / maxValue;
@@ -77,7 +85,6 @@ namespace MMJ
             balanceSlider.value = athlete.stats.balance / maxValue;
             fatigueSlider.value = athlete.stats.fatigue / maxValue;
 
-            // 등급 텍스트 설정
             staminaRatingText.text = GetRating(athlete.stats.health);
             agilityRatingText.text = GetRating(athlete.stats.quickness);
             flexibilityRatingText.text = GetRating(athlete.stats.flexibility);
@@ -85,21 +92,35 @@ namespace MMJ
             speedRatingText.text = GetRating(athlete.stats.speed);
             balanceRatingText.text = GetRating(athlete.stats.balance);
             fatigueRatingText.text = athlete.stats.fatigue.ToString();
-        }
-        private void OnCloseButtonClicked()
-        {
-            // 정보 패널 닫기
-            Debug.Log("정보 패널 닫힘");
-            Destroy(gameObject);
+
+            gameObject.SetActive(true);
         }
 
         private void FirePlayer()
         {
-            playerFirePanel.SetActive(true);
-            //todo
+            // 중복 구독 방지
+            playerFirePanel.OnConfirmed -= HandleConfirmed;
+            playerFirePanel.OnCanceled -= HandleCanceled;
+
+            playerFirePanel.OnConfirmed += HandleConfirmed;
+            playerFirePanel.OnCanceled += HandleCanceled;
+
+            playerFirePanel.Open(current, currentPortrait);
         }
 
-        private string GetRating(int value) // 등급 계산
+        private void HandleConfirmed(DomAthEntity who)
+        {
+            domAthService.OutAthlete(who.entityName);
+            OnFired?.Invoke(who);
+            gameObject.SetActive(false); // Destroy → SetActive(false)
+        }
+
+        private void HandleCanceled()
+        {
+            // 취소 시 아무 일 없음
+        }
+
+        private string GetRating(int value)
         {
             if (value > (int)AthleteGrade.A * 100) return "A";
             if (value > (int)AthleteGrade.B * 100) return "B";
@@ -107,7 +128,7 @@ namespace MMJ
             if (value > (int)AthleteGrade.D * 100) return "D";
             if (value > (int)AthleteGrade.E * 100) return "E";
             if (value > (int)AthleteGrade.F) return "F";
-            Debug.LogWarning($"입력 수치가 0이거나, 0 아래임{value}");
+            Debug.LogWarning($"입력 수치가 0이거나, 0 아래임 {value}");
             return "-1";
         }
     }
