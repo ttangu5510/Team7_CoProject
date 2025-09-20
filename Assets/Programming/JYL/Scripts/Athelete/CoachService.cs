@@ -125,10 +125,9 @@ namespace JYL
                 .AddTo(this);
         }
 
-        public void OutCoach(string coachName) // 코치 방출
+        public void OutCoach(CoachEntity entity) // 코치 방출
         {
             // 코치의 동적 객체 최신화와 세이브 객체 최신화 진행
-            CoachEntity entity = repository.FindByName(coachName); // 레포지토리에서 동적 객체 찾음
             entity.OutCoach(); // 도메인 로직 수행. 상태만 변경함.Unrecruited
             repository.Delete(entity); // 레포지토리를 통해 변경 사항 저장. 일반급과 후보급 이상이 서로 다른 로직 수행
         }
