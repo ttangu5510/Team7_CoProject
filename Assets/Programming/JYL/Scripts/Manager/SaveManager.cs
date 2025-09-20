@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -303,9 +303,11 @@ namespace JYL
             // 배치 중이면 배치 해제
             for (int i = 0; i < curSave.coachAssign.Length; i++)
             {
+                Debug.Log($"엔티티 id : {entity.id} / 배열 id : {curSave.coachAssign[i]} / {curSave.coachAssign[i] == entity.id}");
                 if (curSave.coachAssign[i] == entity.id)
                 {
                     curSave.coachAssign[i] = -1;
+                    Debug.Log($"변경 후 된 값 : {curSave.coachAssign[i]}");
                 }
             }
         }
