@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using JWS;
@@ -5,6 +6,7 @@ using UnityEngine;
 
 namespace JYL
 {
+	[Serializable]
     public class Achievement
     {
         public readonly string ID;

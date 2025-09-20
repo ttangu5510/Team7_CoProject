@@ -68,7 +68,7 @@ namespace JYL
     [System.Serializable]
     public enum CoachGrade
     {
-        스카우트센터 = 1, // 일반
+        스카우트센터 = 1, // 일반. 피로도 1 감소
         선수출신 // 엘리트
     }
 }
