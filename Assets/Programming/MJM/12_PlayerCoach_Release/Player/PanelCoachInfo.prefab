@@ -1628,14 +1628,14 @@ GameObject:
   - component: {fileID: 4020380900629387047}
   - component: {fileID: 4809433035545104345}
   - component: {fileID: 3102512218460095109}
-  - component: {fileID: 5210989071763750704}
+  - component: {fileID: 284227664580062412}
   m_Layer: 5
   m_Name: PanelCoachInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4020380900629387047
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1696,7 +1696,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5210989071763750704
+--- !u!114 &284227664580062412
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1705,14 +1705,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 7606330107328193926}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8713d708a097af949b20ae6068325fdf, type: 3}
+  m_Script: {fileID: 11500000, guid: eaf63d2d96806234290ab77c4728e747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  coachImage: {fileID: 688879269810844521}
-  coachName: {fileID: 3836058513080203599}
-  coachRetireLeftCount: {fileID: 8022012071368702830}
   closeButton: {fileID: 2246516436362552994}
   fireButton: {fileID: 325440058909398616}
+  firePanel: {fileID: 0}
+  coachIcon: {fileID: 688879269810844521}
+  nameText: {fileID: 3836058513080203599}
+  retireText: {fileID: 8022012071368702830}
+  fatigueText: {fileID: 1597044356551281689}
+  routineText: {fileID: 8926672887082308495}
 --- !u!1 &7792798737837601726
 GameObject:
   m_ObjectHideFlags: 0

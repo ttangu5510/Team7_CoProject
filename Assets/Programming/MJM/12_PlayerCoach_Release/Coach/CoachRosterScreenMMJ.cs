@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using JYL;
+﻿using JYL;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
 public class CoachRosterScreenMMJ : MonoBehaviour
 {
-    [Header("UI Refs")]
+    [Header("UI")]
     [SerializeField] private Transform content;          // ScrollView Content
-    [SerializeField] private CoachItemMMJ itemPrefab;    // 아이템 프리팹
-    [SerializeField] private CoachInfoPanelMMJ infoPanel;
+    [SerializeField] private CoachItemMMJ itemPrefab;    // 코치 아이템 프리팹
+    [SerializeField] private CoachInfoPanelMMJ infoPanel; // 미리 하이어라키에 둔 패널
 
     [Inject] private CoachService coachService;
 
@@ -28,14 +28,9 @@ public class CoachRosterScreenMMJ : MonoBehaviour
         foreach (var coach in roster)
         {
             var item = Instantiate(itemPrefab, content);
-
-            int yearsToRetire = coach.retireAge - coach.curAge.Value;
-            if (yearsToRetire < 0) yearsToRetire = 0;
-
-            item.Bind(coach, yearsToRetire, a =>
+            item.Bind(coach, a =>
             {
                 infoPanel.SetInfo(a);
-
                 infoPanel.OnFired -= OnCoachFired;
                 infoPanel.OnFired += OnCoachFired;
             });

@@ -7539,10 +7539,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 816518223}
-    - targetCorrespondingSourceObject: {fileID: 7403839412852567571, guid: c6d8748d62735b94daa0717c3cbf49ca,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1718212502}
     - targetCorrespondingSourceObject: {fileID: 7566629717107737679, guid: c6d8748d62735b94daa0717c3cbf49ca,
         type: 3}
       insertIndex: 3
@@ -7560,27 +7556,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1451738990}
   m_SourcePrefab: {fileID: 100100000, guid: c6d8748d62735b94daa0717c3cbf49ca, type: 3}
---- !u!1 &1718212501 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7403839412852567571, guid: c6d8748d62735b94daa0717c3cbf49ca,
-    type: 3}
-  m_PrefabInstance: {fileID: 1718212500}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1718212502
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1718212501}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 924b765ad216ec74b8755961006ea678, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  content: {fileID: 0}
-  itemPrefab: {fileID: 0}
-  infoPanel: {fileID: 0}
 --- !u!1 &1751033708
 GameObject:
   m_ObjectHideFlags: 0
@@ -10445,12 +10420,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8145251346155456330}
   m_CullTransparentMesh: 1
---- !u!1 &1011792124684950288 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8369326860078568715, guid: 5e44e03adef310c4c952e365eb0862ea,
-    type: 3}
-  m_PrefabInstance: {fileID: 2909155579660511293}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1089274514483701193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14733,6 +14702,18 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e44e03adef310c4c952e365eb0862ea, type: 3}
+--- !u!114 &2909155579660511294 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2501431066501632122, guid: 5e44e03adef310c4c952e365eb0862ea,
+    type: 3}
+  m_PrefabInstance: {fileID: 2909155579660511293}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 372345222e5a2644b8fba4b017f854b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2918502775853482681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25673,7 +25654,7 @@ PrefabInstance:
     - target: {fileID: 8113155378474648867, guid: 12627e09bcd56fd43962ee7bd9123453,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -120.00007
+      value: -120.00096
       objectReference: {fileID: 0}
     - target: {fileID: 8227043469887992878, guid: 12627e09bcd56fd43962ee7bd9123453,
         type: 3}
@@ -30190,6 +30171,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 816518225}
     m_Modifications:
+    - target: {fileID: 284227664580062412, guid: 2c7eedf094ff5674cb221e26dba3841d,
+        type: 3}
+      propertyPath: firePanel
+      value: 
+      objectReference: {fileID: 2909155579660511294}
     - target: {fileID: 4020380900629387047, guid: 2c7eedf094ff5674cb221e26dba3841d,
         type: 3}
       propertyPath: m_Pivot.x
@@ -30290,26 +30276,28 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5210989071763750704, guid: 2c7eedf094ff5674cb221e26dba3841d,
-        type: 3}
-      propertyPath: coachFirePanel
-      value: 
-      objectReference: {fileID: 1011792124684950288}
     - target: {fileID: 7606330107328193926, guid: 2c7eedf094ff5674cb221e26dba3841d,
         type: 3}
       propertyPath: m_Name
       value: CoachInfoPanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 7606330107328193926, guid: 2c7eedf094ff5674cb221e26dba3841d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2c7eedf094ff5674cb221e26dba3841d, type: 3}
+--- !u!114 &7974829867495463621 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 284227664580062412, guid: 2c7eedf094ff5674cb221e26dba3841d,
+    type: 3}
+  m_PrefabInstance: {fileID: 7974829867495463620}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaf63d2d96806234290ab77c4728e747, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &7976148180625447527
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -30973,6 +30961,7 @@ GameObject:
   - component: {fileID: 685696817754972436}
   - component: {fileID: 9182225961534204190}
   - component: {fileID: 6098713866582867064}
+  - component: {fileID: 9182225961534204191}
   m_Layer: 5
   m_Name: CoachRosterScreen
   m_TagString: Untagged
@@ -32752,6 +32741,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8320978231314006468}
   m_CullTransparentMesh: 1
+--- !u!114 &9182225961534204191
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8320978231314006468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f57344149a1a8ef45b27f534e5668876, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  content: {fileID: 6910422845169625450}
+  itemPrefab: {fileID: 6023482498928766032, guid: 60ee575e0b5e3984c8d0d6e9984b57fe,
+    type: 3}
+  infoPanel: {fileID: 7974829867495463621}
 --- !u!1 &9191639689722885960
 GameObject:
   m_ObjectHideFlags: 0

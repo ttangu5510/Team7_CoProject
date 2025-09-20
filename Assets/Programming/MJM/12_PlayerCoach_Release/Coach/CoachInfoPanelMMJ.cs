@@ -24,6 +24,7 @@ public class CoachInfoPanelMMJ : MonoBehaviour
     private CoachEntity current;
 
     [Inject] private CoachService coachService;
+    [Inject] private SaveManager saveManager;
 
     private void Awake()
     {
@@ -46,11 +47,24 @@ public class CoachInfoPanelMMJ : MonoBehaviour
         int yearsToRetire = coach.retireAge - coach.curAge.Value;
         retireText.text = yearsToRetire > 0 ? $"은퇴까지 {yearsToRetire}년" : "은퇴 예정";
 
-        // 코치 효과 / 루틴 정보
-        // fatigueText.text = $"훈련 피로도 감소 : {coach.fatigueReduction}";
-        // routineText.text = coach.assignedRoutine >= 0
-           // ? $"배치되어 있는 루틴 : 루틴 {coach.assignedRoutine + 1}"
-           // : "배치되어 있는 루틴 : 없음"; -------------------------------------- todo 
+        // 코치 등급 기반 피로도 감소
+        int fatigueReduction = (coach.grade == CoachGrade.스카우트센터) ? 1 : 2;
+        fatigueText.text = $"{fatigueReduction}";
+
+        // SaveManager에서 루틴 배치 확인
+        var save = saveManager.GetCurrentSave();
+        int routineIndex = System.Array.IndexOf(save.coachAssign, coach.id);
+
+        if (routineIndex >= 0 && routineIndex < 4)
+        {
+            // 슬롯 번호 → 시설 이름 매핑
+            string[] routineNames = { "스피드 스케이팅", "피겨 스케이팅", "스켈레톤", "스키점프" };
+            routineText.text = $"{routineNames[routineIndex]}";
+        }
+        else
+        {
+            routineText.text = "없음";
+        }
 
         gameObject.SetActive(true);
     }
@@ -68,13 +82,13 @@ public class CoachInfoPanelMMJ : MonoBehaviour
 
     private void HandleConfirmed(CoachEntity who)
     {
-        coachService.OutCoach(who.entityName);
+        coachService.OutCoach(who);
         OnFired?.Invoke(who);
         gameObject.SetActive(false);
     }
 
     private void HandleCanceled()
     {
-        // 취소 시 아무것도 안 함
+        // 취소 시 아무 동작 없음
     }
 }
