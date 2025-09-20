@@ -31,7 +31,6 @@ namespace JYL
             Reward = data.Reward;
             State = data.state;
         }
-        
     }    
 }
 

@@ -8,17 +8,14 @@ namespace JYL
 {
     public class AchievementManager : MonoBehaviour
     {
-        [Inject] private ISaveManager saveManager;
         [SerializeField] private AchievementDatabase database;
+        
+        [Inject] private ISaveManager saveManager;
+        
         private List<AchievementController> achievements = new();
-        void Start()
+        void OnEnable()
         {
             achievements = GetControllerList();
-        }
-
-        void Update()
-        {
-        
         }
 
         private List<AchievementController> GetControllerList()
@@ -29,6 +26,11 @@ namespace JYL
             {
                 AchievementSave achSave = save.FindAchievementSaveByID(data.ID);
                 result.Add(new AchievementController(data, achSave));
+            }
+
+            foreach (var controller in achievements)
+            {
+                //controller.state
             }
             return result;
         }
