@@ -51,12 +51,12 @@ namespace JWS
 
             if (statBars != null && statBars.Length >= 7)
             {
-                statBars[0].Set("체력", ath.stats.health, 100);
-                statBars[1].Set("순발력", ath.stats.quickness, 100);
-                statBars[2].Set("유연성", ath.stats.flexibility, 100);
-                statBars[3].Set("기술", ath.stats.technic, 100);
-                statBars[4].Set("속도", ath.stats.speed, 100);
-                statBars[5].Set("균형감각", ath.stats.balance, 100);
+                statBars[0].Set("체력", ath.stats.health, 800);
+                statBars[1].Set("순발력", ath.stats.quickness, 800);
+                statBars[2].Set("유연성", ath.stats.flexibility, 800);
+                statBars[3].Set("기술", ath.stats.technic, 800);
+                statBars[4].Set("속도", ath.stats.speed, 800);
+                statBars[5].Set("균형감각", ath.stats.balance, 800);
                 statBars[6].Set("피로도", ath.stats.fatigue, 100);
             }
         }
