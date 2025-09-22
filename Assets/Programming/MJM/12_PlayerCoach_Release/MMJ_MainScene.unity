@@ -419,18 +419,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &64018282 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4913212785774473990, guid: 77ffcb047638efa40b16ccd06961f962,
-    type: 3}
-  m_PrefabInstance: {fileID: 3264202465175969301}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &126269788
 GameObject:
   m_ObjectHideFlags: 0
@@ -7791,7 +7779,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1016294941}
   m_HandleRect: {fileID: 1016294940}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 1.0000002
   m_Size: 0.62373155
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -8198,7 +8186,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000057322744}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2106009838
@@ -15275,11 +15263,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3500570770771440025, guid: 77ffcb047638efa40b16ccd06961f962,
-        type: 3}
-      propertyPath: athleteIcon
-      value: 
-      objectReference: {fileID: 64018282}
     - target: {fileID: 3500570770771440025, guid: 77ffcb047638efa40b16ccd06961f962,
         type: 3}
       propertyPath: playerFirePanel
@@ -25654,7 +25637,7 @@ PrefabInstance:
     - target: {fileID: 8113155378474648867, guid: 12627e09bcd56fd43962ee7bd9123453,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -120.000496
+      value: -120.00005
       objectReference: {fileID: 0}
     - target: {fileID: 8227043469887992878, guid: 12627e09bcd56fd43962ee7bd9123453,
         type: 3}
@@ -30280,6 +30263,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: CoachInfoPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 7606330107328193926, guid: 2c7eedf094ff5674cb221e26dba3841d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
