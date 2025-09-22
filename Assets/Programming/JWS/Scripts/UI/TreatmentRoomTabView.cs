@@ -157,51 +157,65 @@ namespace JWS
         // ------------------------------
         private void Refresh()
         {
-            var all = athleteService.GetAllRecruitedAthleteList();
+            var all = athleteService.GetAllRecruitedAthleteList() ?? new List<DomAthEntity>();
             var byId = all.ToDictionary(a => a.id, a => a);
             var injuredAll = all.Where(a => a.curState == AthleteState.Injured).ToList();
 
             int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
 
-            // 1) 뒤에서부터 NeedUpgrade(잠금)
+            // 1) 뒤에서부터 잠금
             for (int i = slots.Count - 1; i >= usable; i--)
             {
                 slots[i].ShowLocked();
                 _assigned[i] = null;
             }
 
-            // 2) 저장된 배치 → 앞에서부터 배치
+            // 2) 현재 작업중인 배치(_assigned) 우선 수집
             var picked = new List<DomAthEntity>();
             var seen = new HashSet<int>();
-            foreach (var id in _savedAssignedIds)
+            for (int i = 0; i < usable; i++)
             {
-                if (picked.Count >= usable) break;
-                if (!byId.TryGetValue(id, out var ent)) continue;
+                var ent = _assigned[i];
+                if (ent == null) continue;
                 if (ent.curState != AthleteState.Injured) continue;
-                if (!seen.Add(id)) continue;
+                if (!seen.Add(ent.id)) continue;
                 picked.Add(ent);
             }
 
-            int write = 0;
-            for (; write < picked.Count && write < usable; write++)
+            // 3) 작업중 배치가 없다면 저장본을 초기 배치로 사용
+            if (picked.Count == 0 && _savedAssignedIds != null && _savedAssignedIds.Count > 0)
             {
-                var ent = picked[write];
-                _assigned[write] = ent;
-                slots[write].ShowAssigned(ent);
+                foreach (var id in _savedAssignedIds)
+                {
+                    if (picked.Count >= usable) break;
+                    if (id < 0) { picked.Add(null); continue; }  // 빈 칸 유지
+                    if (!byId.TryGetValue(id, out var ent)) { picked.Add(null); continue; }
+                    if (!seen.Add(id)) { picked.Add(null); continue; }
+                    picked.Add(ent.curState == AthleteState.Injured ? ent : null);
+                }
+
+                // 저장본 → _assigned에도 반영하여 일관성 유지
+                for (int i = 0; i < usable; i++)
+                    _assigned[i] = i < picked.Count ? picked[i] : null;
             }
 
-            // 3) 남은 슬롯 처리
-            int unassignedInjuredCount = injuredAll.Count - picked.Count;
-            for (int i = write; i < usable; i++)
+            // 4) 슬롯 그리기
+            int iWrite = 0;
+            for (; iWrite < usable; iWrite++)
             {
-                _assigned[i] = null;
-
-                if (unassignedInjuredCount <= 0)
-                    slots[i].ShowNoAvailable(); // 배치 가능한 부상자 없음
+                var ent = (iWrite < picked.Count) ? picked[iWrite] : null;
+                if (ent != null) slots[iWrite].ShowAssigned(ent);
                 else
-                    slots[i].ShowEmpty();       // 부상자 있음 → 빈 슬롯
+                {
+                    // 아직 배치되지 않은 부상자 수로 빈/불가 구분
+                    int alreadyPicked = picked.Count(x => x != null);
+                    int unpicked = Math.Max(0, injuredAll.Count - alreadyPicked);
+                    if (unpicked > 0) slots[iWrite].ShowEmpty();
+                    else              slots[iWrite].ShowNoAvailable();
+                }
             }
         }
+
         
         // ============================================================
         // [7] InjureListPanel과 이벤트 연결
@@ -266,18 +280,38 @@ namespace JWS
             injureListPanel.OnRequestConfirm
                 .Subscribe(_ =>
                 {
-                    // 현재 슬롯 상태 저장
-                    var ids = GetAssignedIdsForSave().ToArray();
+                    // 2-1) 현재 작업중 상태를 저장 형식으로 추출
+                    var ids = GetAssignedIdsForSave().ToArray(); // 길이 8, 비어있으면 -1
+
+                    // 2-2) 세이브에 쓰기
                     saveManager.SetAssignedTreatmentAthletes(ids);
-                    
-                    // 세이브 파일 쓰기 (현재 슬롯 기준)
                     saveManager.SaveProgress(saveManager.GetCurrentSlotIndex());
 
-                    // 팝업 닫기
-                    if (injuredAthleteInfoPUI) 
-                        injuredAthleteInfoPUI.SetActive(false);
+                    // 2-3) 로컬 저장본 갱신
+                    _savedAssignedIds = ids.ToList();
+
+                    // 2-4) 저장본 → _assigned 재구성 (즉시 슬롯에 반영되게)
+                    var all = athleteService.GetAllRecruitedAthleteList() ?? new List<DomAthEntity>();
+                    var byId = all.ToDictionary(a => a.id, a => a);
+                    int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
+                    for (int i = 0; i < usable; i++)
+                    {
+                        var id = ids[i];
+                        _assigned[i] = (id >= 0 && byId.TryGetValue(id, out var ent) && ent.curState == AthleteState.Injured)
+                            ? ent
+                            : null;
+                    }
+                    for (int i = usable; i < _assigned.Length; i++) _assigned[i] = null;
+
+                    // 2-5) 화면 갱신
+                    Refresh();
+
+                    // 2-6) 패널 닫기
+                    if (injuredAthleteInfoPUI) injuredAthleteInfoPUI.SetActive(false);
                 })
                 .AddTo(cd);
+
+
 
 
             _panelSubs = cd;
