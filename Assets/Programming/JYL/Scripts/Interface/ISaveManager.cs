@@ -42,5 +42,8 @@ namespace JYL
         void SetSlotIndex(int slotIndex);
         int GetCurrentSlotIndex();
         SaveData GetAutoSaveData();
+        
+        // 업적
+        AchievementWrapper GetAchievementWrapper();
     }
 }

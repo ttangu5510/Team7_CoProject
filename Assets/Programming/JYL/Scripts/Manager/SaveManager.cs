@@ -19,6 +19,8 @@ namespace JYL
         private static string savePath = Application.persistentDataPath + "/Save";
         #endif
 
+        private AchievementWrapper achievementWrapper;
+        
         private List<SaveData> saves = new();
         private SaveData curSave;
 
@@ -174,11 +176,13 @@ namespace JYL
         {
             SaveData newSave = save.CloneSave();
             curSave = newSave;
+            achievementWrapper = new AchievementWrapper(curSave.achievementRecord);
         }
 
         public void LoadProgress(string fileName) // 이름으로 불러올 수 있게 만듦. 어떤 걸 쓰게 될 지 모름.
         {
             curSave = saveDataByName[fileName];
+            achievementWrapper = new AchievementWrapper(curSave.achievementRecord);
         }
         
         #endregion
@@ -371,6 +375,13 @@ namespace JYL
                 return null;
             }
             return autoSave;
+        }
+        #endregion
+        
+        #region 업적
+        public AchievementWrapper GetAchievementWrapper() // 업적 Reactive 전달.
+        {
+            return achievementWrapper;
         }
         #endregion
     }

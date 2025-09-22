@@ -10,10 +10,10 @@ namespace JYL
 {
     public class AchievementController
     {
-        private Achievement achieve;
+        public Achievement achieve { get; }
         private AchievementSave save;
         public ReactiveProperty<AchievementState> state { get; } = new();
-        public ReactiveProperty<float> progress { get; } = new();
+        public ReactiveProperty<int> progress { get; } = new();
         
         private readonly CompositeDisposable disposables = new();
 
@@ -35,6 +35,12 @@ namespace JYL
                 .AddTo(disposables);
         }
 
+        public void UnlockAchievement()
+        {
+            state.Value = AchievementState.Unlocked;
+            OnProgressChanged(progress.Value);
+        }
+
         private void OnStateChanged(AchievementState state)
         {
             switch (state)
@@ -45,7 +51,6 @@ namespace JYL
                     OnProgressChanged(progress.Value); // 완료 가능한 상황인지 바로 체크함.
                     break;
                 case AchievementState.CanComplete:
-                    // TODO : 이 타이밍에 완료 알림 토스트 UI 띄움
                     break;
                 case AchievementState.Completed:
                     // 상태 변화를 Manager쪽에서 참고한 다음, 완료 시 트로피 획득 처리 (추가 처리할 것은 없음).
@@ -55,15 +60,23 @@ namespace JYL
             save.state = state;
         }
         
-        private void OnProgressChanged(float progressValue)
+        // progress 값이 변할 때 체크 함.
+        private void OnProgressChanged(int progressValue)
         {
             // 변경된 값 SaveData에 저장
             save.progress = progressValue;
             
+            // 언락됐거나, 히든일 때만 조건 체크함.
             if (state.Value is AchievementState.Unlocked or AchievementState.Hidden && progress.Value >= achieve.CompleteNumber)
             {
                 state.Value = AchievementState.CanComplete;
             }
+        }
+
+        public void OnDestroy()
+        {
+            disposables.Dispose();
+            disposables.Clear();
         }
     }
 }

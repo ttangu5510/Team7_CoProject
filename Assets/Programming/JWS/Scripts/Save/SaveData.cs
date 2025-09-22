@@ -45,6 +45,7 @@ namespace JWS
 
         // 업적
         public List<AchievementSave> achievements = new(); // 전체 목록 + 진행/달성
+        public AchievementRecord achievementRecord = new(); // 업적 관련 카운터 관리.
 
         // 도감
         public List<EncyclopediaState> encyclopedia = new(); // 전체 목록 + 트로피/메달 보유 여부
@@ -100,6 +101,7 @@ namespace JWS
                 coachSaves = coachSaves.ConvertAll(coachSave => coachSave with { }),
                 quests = quests.ConvertAll(quest => quest with { }),
                 achievements = achievements.ConvertAll(achievement => achievement with { }),
+                achievementRecord = achievementRecord with { },
                 encyclopedia = encyclopedia.ConvertAll(encyclopedia => encyclopedia with { })
             };
             return newSave;
@@ -218,7 +220,7 @@ namespace JWS
     {
         public string ID { get; } // 업적 ID(전체 목록 포함)
         public AchievementState state;
-        public float progress = 0f;
+        public int progress = 0;
         public string completeTime  = "";
 
         public AchievementSave(string ID, AchievementState state)
@@ -236,6 +238,19 @@ namespace JWS
         CanComplete, // 달성 완료 가능
         Completed, // 달성 완료
         Hidden // 숨겨짐
+    }
+    [Serializable]
+    public record AchievementRecord
+    {
+        // AchievementCondition 참고 필요함.
+        public int matchEntryCount; // 경기 참가
+        public int matchWinCount; // 우승
+        public int trainCount; // 훈련 진행
+        public int recoverCount; // 회복 진행
+        public int specialTrainCount; // 특훈 진행
+        public int athleteRecruitCount; // 선수 영입
+        public int coachRecruitCount; // 코치 영입
+        public int athleteRetireCount; // 선수 은퇴
     }
 
 /* ========================= 도감 ========================= */
