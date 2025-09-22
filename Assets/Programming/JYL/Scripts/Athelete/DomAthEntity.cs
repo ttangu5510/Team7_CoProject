@@ -131,11 +131,9 @@ public class DomAthEntity : BaseAthEntity
     public void RecoverAthlete(int amount) // 선수 회복에 쓰이는 함수
     {
         leftInjury -= amount;
-        if (leftInjury <= 0)
-        {
-            leftInjury = 0;
-            curState = AthleteState.Active;
-        }
+        if (leftInjury > 0) return;
+        leftInjury = 0;
+        curState = AthleteState.Active;
     }
 
     public void GetAge()
