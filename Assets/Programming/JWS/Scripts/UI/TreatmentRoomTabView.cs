@@ -84,6 +84,7 @@ namespace JWS
             if (injureAthInfoPanel)    injureAthInfoPanel.gameObject.SetActive(false);
 
             // 슬롯 UI 최초 갱신
+            LoadAssignedFromSave();
             Refresh();
 
             // MedicalCenter 단계/수용 인원 변화시 즉시 Refresh()
@@ -389,6 +390,28 @@ namespace JWS
             foreach (var ent in _assigned)
                 list.Add(ent?.id ?? -1); // 배치 안된 칸은 -1
             return list;
+        }
+        
+        private void LoadAssignedFromSave()
+        {
+            var ids = saveManager.GetAssignedTreatmentAthletes(); // int[8] 반환 가정 (-1=빈칸)
+            if (ids == null || ids.Length == 0) return;
+
+            _savedAssignedIds = ids.ToList();
+
+            // 저장본 → 현재 상태에도 하이드레이트(즉시 보이게)
+            var all  = athleteService.GetAllRecruitedAthleteList() ?? new List<DomAthEntity>();
+            var byId = all.ToDictionary(a => a.id, a => a);
+            int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
+
+            for (int i = 0; i < usable; i++)
+            {
+                var id = ids[i];
+                _assigned[i] = (id >= 0 && byId.TryGetValue(id, out var ent) && ent.curState == AthleteState.Injured)
+                    ? ent
+                    : null;
+            }
+            for (int i = usable; i < _assigned.Length; i++) _assigned[i] = null;
         }
     }
 }
