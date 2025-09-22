@@ -36,7 +36,10 @@ namespace JWS
         private IDisposable _panelSubs;                        // 부상자 목록 패널 이벤트 구독 모음
 
         // 슬롯별 배치 현황(세이브/로드 대상)
+        // 커밋(실제 슬롯)
         private readonly DomAthEntity[] _assigned = new DomAthEntity[8];
+        // 초안(패널 열렸을 때만)
+        private DomAthEntity[] _draftAssigned;
 
         // 세이브/로드 용: 슬롯에 배치된 선수 id들 (A→H 순)
         private List<int> _savedAssignedIds = new();
@@ -106,11 +109,18 @@ namespace JWS
             injureListPanel.gameObject.SetActive(true);
             if (injureAthInfoPanel) injureAthInfoPanel.gameObject.SetActive(false);
 
+            _draftAssigned = (DomAthEntity[])_assigned.Clone();
             // 리스트 패널 열기 (현재 배치된 선수들은 배치중 상태로 표시됨)
-            injureListPanel.Open(injuredAll, GetAssignedIdSet());
+            injureListPanel.Open(injuredAll, GetAssignedIdSet(draft:true));
             
             // 패널 이벤트 핸들러 연결
             WireListPanelHandlers(); // ★ 여기
+        }
+        
+        private HashSet<int> GetAssignedIdSet(bool draft = false)
+        {
+            var src = draft && _draftAssigned != null ? _draftAssigned : _assigned;
+            return src.Where(a => a != null).Select(a => a.id).ToHashSet();
         }
 
         // ============================================================
@@ -225,95 +235,67 @@ namespace JWS
         {
             _panelSubs?.Dispose();
             var cd = new CompositeDisposable();
+            cd.Add(Disposable.Create(() => _draftAssigned = null)); // 패널 닫히면 초안 폐기
 
             // "배치하기"
             injureListPanel.OnRequestAssign
                 .Subscribe(ath =>
                 {
+                    if (_draftAssigned == null) _draftAssigned = (DomAthEntity[])_assigned.Clone();
                     int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
+
+                    // 첫 빈칸
                     int firstEmpty = -1;
-                    for (int i = 0; i < usable; i++)
-                        if (_assigned[i] == null) { firstEmpty = i; break; }
+                    for (int i = 0; i < usable; i++) if (_draftAssigned[i] == null) { firstEmpty = i; break; }
+                    if (firstEmpty < 0) { injureListPanel.NudgeAssignButton(ath.id); return; }
 
-                    if (firstEmpty < 0)
-                    {
-                        // 슬롯 꽉참 → 이펙트
-                        injureListPanel.NudgeAssignButton(ath.id);
-                        return;
-                    }
+                    // 중복 제거
+                    for (int i = 0; i < usable; i++) if (_draftAssigned[i]?.id == ath.id) _draftAssigned[i] = null;
 
-                    // 이미 다른 슬롯에 들어있다면 해제
-                    int cur = FindSlotIndexByAthleteId(ath.id);
-                    if (cur >= 0) _assigned[cur] = null;
-
-                    _assigned[firstEmpty] = ath;       // 첫 빈 슬롯에 배치
-                    Refresh();
-                    injureListPanel.UpdateItemAssigned(ath.id, true);
+                    _draftAssigned[firstEmpty] = ath;
+                    injureListPanel.UpdateItemAssigned(ath.id, true); // 리스트만 업데이트
                 })
                 .AddTo(cd);
 
-            // "배치중 → 해제"
+            // 해제
             injureListPanel.OnRequestUnassign
                 .Subscribe(ath =>
                 {
-                    int idx = FindSlotIndexByAthleteId(ath.id);
-                    if (idx >= 0)
-                    {
-                        _assigned[idx] = null;
-                        Refresh();
-                        injureListPanel.UpdateItemAssigned(ath.id, false);
-                    }
+                    if (_draftAssigned == null) return;
+                    int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
+                    for (int i = 0; i < usable; i++) if (_draftAssigned[i]?.id == ath.id) _draftAssigned[i] = null;
+                    injureListPanel.UpdateItemAssigned(ath.id, false);
                 })
                 .AddTo(cd);
 
-            // "리셋"
+            // 리셋
             injureListPanel.OnRequestReset
                 .Subscribe(_ =>
                 {
                     int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
-                    for (int i = 0; i < usable; i++) _assigned[i] = null;
-                    Refresh();
+                    if (_draftAssigned == null) _draftAssigned = (DomAthEntity[])_assigned.Clone();
+                    for (int i = 0; i < usable; i++) _draftAssigned[i] = null;
                     injureListPanel.UpdateAllAssignedFalse();
                 })
                 .AddTo(cd);
 
-            // "확정"
+            // 확정: 초안→커밋 + 저장 + Refresh
             injureListPanel.OnRequestConfirm
                 .Subscribe(_ =>
                 {
-                    // 2-1) 현재 작업중 상태를 저장 형식으로 추출
-                    var ids = GetAssignedIdsForSave().ToArray(); // 길이 8, 비어있으면 -1
+                    if (_draftAssigned != null)
+                        Array.Copy(_draftAssigned, _assigned, _assigned.Length);
 
-                    // 2-2) 세이브에 쓰기
+                    var ids = GetAssignedIdsForSave().ToArray();          // 커밋 기준
                     saveManager.SetAssignedTreatmentAthletes(ids);
                     saveManager.SaveProgress(saveManager.GetCurrentSlotIndex());
-
-                    // 2-3) 로컬 저장본 갱신
                     _savedAssignedIds = ids.ToList();
 
-                    // 2-4) 저장본 → _assigned 재구성 (즉시 슬롯에 반영되게)
-                    var all = athleteService.GetAllRecruitedAthleteList() ?? new List<DomAthEntity>();
-                    var byId = all.ToDictionary(a => a.id, a => a);
-                    int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
-                    for (int i = 0; i < usable; i++)
-                    {
-                        var id = ids[i];
-                        _assigned[i] = (id >= 0 && byId.TryGetValue(id, out var ent) && ent.curState == AthleteState.Injured)
-                            ? ent
-                            : null;
-                    }
-                    for (int i = usable; i < _assigned.Length; i++) _assigned[i] = null;
-
-                    // 2-5) 화면 갱신
                     Refresh();
-
-                    // 2-6) 패널 닫기
-                    if (injuredAthleteInfoPUI) injuredAthleteInfoPUI.SetActive(false);
+                    injuredAthleteInfoPUI?.SetActive(false);
+                    _draftAssigned = null;
                 })
                 .AddTo(cd);
-
-
-
 
             _panelSubs = cd;
         }
