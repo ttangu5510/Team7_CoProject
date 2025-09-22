@@ -158,9 +158,19 @@ namespace SHG
 
     int GetIncome(Season season, int yearSpan)
     {
-      int trainingGrant = this.Data.TrainingGrantByYears[yearSpan].Incomes[(int)season];
+      int trainingGrant;
+      int competitionGrant;
+      if (this.Data.TrainingGrantByYears.Length - 1 < yearSpan) {
+        trainingGrant = 0;
+      } else {
+        trainingGrant = this.Data.TrainingGrantByYears[yearSpan].Incomes[(int)season];
+      }
       this.AddIncome(trainingGrant, IncomeType.TrainingGrant);
-      int competitionGrant = this.Data.CompetitionGrantByYears[yearSpan].Incomes[(int)season];
+      if (this.Data.CompetitionGrantByYears.Length - 1 < yearSpan) {
+        competitionGrant = 0;
+      } else {
+        competitionGrant = this.Data.CompetitionGrantByYears[yearSpan].Incomes[(int)season];
+      }
       this.AddIncome(competitionGrant, IncomeType.CompetitionGrant);
       return (trainingGrant + competitionGrant);
     }

@@ -5,7 +5,7 @@ namespace SHG
   {
     public static IncomeForSeason TrainingGrants1
       = new IncomeForSeason { Incomes = new int[] {
-        15_000, 15_000, 15_000, 15_000 
+        15_000, 15_000, 15_000, 15_000 ,
       }};
 
     public static IncomeForSeason TrainingGrants2
@@ -63,12 +63,24 @@ namespace SHG
 
     public static ResourceData Data => new ResourceData {
       TrainingGrantByYears = new IncomeForSeason[] {
-        TrainingGrants1, TrainingGrants2, TrainingGrants3, TrainingGrants4 },
+        TrainingGrants1, TrainingGrants2, TrainingGrants3, TrainingGrants4,
+        TrainingGrants1, TrainingGrants2, TrainingGrants3, TrainingGrants4,
+        TrainingGrants1, TrainingGrants2, TrainingGrants3, TrainingGrants4,
+        TrainingGrants1, TrainingGrants2, TrainingGrants3, TrainingGrants4,
+         },
       CompetitionGrantByYears = new IncomeForSeason[] {
-        CompetitionGrants1, CompetitionGrants2, CompetitionGrants3, CompetitionGrants4
+        CompetitionGrants1, CompetitionGrants2, CompetitionGrants3, CompetitionGrants4,
+        CompetitionGrants1, CompetitionGrants2, CompetitionGrants3, CompetitionGrants4,
+        CompetitionGrants1, CompetitionGrants2, CompetitionGrants3, CompetitionGrants4,
+        CompetitionGrants1, CompetitionGrants2, CompetitionGrants3, CompetitionGrants4,
+        CompetitionGrants1, CompetitionGrants2, CompetitionGrants3, CompetitionGrants4,
       },
       QuestPrizes = new IncomeForSeason[] {
-        QuestPrize, QuestPrize, QuestPrize, QuestPrize 
+        QuestPrize, QuestPrize, QuestPrize, QuestPrize,
+        QuestPrize, QuestPrize, QuestPrize, QuestPrize,
+        QuestPrize, QuestPrize, QuestPrize, QuestPrize,
+        QuestPrize, QuestPrize, QuestPrize, QuestPrize,
+        QuestPrize, QuestPrize, QuestPrize, QuestPrize,
       },
       PersonnelCost = PersonnelCost,
       FacilityCost = FacilityCost

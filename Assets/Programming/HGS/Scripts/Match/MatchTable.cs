@@ -7,6 +7,7 @@ namespace SHG
   public static class MatchTable 
   {
     static System.Random RAND = new ();
+    const int MATCH_END_YEAR = 40;
     public static IGroup[] ASIAN_COUNTRIES = new IGroup[] {
       new Country { Name = "china" },
       new Country { Name = "japan" },
@@ -58,36 +59,23 @@ namespace SHG
       (ResourceType.Coin, 0)
     };
 
-    public static MatchData[] Data { get; private set; }
+    public static List<MatchData> Data { get; private set; }
 
-    static MatchTable()
-    {
-      HashSet<string> usedAutonomyNames = new ();  
+    static MatchTable() {
+      Data = new();
+      HashSet<string> usedAutonomyNames = new();
       MatchData[] firstYear = GetFirstYear();
       MatchData[] secondYear = GetSecondYear(usedAutonomyNames);
       MatchData[] thirdYear = GetThirdYear(usedAutonomyNames);
       MatchData[] forthYear = GetForthYear(usedAutonomyNames);
-      Data = new MatchData[firstYear.Length + secondYear.Length + thirdYear.Length + forthYear.Length];
-      Array.Copy(sourceArray: firstYear,
-        sourceIndex: 0,
-        destinationArray: Data,
-        destinationIndex: 0,
-        length: firstYear.Length);  
-      Array.Copy(sourceArray: secondYear,
-        sourceIndex: 0,
-        destinationArray: Data,
-        destinationIndex: firstYear.Length, 
-        length: secondYear.Length);
-      Array.Copy(sourceArray: thirdYear,
-        sourceIndex: 0,
-        destinationArray: Data, 
-        destinationIndex: firstYear.Length + secondYear.Length,
-        length: thirdYear.Length);
-      Array.Copy(sourceArray: forthYear,
-        sourceIndex: 0,
-        destinationArray: Data,
-        destinationIndex: firstYear.Length + secondYear.Length + thirdYear.Length,
-        length: forthYear.Length);
+      Data.AddRange(firstYear);
+      Data.AddRange(secondYear);
+      Data.AddRange(thirdYear);
+      Data.AddRange(forthYear);
+      for (int year = 5; year <= MATCH_END_YEAR; ++year) {
+        MatchData[] matches = GetNthYear(year, usedAutonomyNames);
+        Data.AddRange(matches);
+      }
     }
 
     public static MatchData[] GetFirstYear()
@@ -151,6 +139,37 @@ namespace SHG
       return (matches);
     }
 
+    public static MatchData[] GetNthYear(int year, HashSet<string> usedAutonomyNames)
+    {
+      int[] autonomyWeeks;
+      int remainder = year % 4;
+      string lastMatchName;
+      switch (remainder) {
+        case 0:
+          autonomyWeeks = new int[] { 7, 13, 26, 33 };
+          lastMatchName = "전국 동계 스포츠";
+          break;
+        case 1:
+          autonomyWeeks = new int[] { 6, 12, 25, 31 };
+          lastMatchName = "동계 아시안";
+          break;
+        case 2:
+          autonomyWeeks = new int[] { 7, 131, 25, 33 };
+          lastMatchName = "세계 선수권";
+          break;
+        case 3:
+          autonomyWeeks = new int[] { 5, 12, 16, 32 };
+          lastMatchName = "국제 동계 스포츠";
+          break;
+        default:
+          return null;
+      }
+      var matches = new MatchData[autonomyWeeks.Length + 2];
+      FillAutnomyCups(matches, year, autonomyWeeks, usedAutonomyNames);
+      FillMandatoryMatches(matches, year, lastMatchName);
+      return (matches);
+    }
+
     static void FillMandatoryMatches(MatchData[] matches, int year, string lastMatch)
     {
       matches[matches.Length - 2] = new MatchData {
@@ -174,6 +193,9 @@ namespace SHG
         string name = GetRandomAutonomyName();
         while (usedNames.Contains(name)) {
           name = GetRandomAutonomyName();
+        }
+        if ((float)usedNames.Count > (float)AUTONOMY_MATCH_NAMES.Length * 0.8) {
+          usedNames.Clear();
         }
         matches[i] = new MatchData {
           Name = name,
