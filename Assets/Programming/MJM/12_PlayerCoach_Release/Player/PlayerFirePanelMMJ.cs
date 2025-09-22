@@ -1,7 +1,9 @@
 ﻿using System;
 using JYL;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System.Collections;
 
 public class PlayerFirePanelMMJ : MonoBehaviour
 {
@@ -14,22 +16,31 @@ public class PlayerFirePanelMMJ : MonoBehaviour
 
     private DomAthEntity current;
     private Sprite currentPortrait;
+   //  private bool _wired;
 
-    private void Start()
+    private void Awake()
     {
+        WireButtonsOnce();
+    }
+
+    private void WireButtonsOnce()
+    {
+       // if (_wired) return;
+       // _wired = true;
+
+        cancelButton.onClick.RemoveAllListeners();
         cancelButton.onClick.AddListener(() =>
         {
             OnCanceled?.Invoke();
             gameObject.SetActive(false);
         });
 
+        confirmButton.onClick.RemoveAllListeners();
         confirmButton.onClick.AddListener(() =>
         {
-            OnConfirmed?.Invoke(current);
+            if (current != null) OnConfirmed?.Invoke(current);
             gameObject.SetActive(false);
         });
-
-        gameObject.SetActive(false); // 기본 비활성
     }
 
     public void Open(DomAthEntity athlete, Sprite portrait = null)
@@ -37,6 +48,11 @@ public class PlayerFirePanelMMJ : MonoBehaviour
         current = athlete;
         currentPortrait = portrait;
         if (playerImage && portrait) playerImage.sprite = portrait;
+
+        // 혹시 CanvasGroup이 있다면 첫 프레임 인터랙션 보장
+        var cg = GetComponent<CanvasGroup>();
+        if (cg) { cg.alpha = 1f; cg.interactable = true; cg.blocksRaycasts = true; }
+
         gameObject.SetActive(true);
     }
 }

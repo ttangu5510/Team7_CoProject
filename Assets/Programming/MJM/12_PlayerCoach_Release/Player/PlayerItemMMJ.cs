@@ -60,8 +60,10 @@ public class PlayerItemMMJ : MonoBehaviour
         informationButton.onClick.RemoveAllListeners();
         informationButton.onClick.AddListener(() =>
         {
+            Debug.Log($"onDetail{this.onDetail == null} / inClick {onClick == null}");
             this.onDetail?.Invoke(model);
-            onClick?.Invoke(model);
+           
+            // onClick?.Invoke(model);
         });
     }
 }

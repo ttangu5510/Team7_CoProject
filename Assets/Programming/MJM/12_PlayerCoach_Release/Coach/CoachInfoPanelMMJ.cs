@@ -28,8 +28,6 @@ public class CoachInfoPanelMMJ : MonoBehaviour
 
     private void Awake()
     {
-        gameObject.SetActive(false);
-
         closeButton.OnClickAsObservable()
             .Subscribe(_ => gameObject.SetActive(false))
             .AddTo(this);
