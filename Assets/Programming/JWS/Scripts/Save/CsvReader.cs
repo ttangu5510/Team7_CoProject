@@ -39,6 +39,17 @@ public static class CsvReader
         return list;
     }
 
+    public static List<AchievementCsvData> ReadAchievements(string fileName)
+    {
+        var rows = Read(fileName);
+        if (rows == null) return null;
+        
+        List<AchievementCsvData> list = new();
+        foreach(var row in rows.Skip(1)) // 헤더 스킵
+            list.Add(new AchievementCsvData(row));
+        return list;
+    }
+
     private static List<string[]> Read(string fileName)
     {
         TextAsset csvFile = Resources.Load<TextAsset>($"CSV/{fileName}");
