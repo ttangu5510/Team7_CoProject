@@ -61,10 +61,18 @@ namespace JWS
             gameObject.SetActive(true);
             Clear();
 
-            var list = injuredAll?.Where(a => a.curState == AthleteState.Injured).ToList() ?? new List<DomAthEntity>();
+            var list = injuredAll?.Where(a => a.curState == AthleteState.Injured).ToList() 
+                       ?? new List<DomAthEntity>();
+
+            // 안전: content 활성 보장
+            if (!content.gameObject.activeSelf) content.gameObject.SetActive(true);
+
             foreach (var ath in list)
             {
-                var ui = Instantiate(itemPrefab, content);
+                // 부모/로컬값 안전 오버로드 사용
+                var ui = Instantiate(itemPrefab, content, false);
+                if (!ui.gameObject.activeSelf) ui.gameObject.SetActive(true);   // ★ prefab이 비활성이어도 강제 ON
+
                 _spawned.Add(ui.gameObject);
                 _items.Add(ui);
                 _itemById[ath.id] = ui;
@@ -76,7 +84,14 @@ namespace JWS
                 ui.OnUnassign .Subscribe(_reqUnassign.OnNext) .AddTo(ui);
                 ui.OnOpenInfo .Subscribe(a => ShowInfo(a))    .AddTo(ui);
             }
+
+            // 레이아웃 강제 갱신(ScrollView/VerticalLayout/SizeFitter 모두 반영)
+            Canvas.ForceUpdateCanvases();
+            var rt = content as RectTransform;
+            if (rt != null) UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
+            Canvas.ForceUpdateCanvases();
         }
+
 
         private void ShowInfo(DomAthEntity ath)
         {
