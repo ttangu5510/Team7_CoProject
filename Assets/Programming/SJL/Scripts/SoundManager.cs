@@ -55,12 +55,14 @@ namespace SJL
         public void SetMusicVolume(float sliderValue)
         {
             float dB = Mathf.Log10(Mathf.Max(sliderValue, 0.0001f)) * 20f;
-            audioMixer.SetFloat("MusicVolume", dB);
+            audioMixer.SetFloat("MusicVolume", dB); 
+            Debug.Log($"SetMusicVolume: value={sliderValue}, dB={dB}");
         }
         public void SetSFXVolume(float sliderValue)
         {
             float dB = Mathf.Log10(Mathf.Max(sliderValue, 0.0001f)) * 20f;
             audioMixer.SetFloat("SfxVolume", dB);
+            Debug.Log($"SetSfxVolume: value={sliderValue}, dB={dB}");
         }
 
         // 배경음 변경/재생

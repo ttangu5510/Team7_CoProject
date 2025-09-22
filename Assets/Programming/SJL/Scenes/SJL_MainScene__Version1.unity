@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 416742810}
   - component: {fileID: 416742809}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: speaker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4360,37 +4360,42 @@ PrefabInstance:
     - target: {fileID: 3872999861457030467, guid: b87e15a643e524b4caa0d4a4aa059bcd,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3872999861457030467, guid: b87e15a643e524b4caa0d4a4aa059bcd,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6609117704020734623, guid: b87e15a643e524b4caa0d4a4aa059bcd,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6609117704020734623, guid: b87e15a643e524b4caa0d4a4aa059bcd,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8972809275598800781, guid: b87e15a643e524b4caa0d4a4aa059bcd,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8972809275598800781, guid: b87e15a643e524b4caa0d4a4aa059bcd,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9164460547970797877, guid: b87e15a643e524b4caa0d4a4aa059bcd,
         type: 3}
       propertyPath: m_Name
       value: SettingsPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 9164460547970797877, guid: b87e15a643e524b4caa0d4a4aa059bcd,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4438,6 +4443,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SoundManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 5125796979957517431, guid: e5b91f19b29d33e4fa949e51beb34dc8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6784738430383765090, guid: e5b91f19b29d33e4fa949e51beb34dc8,
         type: 3}
@@ -4487,11 +4497,6 @@ PrefabInstance:
     - target: {fileID: 6784738430383765090, guid: e5b91f19b29d33e4fa949e51beb34dc8,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7102038090335956540, guid: e5b91f19b29d33e4fa949e51beb34dc8,
-        type: 3}
-      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -5251,6 +5256,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3232142183455446260, guid: e36eaa142ca1a7742bc0ebc7168d97bd,
+        type: 3}
+      propertyPath: loadingSprites.Array.data[2]
+      value: 
+      objectReference: {fileID: 21300000, guid: 34ca5743742f2ec44bb8a9d3d53fc77a,
+        type: 3}
     - target: {fileID: 3733255079464511432, guid: e36eaa142ca1a7742bc0ebc7168d97bd,
         type: 3}
       propertyPath: m_Pivot.x
