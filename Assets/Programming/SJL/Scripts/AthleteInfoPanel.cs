@@ -13,7 +13,7 @@ namespace SJL
     {
         [Header("Button")]
         [SerializeField] Button closeButton;
-        
+         
         [Header("Player Information")]
         [SerializeField] private Image athleteIcon;
         [SerializeField] private TextMeshProUGUI nameText;

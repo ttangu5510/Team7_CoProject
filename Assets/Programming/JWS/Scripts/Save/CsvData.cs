@@ -1,5 +1,6 @@
 using System;
 using JYL;
+using UnityEngine;
 
 namespace JWS
 {
@@ -81,6 +82,36 @@ namespace JWS
             Technic = int.Parse(row[6]);
             Speed = int.Parse(row[7]);
             Balance = int.Parse(row[8]);
+        }
+    }
+
+    public class AchievementCsvData
+    {
+        public readonly string ID;
+        public readonly AchievementCategory Category;
+        public readonly string AchName;
+        public readonly string AchDesc;
+        public readonly AchievementCondition Condition;
+        public readonly int CompleteNumber;
+        public readonly AchievementReward Reward;
+        public readonly string PrevAchievement;
+        public readonly AchievementState state;
+
+        public AchievementCsvData(string[] row)
+        {
+            if (row.Length < 9)
+            {
+                throw new ArgumentException($"For Athlete CSV row 데이터 오류{row}_길이:{row.Length}");
+            }
+            ID = row[0];
+            Category = Enum.Parse<AchievementCategory>(row[1]);
+            AchName = row[2];
+            AchDesc = row[3];
+            Condition = Enum.Parse<AchievementCondition>(row[4]);
+            CompleteNumber = int.Parse(row[5]);
+            Reward = Enum.Parse<AchievementReward>(row[6]);
+            PrevAchievement = row[7];
+            state =  Enum.Parse<AchievementState>(row[8]);
         }
     }
 }

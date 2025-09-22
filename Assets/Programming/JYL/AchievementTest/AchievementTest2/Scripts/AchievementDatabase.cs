@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace JYL.AchievementTest02
 {
-    [CreateAssetMenu(fileName = "AchievementDB", menuName = "Achievement/Database")]
+    //[CreateAssetMenu(fileName = "AchievementDB", menuName = "Achievement/Database")]
     [Serializable]
     public class AchievementDatabase : ScriptableObject
     {

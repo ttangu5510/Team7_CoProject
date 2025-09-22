@@ -44,7 +44,7 @@ namespace JWS
         public List<QuestState> quests = new(); // 전체 목록 + 진행/클리어 여부
 
         // 업적
-        public List<AchievementState> achievements = new(); // 전체 목록 + 진행/달성
+        public List<AchievementSave> achievements = new(); // 전체 목록 + 진행/달성
 
         // 도감
         public List<EncyclopediaState> encyclopedia = new(); // 전체 목록 + 트로피/메달 보유 여부
@@ -84,6 +84,7 @@ namespace JWS
             quests.Clear();
             achievements.Clear();
             encyclopedia.Clear();
+            achievements = CreateAchievementSaves();
         }
         
         // 세이브데이터 객체 복사
@@ -117,6 +118,23 @@ namespace JWS
         public CoachSave FindCoach(int id)
         {
             return coachSaves.Find(coach => coach.id == id);
+        }
+
+        public AchievementSave FindAchievementSaveByID(string id)
+        {
+            return achievements.Find(save => save.ID == id);
+        }
+        
+        private List<AchievementSave> CreateAchievementSaves() // 업적 최초 생성
+        {
+            var list = CsvReader.ReadAchievements("AchievementDataTable");
+            List<AchievementSave> achievements = new List<AchievementSave>();
+            foreach (var data in list)
+            {
+                achievements.Add(new AchievementSave(data.ID,data.state));
+            }
+
+            return achievements;
         }
     }
 
@@ -196,17 +214,28 @@ namespace JWS
 /* ========================= 업적 ========================= */
 
     [Serializable]
-    public record AchievementState
+    public record AchievementSave
     {
-        public string id; // 업적 ID(전체 목록 포함)
-        public AchievementProgress progress;
+        public string ID { get; } // 업적 ID(전체 목록 포함)
+        public AchievementState state;
+        public float progress = 0f;
+        public string completeTime  = "";
+
+        public AchievementSave(string ID, AchievementState state)
+        {
+            this.ID = ID;
+            this.state = state;
+        }
     }
 
-    public enum AchievementProgress
+    [Serializable]
+    public enum AchievementState
     {
+        Unlocked, // 공개됨
         Locked, // 미진행/잠금
-        InProgress, // 진행 중
-        Unlocked // 달성
+        CanComplete, // 달성 완료 가능
+        Completed, // 달성 완료
+        Hidden // 숨겨짐
     }
 
 /* ========================= 도감 ========================= */

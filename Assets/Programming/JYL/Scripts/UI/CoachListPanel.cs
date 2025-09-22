@@ -50,7 +50,6 @@ public class CoachListPanel : MonoBehaviour
         recruitedCoaches = coachService.GetRecruitedCoaches(); // 현재 영입된 코치들 불러오기
         this.routineNumber  = routineNumber; // 현재 훈련 배치 번호
         this.assignedCoaches = assignedCoaches; // 훈련 배치된 코치들 배열
-        Debug.LogWarning($"여기에 들여온 배열 길이{assignedCoaches.Length}__들여온루틴넘버{routineNumber}");
         isAssigned = assignedCoaches[routineNumber] != -1; // 현재 배치에 id가 있다면, 배치 중인것.
         
         CreateItems();
