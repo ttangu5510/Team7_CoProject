@@ -346,6 +346,30 @@ namespace JYL
         }
         #endregion
         
+        #region 치료실 배치
+        /// 현재 치료실에 배치된 선수 ID 배열 반환
+        public int[] GetAssignedTreatmentAthletes()
+        {
+            return (int[])curSave.treatmentAssign.Clone();
+        }
+        
+        /// 치료실 슬롯 전체를 갱신
+        public void SetAssignedTreatmentAthletes(int[] assignedAthletes)
+        {
+            curSave.treatmentAssign = (int[])assignedAthletes.Clone();
+        }
+        
+        /// 치료실 전체 리셋 (모든 슬롯 해제)
+        public void ResetTreatmentAssign()
+        {
+            for (int i = 0; i < curSave.treatmentAssign.Length; i++)
+                curSave.treatmentAssign[i] = -1;
+        }
+
+        #endregion
+
+
+        
         #region 리스트 추출
         // 세이브 데이터 리스트 반환
         public List<SaveData> GetAllSave()

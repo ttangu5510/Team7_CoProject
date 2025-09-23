@@ -61,7 +61,8 @@ public class PlayerItemMMJ : MonoBehaviour
         informationButton.onClick.AddListener(() =>
         {
             this.onDetail?.Invoke(model);
-            onClick?.Invoke(model);
+           
+            // onClick?.Invoke(model);
         });
     }
 }

@@ -54,8 +54,6 @@ namespace MMJ
 
         private void Awake()
         {
-            gameObject.SetActive(false); // 기본 비활성
-
             closeButton.OnClickAsObservable()
                 .Subscribe(_ => gameObject.SetActive(false)) // Destroy → SetActive(false)
                 .AddTo(this);
@@ -69,6 +67,7 @@ namespace MMJ
         {
             current = athlete;
             currentPortrait = portrait;
+            Debug.Log("Test 마마마맘마");
 
             // UI 채우기
             nameText.text = athlete.entityName;
@@ -101,7 +100,7 @@ namespace MMJ
             // 중복 구독 방지
             playerFirePanel.OnConfirmed -= HandleConfirmed;
             playerFirePanel.OnCanceled -= HandleCanceled;
-
+           
             playerFirePanel.OnConfirmed += HandleConfirmed;
             playerFirePanel.OnCanceled += HandleCanceled;
 

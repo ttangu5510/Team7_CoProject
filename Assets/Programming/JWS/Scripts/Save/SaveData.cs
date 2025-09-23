@@ -54,13 +54,21 @@ namespace JWS
         // 코치 배치 배열. id를 저장함
         public int[] coachAssign;
 
+        // 치료실 슬롯 (A~H, 총 8칸)
+        public int[] treatmentAssign;
+        
         // ==== Init 메서드 ====
         public void Init(string userId, string userName, string clanName)
         {
             this.userId = userId;
             playerName = userName;
             this.clanName = clanName;
+
+            // 코치 슬롯 초기화
             coachAssign = new[] { -1, -1, -1, -1 };
+
+            // 치료실 슬롯 초기화 (8칸)
+            treatmentAssign = new[] { -1, -1, -1, -1, -1, -1, -1, -1 };
             
             // 시간 초기화
             time.yearCycle = 1;
@@ -96,6 +104,7 @@ namespace JWS
             SaveData newSave = this with
             {
                 coachAssign =  (int[])coachAssign?.Clone(), 
+                treatmentAssign = (int[])treatmentAssign?.Clone(),
                 time = time with { },
                 currencies = currencies with { },
                 buildings = buildings.ConvertAll(building => building with { }),
