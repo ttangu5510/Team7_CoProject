@@ -29,6 +29,7 @@ namespace JYL
             }
             else
             {
+                Debug.Log($"세이브가 null임_{data.ID}_{save == null}");
                 progress.Value = 0;
             }
             

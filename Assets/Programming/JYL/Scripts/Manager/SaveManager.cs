@@ -365,10 +365,7 @@ namespace JYL
             for (int i = 0; i < curSave.treatmentAssign.Length; i++)
                 curSave.treatmentAssign[i] = -1;
         }
-
         #endregion
-
-
         
         #region 리스트 추출
         // 세이브 데이터 리스트 반환
