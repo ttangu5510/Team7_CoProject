@@ -1,0 +1,128 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UniRx;
+using UnityEngine;
+using JYL;
+using UnityEngine.UI;
+
+namespace JWS
+{
+    public class InjureListPanel : MonoBehaviour
+    {
+        [Header("Header")]
+        [SerializeField] private Button closeButton;                 // X (루트 닫기)
+
+        [Header("List")]
+        [SerializeField] private Transform content;                  // ScrollView/Viewport/Content
+        [SerializeField] private InjuredAthleteItem itemPrefab;
+        [SerializeField] private InjureAthInfoPanel infoPanel;       // 형제 상세 패널
+        [SerializeField] private GameObject injuredAthleteInfoPui;   // 팝업 루트
+        
+        [Header("Footer")]
+        [SerializeField] private Button confirmButton; // ✓ 확정
+        [SerializeField] private Button resetButton;   // ↺ 초기화
+
+        private readonly Subject<DomAthEntity> _reqAssign   = new();
+        private readonly Subject<DomAthEntity> _reqUnassign = new();
+        private readonly Subject<Unit>         _reqReset    = new();
+        private readonly Subject<Unit>         _reqConfirm  = new();
+
+        public IObservable<DomAthEntity> OnRequestAssign   => _reqAssign;
+        public IObservable<DomAthEntity> OnRequestUnassign => _reqUnassign;
+        public IObservable<Unit>         OnRequestReset    => _reqReset;
+        public IObservable<Unit>         OnRequestConfirm  => _reqConfirm;
+
+        private readonly List<InjuredAthleteItem> _items = new();
+        private readonly Dictionary<int, InjuredAthleteItem> _itemById = new();
+        private readonly List<GameObject> _spawned = new();
+
+        private void Awake()
+        {
+            closeButton?.OnClickAsObservable()
+                .Subscribe(_ => { if (injuredAthleteInfoPui) injuredAthleteInfoPui.SetActive(false); else gameObject.SetActive(false); })
+                .AddTo(this);
+
+            confirmButton?.OnClickAsObservable()
+                .Subscribe(_ => _reqConfirm.OnNext(Unit.Default))
+                .AddTo(this);
+
+            resetButton?.OnClickAsObservable()
+                .Subscribe(_ => _reqReset.OnNext(Unit.Default))
+                .AddTo(this);
+        }
+
+        /// <summary>
+        /// injuredAll: 부상자 전체, assignedIds: 이미 슬롯에 배치된 선수들
+        /// slotIndex: 어떤 슬롯에 반영할지(확정시 사용)
+        /// </summary>
+        public void Open(IEnumerable<DomAthEntity> injuredAll, HashSet<int> assignedIds)
+        {
+            gameObject.SetActive(true);
+            Clear();
+
+            var list = injuredAll?.Where(a => a.curState == AthleteState.Injured).ToList() 
+                       ?? new List<DomAthEntity>();
+
+            // 안전: content 활성 보장
+            if (!content.gameObject.activeSelf) content.gameObject.SetActive(true);
+
+            foreach (var ath in list)
+            {
+                // 부모/로컬값 안전 오버로드 사용
+                var ui = Instantiate(itemPrefab, content, false);
+                if (!ui.gameObject.activeSelf) ui.gameObject.SetActive(true);   // ★ prefab이 비활성이어도 강제 ON
+
+                _spawned.Add(ui.gameObject);
+                _items.Add(ui);
+                _itemById[ath.id] = ui;
+
+                bool isAssigned = assignedIds != null && assignedIds.Contains(ath.id);
+                ui.Bind(ath, isAssigned);
+
+                ui.OnAssign   .Subscribe(_reqAssign.OnNext)   .AddTo(ui);
+                ui.OnUnassign .Subscribe(_reqUnassign.OnNext) .AddTo(ui);
+                ui.OnOpenInfo .Subscribe(a => ShowInfo(a))    .AddTo(ui);
+            }
+
+            // 레이아웃 강제 갱신(ScrollView/VerticalLayout/SizeFitter 모두 반영)
+            Canvas.ForceUpdateCanvases();
+            var rt = content as RectTransform;
+            if (rt != null) UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
+            Canvas.ForceUpdateCanvases();
+        }
+
+
+        private void ShowInfo(DomAthEntity ath)
+        {
+            if (!infoPanel.gameObject.activeSelf) infoPanel.gameObject.SetActive(true);
+            infoPanel.transform.SetAsLastSibling();
+            infoPanel.Open(ath);
+        }
+
+        public void UpdateItemAssigned(int athId, bool assigned)
+        {
+            if (_itemById.TryGetValue(athId, out var ui))
+                ui.SetAssigned(assigned);
+        }
+
+        public void NudgeAssignButton(int athId)
+        {
+            if (_itemById.TryGetValue(athId, out var ui))
+                ui.NudgeAssignButton();
+        }
+
+        public void UpdateAllAssignedFalse()
+        {
+            foreach (var kv in _itemById) kv.Value.SetAssigned(false);
+        }
+
+        private void Clear()
+        {
+            foreach (var go in _spawned) if (go) Destroy(go);
+            _spawned.Clear();
+            _items.Clear();
+            _itemById.Clear();
+        }
+    }
+}
