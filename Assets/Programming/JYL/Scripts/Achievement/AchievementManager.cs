@@ -49,6 +49,7 @@ namespace JYL
             foreach (var data in database.achievements)
             {
                 // id를 통해 세이브 파일 객체가 있는지 찾음.
+                Debug.Log($"데이터 ID{data.ID}");
                 AchievementSave achSave = save.FindAchievementSaveByID(data.ID);
                 // 데이터베이스의 업적 객체와 세이브데이터의 업적 객체를 통해 동적 업적 객체 생성
                 result.Add(new AchievementController(data, achSave)); 

@@ -83,6 +83,7 @@ namespace JYL
             save.Init(uid,playerName,clanName);
             saves.Add(save);
             curSave = save;
+            achievementWrapper = new(curSave.achievementRecord);
             AutoSave();
         }
 

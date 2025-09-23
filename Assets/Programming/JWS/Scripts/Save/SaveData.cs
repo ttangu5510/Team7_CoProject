@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using JYL;
+using UnityEngine;
 
 namespace JWS
 {
@@ -85,6 +86,7 @@ namespace JWS
             quests.Clear();
             achievements.Clear();
             encyclopedia.Clear();
+            achievementRecord = new AchievementRecord();
             achievements = CreateAchievementSaves();
         }
         
@@ -124,11 +126,13 @@ namespace JWS
 
         public AchievementSave FindAchievementSaveByID(string id)
         {
+            Debug.Log($"업적리스트 확인{achievements.Count}__아이템 잇는지 확인.{id}__{achievements.Find(save => save.ID == id) != null}");
             return achievements.Find(save => save.ID == id);
         }
         
         private List<AchievementSave> CreateAchievementSaves() // 업적 최초 생성
         {
+            Debug.Log("이거들어오는지 확인");
             var list = CsvReader.ReadAchievements("AchievementDataTable");
             List<AchievementSave> achievements = new List<AchievementSave>();
             foreach (var data in list)
@@ -227,6 +231,8 @@ namespace JWS
         {
             this.ID = ID;
             this.state = state;
+            progress = 0;
+            completeTime = ""; // TODO: 업적 완료 시간 표기
         }
     }
 

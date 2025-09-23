@@ -10,6 +10,7 @@ namespace JYL
 {
     public class AchievementController
     {
+        [Inject] private ISaveManager saveManager;
         public Achievement achieve { get; }
         private AchievementSave save;
         public ReactiveProperty<AchievementState> state { get; } = new();
@@ -21,8 +22,15 @@ namespace JYL
         {
             achieve = data;
             this.save = save;
-            progress.Value = save.progress;
-            state.Value =  save.state;
+            if (save != null)
+            {
+                progress.Value = save.progress;
+                state.Value =  save.state;
+            }
+            else
+            {
+                progress.Value = 0;
+            }
             
             progress
                 .CombineLatest(state, (p, s) => (p, s))
@@ -37,6 +45,7 @@ namespace JYL
 
         public void UnlockAchievement()
         {
+            Debug.Log("업적 언락으로 들어옴");
             state.Value = AchievementState.Unlocked;
             OnProgressChanged(progress.Value);
         }
@@ -49,10 +58,13 @@ namespace JYL
                 // 선행 업적의 상태가 Complete로 변경 시, Unlocked로 변경됨.
                 case AchievementState.Unlocked:
                     OnProgressChanged(progress.Value); // 완료 가능한 상황인지 바로 체크함.
+                    Debug.Log($"업적 언락상태로 전환 ");
                     break;
                 case AchievementState.CanComplete:
+                    Debug.Log("업적 완료가능상태로 전환");
                     break;
                 case AchievementState.Completed:
+                    Debug.Log("업적 완료상태로 전환");
                     // 상태 변화를 Manager쪽에서 참고한 다음, 완료 시 트로피 획득 처리 (추가 처리할 것은 없음).
                     break;
             }
@@ -64,12 +76,16 @@ namespace JYL
         private void OnProgressChanged(int progressValue)
         {
             // 변경된 값 SaveData에 저장
-            save.progress = progressValue;
+            if (save != null)
+            {
+                save.progress = progressValue;
+            }
             
             // 언락됐거나, 히든일 때만 조건 체크함.
             if (state.Value is AchievementState.Unlocked or AchievementState.Hidden && progress.Value >= achieve.CompleteNumber)
             {
                 state.Value = AchievementState.CanComplete;
+                Debug.Log($"완료가능 업적이름: {achieve.AchName}");
             }
         }
 
