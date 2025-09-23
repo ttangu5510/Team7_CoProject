@@ -1514,6 +1514,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1239305048}
   - component: {fileID: 1239305049}
+  - component: {fileID: 1239305050}
   m_Layer: 5
   m_Name: Tutorial
   m_TagString: Untagged
@@ -1556,6 +1557,21 @@ MonoBehaviour:
   ConformX: 1
   ConformY: 1
   Logging: 0
+--- !u!114 &1239305050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239305047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24659a36b5597bb45aadfe5540847fb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tutorialText: {fileID: 53653759}
+  lineDelay: 1
+  highlightObjects: []
 --- !u!1001 &1262927115
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2794,7 +2810,7 @@ MonoBehaviour:
   m_Resolution: 0
   m_useNativeSize: 0
   squircleType: 1
-  n: 4
+  n: 10
   delta: 5
   quality: 0.1
   radius: 1000
@@ -20698,7 +20714,7 @@ PrefabInstance:
     - target: {fileID: 8113155378474648867, guid: 12627e09bcd56fd43962ee7bd9123453,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -120.00003
+      value: -120.00033
       objectReference: {fileID: 0}
     - target: {fileID: 8227043469887992878, guid: 12627e09bcd56fd43962ee7bd9123453,
         type: 3}
