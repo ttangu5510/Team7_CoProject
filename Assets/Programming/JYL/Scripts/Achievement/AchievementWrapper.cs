@@ -6,18 +6,18 @@ using UnityEngine;
 
 public class AchievementWrapper
 {
-    public ReactiveProperty<int> MatchEntryCount { get; }
-    public ReactiveProperty<int> MatchWinCount { get; }
-    public ReactiveProperty<int> TrainCount { get; } // 연결완료
-    public ReactiveProperty<int> RecoverCount { get; }
-    public ReactiveProperty<int> SpecialTrainCount { get; } // 연결완료
-    public ReactiveProperty<int> AthleteRecruitCount { get; } // 연결완료
-    public ReactiveProperty<int> CoachRecruitCount { get; } // 연결완료
-    public ReactiveProperty<int> AthleteRetireCount { get; } // 연결완료
+    public ReactiveProperty<int> MatchEntryCount { get; } // 연결완료. SaveAdaptor
+    public ReactiveProperty<int> MatchWinCount { get; } // 연결 완료. SaveAdaptor
+    public ReactiveProperty<int> TrainCount { get; } // 연결완료. TraniningBox
+    public ReactiveProperty<int> RecoverCount { get; } // 연결완료. SaveAdaptor
+    public ReactiveProperty<int> SpecialTrainCount { get; } // 연결완료. SPTrainingBox
+    public ReactiveProperty<int> AthleteRecruitCount { get; } // 연결완료. DomAthRepository
+    public ReactiveProperty<int> CoachRecruitCount { get; } // 연결완료. DomAthRepository
+    public ReactiveProperty<int> AthleteRetireCount { get; } // 연결완료. DomAthRepository
 
-    private AchievementRecord data;
+    private AchievementRecord data; // 세이브에 포함되는 기록용 객체
     
-    public AchievementWrapper(AchievementRecord record)
+    public AchievementWrapper(AchievementRecord record) // 생성자를 통한 초기화
     {
         data = record;
         

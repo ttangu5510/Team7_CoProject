@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks.Triggers;
+using EditorAttributes;
 using JWS;
 using SHG;
 using UniRx;
@@ -12,7 +14,10 @@ namespace JYL
 {
     public class AchievementManager : MonoBehaviour
     {
-        [SerializeField] private AchievementDatabase database;
+        [Header("Set References")]
+        [SerializeField] private RectTransform parentContent;
+        [SerializeField] private AchievementNotification notification;
+        [SerializeField] private AchievementDatabase databaseSo;
         
         [Inject] private ISaveManager saveManager;
         [Inject] private IFacilitiesController  facilitiesController;
@@ -21,6 +26,14 @@ namespace JYL
         private List<AchievementController> achievements = new();
 
         public AchievementWrapper wrapper;
+        
+        // 테스트
+        [Button]
+        void TestNotification()
+        {
+            notification.gameObject.SetActive(true);
+            notification.ShowNotification(achievements[0].achieve);
+        }
         
         #region 라이프사이클
         void OnEnable()
@@ -47,7 +60,7 @@ namespace JYL
             SaveData save = saveManager.GetCurrentSave(); // 현재 세이브 파일을 불러옴.
             wrapper = saveManager.GetAchievementWrapper();
             
-            foreach (var data in database.achievements)
+            foreach (var data in databaseSo.achievements)
             {
                 // id를 통해 세이브 파일 객체가 있는지 찾음.
                 Debug.Log($"데이터 ID{data.ID}");
@@ -61,6 +74,7 @@ namespace JYL
             {
                 controller.state
                     .Where(s => s is not (AchievementState.Locked or AchievementState.Completed))
+                    .Skip(1)
                     .Subscribe(state =>OnStateChanged(controller, state))
                     .AddTo(this); // 상태 변화를 구독함.
                 
@@ -196,14 +210,24 @@ namespace JYL
         {
             switch (state)
             {
+                // 업적 완료 가능 시, 팝업 UI 재생
                 case AchievementState.CanComplete:
-                    // TODO : 업적 완료 토스트 팝업
+                    notification.gameObject.SetActive(true);
+                    notification.ShowNotification(controller.achieve);
                     break;
+                
+                // 업적 완료 시 후행 업적이 있을 경우 해당 업적을 언락한다.
                 case AchievementState.Completed:
                     AchievementController achievementControllers 
                         = achievements.Where(cont => cont.achieve.PrevAchievement == controller.achieve.ID) as AchievementController;
-                    if (achievementControllers != null) achievementControllers.UnlockAchievement();
-                    else Debug.Log($"해당하는 선행 업적이 없음{controller.achieve.ID}");
+                    if (achievementControllers != null)
+                    {
+                        achievementControllers.UnlockAchievement();
+                    }
+                    else
+                    {
+                        Debug.Log($"해당하는 선행 업적이 없음{controller.achieve.ID}");
+                    }
                     break;
             }
         }
