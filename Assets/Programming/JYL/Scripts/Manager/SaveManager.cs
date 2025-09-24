@@ -213,6 +213,7 @@ namespace JYL
         {
             AthleteSave athlete = new(entity);
             curSave.athleteSaves.Add(athlete);
+            achievementWrapper.AthleteRecruitCount.Value++;
         }
 
         // 은퇴는 파라매터만 바뀌고, 저장됨
@@ -220,6 +221,7 @@ namespace JYL
         {
             AthleteSave athlete = curSave.FindAthlete(entity);
             athlete.state = AthleteState.Retired;
+            achievementWrapper.AthleteRetireCount.Value++;
         }
         public void OutAthlete(DomAthEntity entity) //선수 방출. 세이브 객체에서 삭제
         {
@@ -265,6 +267,8 @@ namespace JYL
                     CoachSave save = new(entity);
                     curSave.coachSaves.Add(save);
                 }
+                // 업적 카운트 적용
+                achievementWrapper.CoachRecruitCount.Value++;
             }
         }
 

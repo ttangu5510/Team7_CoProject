@@ -35,11 +35,13 @@ namespace JYL
             
             progress
                 .CombineLatest(state, (p, s) => (p, s))
+                .Skip(1)
                 .Where(x => x.s is AchievementState.Unlocked or AchievementState.Hidden)
                 .Subscribe(x=>OnProgressChanged(x.p))
                 .AddTo(disposables);
 
             state.Where(_ => state.Value is not AchievementState.Completed)
+                .Skip(1)
                 .Subscribe(OnStateChanged)
                 .AddTo(disposables);
         }
@@ -77,10 +79,7 @@ namespace JYL
         private void OnProgressChanged(int progressValue)
         {
             // 변경된 값 SaveData에 저장
-            if (save != null)
-            {
-                save.progress = progressValue;
-            }
+            save.progress = progressValue;
             
             // 언락됐거나, 히든일 때만 조건 체크함.
             if (state.Value is AchievementState.Unlocked or AchievementState.Hidden && progress.Value >= achieve.CompleteNumber)

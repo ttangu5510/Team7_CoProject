@@ -16,10 +16,11 @@ namespace JYL
         
         [Inject] private ISaveManager saveManager;
         [Inject] private IFacilitiesController  facilitiesController;
+        [Inject] private IMatchController matchController;
         
         private List<AchievementController> achievements = new();
 
-        private AchievementWrapper wrapper;
+        public AchievementWrapper wrapper;
         
         #region 라이프사이클
         void OnEnable()
@@ -121,39 +122,72 @@ namespace JYL
                     {
                         if (stage < 0) throw new ArgumentOutOfRangeException(nameof(stage));
                         controller.progress.Value = stage;
-                    });
+                    }).AddTo(this);
                     break;
                 case AchievementCondition.스카우트센터업그레이드:
                     facilitiesController.ScoutCenter.CurrentStage.Subscribe(stage =>
                     {
                         if(stage < 0) throw new ArgumentOutOfRangeException(nameof(stage));
                         controller.progress.Value = stage;
-                    });
+                    }).AddTo(this);
                     break;
                 case AchievementCondition.훈련센터업그레이드:
                     facilitiesController.TrainingCenter.CurrentStage.Subscribe(stage =>
                     {
                         if (stage < 0) throw new ArgumentOutOfRangeException(nameof(stage));
                         controller.progress.Value = stage;
-                    });
+                    }).AddTo(this);
                     break;
                 case AchievementCondition.의료센터업그레이드:
                     facilitiesController.MedicalCenter.CurrentStage.Subscribe(stage =>
                     {
                         if(stage < 0) throw new ArgumentOutOfRangeException(nameof(stage));
                         controller.progress.Value = stage;
-                    });
+                    }).AddTo(this);
                     break;
                 case AchievementCondition.숙소업그레이드:
                     facilitiesController.Accomodation.CurrentStage.Subscribe(stage =>
                     {
                         if (stage < 0) throw new ArgumentOutOfRangeException(nameof(stage));
                         controller.progress.Value = stage;
-                    });
+                    }).AddTo(this);
                     break;
                 default:
                     Debug.LogWarning($"제대로 된 컨디션이들어오지 못했음.{controller.achieve.Condition}");
                     break;
+            }
+            // 경기 프로퍼티 구독
+            MatchSubscribe();
+        }
+        
+        // 경기 프로퍼티 구독
+        void MatchSubscribe()
+        {
+            matchController.CurrentMatch
+                .Where(x => x != null && x.CurrentState.Value == Match.State.Ended)
+                .Subscribe(MatchResult).AddTo(this);
+        }
+        
+        // 경기 결과 로직 처리
+        void MatchResult(Match match)
+        {
+            wrapper.MatchEntryCount.Value++; // 경기 참여 카운트 +
+                    
+            if (match.Data.IsSingleSport) // 단일 경기일 경우
+            {
+                bool isWin = match.UserResult.GetHighestRank() == 0; // 승리 판단
+                if (isWin)
+                {
+                    wrapper.MatchWinCount.Value++; // 우승 카운트 ++
+                }
+            }
+            else // 종합 경기일 경우
+            {
+                bool isWin = match.Results.IndexOf(match.UserResult) == 0; // 최종 우승 판단
+                if (isWin)
+                {
+                    wrapper.MatchWinCount.Value++; // 우승 카운트 ++
+                }
             }
         }
         
@@ -166,7 +200,8 @@ namespace JYL
                     // TODO : 업적 완료 토스트 팝업
                     break;
                 case AchievementState.Completed:
-                    AchievementController achievementControllers = achievements.Where(cont => cont.achieve.PrevAchievement == controller.achieve.ID) as AchievementController;
+                    AchievementController achievementControllers 
+                        = achievements.Where(cont => cont.achieve.PrevAchievement == controller.achieve.ID) as AchievementController;
                     if (achievementControllers != null) achievementControllers.UnlockAchievement();
                     else Debug.Log($"해당하는 선행 업적이 없음{controller.achieve.ID}");
                     break;

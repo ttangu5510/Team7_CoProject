@@ -34,6 +34,7 @@ public class SpecialTrainingPanel : MonoBehaviour
     
     [Inject] private DomAthService athleteService;
     [Inject] private IResourceController resourceController;
+    [Inject] private AchievementManager achievementManager;
     
     private List<DomAthEntity> athleteList;
     private Dictionary<DomAthEntity, TrainingType> assignDict = new();
@@ -190,7 +191,7 @@ public class SpecialTrainingPanel : MonoBehaviour
         }).AddTo(pui);
     }
 
-    // "훈련 완료" 팝업을 확인 클릭 시 수행. 특훈 결과를 보여준다.
+    // "훈련 완료" 팝업을 확인 클릭 시 수행. 특훈 결과를 보여준다. 업적 카운트도 적용
     private void ShowConfirmPopUp()
     {
         SpecialTrainingResultPUI pui = Instantiate(sTResultPui, trainingCenter.transform);
@@ -201,5 +202,8 @@ public class SpecialTrainingPanel : MonoBehaviour
             {
                 if(confirm) trainingCenter.gameObject.SetActive(false);
             }).AddTo(pui);
+        
+        // 업적 카운트 적용
+        achievementManager.wrapper.SpecialTrainCount.Value += trainingTimes;
     }
 }

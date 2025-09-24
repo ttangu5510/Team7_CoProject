@@ -94,7 +94,6 @@ namespace JWS
             quests.Clear();
             achievements.Clear();
             encyclopedia.Clear();
-            achievementRecord = new AchievementRecord();
             achievements = CreateAchievementSaves();
         }
         
@@ -133,7 +132,7 @@ namespace JWS
             return coachSaves.Find(coach => coach.id == id);
         }
 
-        public AchievementSave FindAchievementSaveByID(string id)
+        public AchievementSave FindAchievementSaveByID(string id) // ID를 통해 업적 세이브파일 찾음
         {
             Debug.Log($"업적리스트 확인{achievements.Count}__아이템 잇는지 확인.{id}__{achievements.Find(save => save.id == id) != null}");
             return achievements.Find(save => save.id == id);

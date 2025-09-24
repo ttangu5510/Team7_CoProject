@@ -49,7 +49,7 @@ namespace SHG
         .AddTo(this);
       this.timeFlowController.WeekInYear
         .Subscribe(week => {
-          this.RecoverAtheltes();
+          this.RecoverAthletes();
           var currentSave = this.saveManager.GetCurrentSave();
           currentSave.time.week = week;
           currentSave.time.yearCycle = this.timeFlowController.Year.Value - ITimeFlowController.START_YEAR + 1;
@@ -69,17 +69,22 @@ namespace SHG
       }
     }
 
-    void RecoverAtheltes()
+    void RecoverAthletes()
     {
       var saveData = this.saveManager.GetCurrentSave();
       int[] ids = saveData.treatmentAssign;
-      int recoveryAmount = facilityController.MedicalCenter.RecoveryAmount.Value > 0 ? facilityController.MedicalCenter.RecoveryAmount.Value: 1;
-      foreach (var athelte in this.domAthService.GetAllRecruitedAthleteList()) {
-        var index = Array.IndexOf(ids, athelte.id);
+      int recoveryAmount = facilityController.MedicalCenter.RecoveryAmount.Value;
+      foreach (var athlete in this.domAthService.GetAllRecruitedAthleteList()) {
+        var index = Array.IndexOf(ids, athlete.id);
         if (index != -1) {
-          this.domAthService.RecoverAthlete(athelte, recoveryAmount);
+          this.domAthService.RecoverAthlete(athlete, recoveryAmount);
         }
       }
+    }
+
+    void CheckAchievements()
+    {
+      
     }
 
     void OnFacilityStageChanged(IFacility facility, int stage)

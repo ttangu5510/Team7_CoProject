@@ -128,9 +128,9 @@ public class DomAthEntity : BaseAthEntity
         stats = newStats;
     }
     
-    public void RecoverAthlete(int amount) // 선수 회복에 쓰이는 함수
+    public void RecoverAthlete() // 선수 회복에 쓰이는 함수
     {
-        leftInjury -= amount;
+        leftInjury --;
         if (leftInjury > 0) return;
         leftInjury = 0;
         curState = AthleteState.Active;

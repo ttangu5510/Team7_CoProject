@@ -56,7 +56,7 @@ namespace JYL
                 .Subscribe(_ =>
                 {
                     wrapper.MatchEntryCount.Value++;
-                    textEntryMatch.text = wrapper.MatchEntryCount.Value.ToString();
+                    textEntryMatch.text = $"경기참가: {wrapper.MatchEntryCount.Value.ToString()}";
                 })
                 .AddTo(this);
             
@@ -64,7 +64,7 @@ namespace JYL
                 .Subscribe(_ =>
                 {
                     wrapper.MatchWinCount.Value++;
-                    textWinMatch.text = wrapper.MatchWinCount.Value.ToString();
+                    textWinMatch.text = $"경기우승: {wrapper.MatchWinCount.Value.ToString()}";
                 })
                 .AddTo(this);
             
@@ -72,7 +72,7 @@ namespace JYL
                 .Subscribe(_ =>
                 {
                     wrapper.TrainCount.Value++;
-                    textUpTrainCount.text = wrapper.TrainCount.Value.ToString();
+                    textUpTrainCount.text = $"훈련횟수: {wrapper.TrainCount.Value.ToString()}";
                 })
                 .AddTo(this);
             
@@ -80,7 +80,7 @@ namespace JYL
                 .Subscribe(_ =>
                 {
                     wrapper.RecoverCount.Value++;
-                    textUpRecoverCount.text = wrapper.RecoverCount.Value.ToString();
+                    textUpRecoverCount.text = $"회복횟수: {wrapper.RecoverCount.Value.ToString()}";
                 })
                 .AddTo(this);
             
@@ -88,7 +88,7 @@ namespace JYL
                 .Subscribe(_ =>
                 {
                     wrapper.SpecialTrainCount.Value++;
-                    textUpSpecialTrainCount.text = wrapper.SpecialTrainCount.Value.ToString();
+                    textUpSpecialTrainCount.text = $"특훈횟수: {wrapper.SpecialTrainCount.Value.ToString()}";
                 })
                 .AddTo(this);
             
@@ -96,7 +96,7 @@ namespace JYL
                 .Subscribe(_ =>
                 {
                     wrapper.AthleteRecruitCount.Value++;
-                    textAthleteRecruitCount.text = wrapper.AthleteRecruitCount.Value.ToString();
+                    textAthleteRecruitCount.text = $"선수영입: {wrapper.AthleteRecruitCount.Value.ToString()}";
                 })
                 .AddTo(this);
             
@@ -104,7 +104,7 @@ namespace JYL
                 .Subscribe(_ =>
                 {
                     wrapper.CoachRecruitCount.Value++;
-                    textCoachRecruitCount.text = wrapper.CoachRecruitCount.Value.ToString();
+                    textCoachRecruitCount.text = $"선출코치영입: {wrapper.CoachRecruitCount.Value.ToString()}";
                 })
                 .AddTo(this);
             
@@ -112,7 +112,7 @@ namespace JYL
                 .Subscribe(_ =>
                 {
                     wrapper.AthleteRetireCount.Value++;
-                    textAthleteRetireCount.text = wrapper.AthleteRetireCount.Value.ToString();
+                    textAthleteRetireCount.text = $"선수은퇴: {wrapper.AthleteRetireCount.Value.ToString()}";
                 })
                 .AddTo(this);
         }
