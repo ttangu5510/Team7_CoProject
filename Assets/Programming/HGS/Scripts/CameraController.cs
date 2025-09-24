@@ -54,7 +54,6 @@ namespace SHG
         float deltaTime = panGesture.TimeStamps[count - 1] - panGesture.TimeStamps[count - 2];
         Vector2 deltaPos = panGesture.Positions[count - 1] - panGesture.Positions[count - 2];
         Vector2 velocity = deltaPos / deltaTime;
-        Debug.Log(velocity.magnitude);
         if (velocity.magnitude < CAMERA_PAN_DIST_THRESHOLD) {
           this.lastPanning.offset = Vector2.zero;
           return ;
