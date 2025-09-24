@@ -11,6 +11,7 @@ namespace JYL
     public interface IDomAthRepository
     {
         DomAthEntity FindByName(string name);
+        DomAthEntity FindById(int id);
         List<DomAthEntity> FindAll();
         List<DomAthEntity> FindAllRecruited();
         List<DomAthEntity> FindAllCanRecruit();
@@ -53,6 +54,11 @@ namespace JYL
         public DomAthEntity FindByName(string name) // 이름으로 선수 찾기 (id로 찾는게 더 나을 수도)
         {
             return  athleteDict.GetValueOrDefault(name);
+        }
+
+        public DomAthEntity FindById(int id)
+        {
+            return athleteDict.Values.Where(ent => ent.id == id) as DomAthEntity;
         }
         
         public List<DomAthEntity> FindAll() // 전체 선수들 리스트로 내보내기
