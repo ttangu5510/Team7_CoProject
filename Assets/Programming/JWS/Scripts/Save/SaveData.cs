@@ -248,8 +248,8 @@ namespace JWS
     public enum AchievementState
     {
         Unlocked, // 공개됨
-        Locked, // 미진행/잠금
         CanComplete, // 달성 완료 가능
+        Locked, // 미진행/잠금
         Completed, // 달성 완료
         Hidden // 숨겨짐
     }
