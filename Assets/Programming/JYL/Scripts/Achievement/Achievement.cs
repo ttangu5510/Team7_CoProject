@@ -9,11 +9,11 @@ namespace JYL
 	[Serializable]
     public class Achievement
     {
-        public readonly string ID;
-        public readonly string AchName;
-        public readonly string AchDescription;
-        public readonly int CompleteNumber;
-        public readonly string PrevAchievement;
+        public string ID;
+        public string AchName;
+        public string AchDescription;
+        public int CompleteNumber;
+        public string PrevAchievement;
         public AchievementCategory Category;
         public AchievementCondition Condition;
         public AchievementReward Reward;

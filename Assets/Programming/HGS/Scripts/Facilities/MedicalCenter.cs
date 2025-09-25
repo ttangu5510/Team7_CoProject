@@ -11,6 +11,7 @@ namespace SHG
       public string Name => "의료 센터";
       public int[] NumberOfAthletes;
       public int[] RecoveryAmounts;
+      
       public int[] MinimumFameForUpgrade;
       public int[] CostForUpgrade;
 
