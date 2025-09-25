@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
@@ -49,7 +49,7 @@ namespace SHG
         .AddTo(this);
       this.timeFlowController.WeekInYear
         .Subscribe(week => {
-          this.RecoverAthletes();
+          this.RecoverAtheletes();
           var currentSave = this.saveManager.GetCurrentSave();
           currentSave.time.week = week;
           currentSave.time.yearCycle = this.timeFlowController.Year.Value - ITimeFlowController.START_YEAR + 1;
@@ -68,7 +68,7 @@ namespace SHG
           .AddTo(this);
       }
     }
-    void RecoverAtheltes()
+    void RecoverAtheletes()
     {
       var saveData = this.saveManager.GetCurrentSave();
       int[] ids = saveData.treatmentAssign;
