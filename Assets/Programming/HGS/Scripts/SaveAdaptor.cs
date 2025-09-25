@@ -21,6 +21,8 @@ namespace SHG
     ITimeFlowController timeFlowController;
     [Inject] 
     IFacilitiesController facilityController;
+    [Inject]
+    DomAthService domAthService;
 
     void Awake()
     {
@@ -47,6 +49,7 @@ namespace SHG
         .AddTo(this);
       this.timeFlowController.WeekInYear
         .Subscribe(week => {
+          this.RecoverAtheltes();
           var currentSave = this.saveManager.GetCurrentSave();
           currentSave.time.week = week;
           currentSave.time.yearCycle = this.timeFlowController.Year.Value - ITimeFlowController.START_YEAR + 1;
@@ -63,6 +66,19 @@ namespace SHG
         facility.CurrentStage
           .Subscribe(stage => this.OnFacilityStageChanged(facility, stage))
           .AddTo(this);
+      }
+    }
+
+    void RecoverAtheltes()
+    {
+      var saveData = this.saveManager.GetCurrentSave();
+      int[] ids = saveData.treatmentAssign;
+      int recoveryAmount = facilityController.MedicalCenter.RecoveryAmount.Value > 0 ? facilityController.MedicalCenter.RecoveryAmount.Value: 1;
+      foreach (var athelte in this.domAthService.GetAllRecruitedAthleteList()) {
+        var index = Array.IndexOf(ids, athelte.id);
+        if (index != -1) {
+          this.domAthService.RecoverAthlete(athelte, recoveryAmount);
+        }
       }
     }
 

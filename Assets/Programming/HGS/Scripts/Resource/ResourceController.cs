@@ -72,6 +72,7 @@ namespace SHG
           int currentYear = this.timeFlowController.Year.Value;
           int yearSpan = currentYear - this.timeFlowController.Start.year ;
           this.AccountFinancialFor(season, yearSpan);
+          this.Fame.Value += IResourceController.FAME_COIN_INCOME_FOR_SEASON;
           });
     }
 
