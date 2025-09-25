@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +22,8 @@ namespace JYL
 
         [Header("Athlete Info")] 
         [SerializeField] private AthleteInfoPanel athleteInfoPanel;
-        
+
+
         // Init에 의해서 외부에 의해 주입
         private Dictionary<DomAthEntity, TrainingType> trainingDict;
         private DomAthEntity athlete; 
@@ -45,7 +46,7 @@ namespace JYL
             
             trainingType = TrainingType.None;
         }
-
+       
         public void Init(Dictionary<DomAthEntity, TrainingType> dict, TrainingType type, DomAthEntity athlete, RectTransform parent) // 생성될 때 호출
         {
             trainingDict = dict;
