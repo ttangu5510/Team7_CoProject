@@ -50,6 +50,13 @@ namespace JYL
                 .AsSingle()
                 .NonLazy();
             
+            // 업적 매니저
+            Container.Bind<AchievementManager>()
+                .To<AchievementManager>()
+                .FromComponentInHierarchy()
+                .AsSingle()
+                .NonLazy();
+            
 //            this.Container.Bind<ITimeFlowController>()
 //                .To<TimeFlowController>()
 //                .AsSingle()

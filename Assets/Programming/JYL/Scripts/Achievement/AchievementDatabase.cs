@@ -1,10 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace JYL
 {
-    [CreateAssetMenu(fileName = "AchievementDatabase", menuName = "Achievement")]
+    [CreateAssetMenu(fileName = "AchievementDatabase", menuName = "Achievement/Database")]
+    [Serializable]
     public class AchievementDatabase : ScriptableObject
     {
         public List<Achievement> achievements = new();
@@ -12,7 +14,8 @@ namespace JYL
         [ContextMenu("Set Achievements")]
         public void GetAchievements()
         {
-            var list = CsvReader.ReadAchievements("CSV/AchievementDataTable");
+            achievements.Clear();
+            var list = CsvReader.ReadAchievements("AchievementDataTable");
             foreach (var item in list)
             {
                 achievements.Add(new Achievement(item));

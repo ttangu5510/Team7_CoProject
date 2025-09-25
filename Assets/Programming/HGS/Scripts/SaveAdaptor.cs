@@ -49,7 +49,7 @@ namespace SHG
         .AddTo(this);
       this.timeFlowController.WeekInYear
         .Subscribe(week => {
-          this.RecoverAtheltes();
+          this.RecoverAthletes();
           var currentSave = this.saveManager.GetCurrentSave();
           currentSave.time.week = week;
           currentSave.time.yearCycle = this.timeFlowController.Year.Value - ITimeFlowController.START_YEAR + 1;
@@ -68,7 +68,6 @@ namespace SHG
           .AddTo(this);
       }
     }
-
     void RecoverAtheltes()
     {
       var saveData = this.saveManager.GetCurrentSave();
@@ -81,7 +80,6 @@ namespace SHG
         }
       }
     }
-
     void OnFacilityStageChanged(IFacility facility, int stage)
     {
       var save = this.saveManager.GetCurrentSave();

@@ -59,6 +59,8 @@ namespace SJL
         [Inject] private ITimeFlowController flowController;
         // 시설의 업그레이드 정도 적용
         [Inject] private IFacilitiesController facilitiesController;
+        // 업적 적용
+        [Inject] private AchievementManager achievementManager;
 
         public List<DomAthEntity> athleteList = new();
         private Dictionary<DomAthEntity,TrainingType> assignDict = new();
@@ -349,8 +351,8 @@ namespace SJL
         {
             // 시간 보내기
             flowController.ProgressWeek();
-            // TODO : ProgressWeek을 통해 UI 초기화 필요
             facilityPresenter.Hide();
+            achievementManager.wrapper.TrainCount.Value++; // 업적 카운트 적용
         }
     }
 }
