@@ -1,0 +1,196 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a40fe545c15a8344abab4b15fdd83ce, type: 3}
+  m_Name: AchievementDatabase
+  m_EditorClassIdentifier: 
+  achievements:
+  - ID: A1001
+    AchName: "\uCCAB \uBB34\uB300"
+    AchDescription: "\uCCAB \uACBD\uAE30\uC5D0 \uCC38\uAC00"
+    CompleteNumber: 1
+    PrevAchievement: null
+    Category: 0
+    Condition: 0
+    Reward: 0
+    State: 0
+  - ID: A1002
+    AchName: "\uBB34\uB300 \uC801\uC751"
+    AchDescription: "\uACBD\uAE30 7\uD68C \uCC38\uAC00"
+    CompleteNumber: 7
+    PrevAchievement: A1001
+    Category: 0
+    Condition: 0
+    Reward: 0
+    State: 1
+  - ID: A1003
+    AchName: "\uC2A4\uBB34 \uBC88\uC758 \uACBD\uD5D8"
+    AchDescription: "\uACBD\uAE30 20\uD68C \uCC38\uAC00"
+    CompleteNumber: 20
+    PrevAchievement: A1002
+    Category: 0
+    Condition: 0
+    Reward: 0
+    State: 1
+  - ID: A2001
+    AchName: "\uCCAB \uC2B9\uB9AC!"
+    AchDescription: "\uCCAB \uACBD\uAE30\uC5D0\uC11C \uC2B9\uB9AC\uD558\uB77C"
+    CompleteNumber: 1
+    PrevAchievement: null
+    Category: 1
+    Condition: 1
+    Reward: 0
+    State: 0
+  - ID: A2002
+    AchName: "\uC544\uD649 \uBC88\uC758 \uC6B0\uC2B9"
+    AchDescription: "\uACBD\uAE30 9\uD68C \uC2B9\uB9AC"
+    CompleteNumber: 9
+    PrevAchievement: A2001
+    Category: 1
+    Condition: 1
+    Reward: 0
+    State: 1
+  - ID: A2003
+    AchName: "\uC11C\uB978 \uBC88\uC758 \uC6B0\uC2B9"
+    AchDescription: "\uACBD\uAE30 30\uD68C \uC2B9\uB9AC"
+    CompleteNumber: 30
+    PrevAchievement: A2002
+    Category: 1
+    Condition: 1
+    Reward: 0
+    State: 1
+  - ID: A3001
+    AchName: "\uAFB8\uC900\uD55C \uB540\uBC29\uC6B8"
+    AchDescription: "\uD6C8\uB828 3\uD68C \uC644\uB8CC"
+    CompleteNumber: 3
+    PrevAchievement: null
+    Category: 2
+    Condition: 2
+    Reward: 0
+    State: 0
+  - ID: A3002
+    AchName: "\uB450 \uC790\uB9BF\uC218 \uB3CC\uD30C"
+    AchDescription: "\uD6C8\uB828 12\uD68C \uC644\uB8CC"
+    CompleteNumber: 12
+    PrevAchievement: A3001
+    Category: 2
+    Condition: 2
+    Reward: 0
+    State: 1
+  - ID: A4001
+    AchName: "\uC791\uC740 \uC7AC\uCDA9\uC804"
+    AchDescription: "\uD68C\uBCF5 3\uD68C \uC644\uB8CC"
+    CompleteNumber: 3
+    PrevAchievement: null
+    Category: 3
+    Condition: 3
+    Reward: 0
+    State: 0
+  - ID: A4002
+    AchName: "\uC9C0\uCE5C \uBAB8 \uB3CC\uBCF4\uAE30"
+    AchDescription: "\uD68C\uBCF5 9\uD68C \uC644\uB8CC"
+    CompleteNumber: 9
+    PrevAchievement: A4001
+    Category: 3
+    Condition: 3
+    Reward: 0
+    State: 1
+  - ID: A5001
+    AchName: "\uCCAB \uD2B9\uD6C8!"
+    AchDescription: "\uCCAB \uD2B9\uD6C8\uC744 \uC644\uB8CC\uD558\uB77C"
+    CompleteNumber: 1
+    PrevAchievement: null
+    Category: 4
+    Condition: 4
+    Reward: 0
+    State: 0
+  - ID: A7001
+    AchName: "\uD734\uAC8C\uC2E4 Lv.1 \uAC15\uD654"
+    AchDescription: "\uD734\uAC8C\uC2E4\uC744 1\uB2E8\uACC4 \uAC15\uD654\uD558\uB77C"
+    CompleteNumber: 1
+    PrevAchievement: null
+    Category: 6
+    Condition: 5
+    Reward: 0
+    State: 0
+  - ID: A7011
+    AchName: "\uC2A4\uCE74\uC6B0\uD2B8 \uC13C\uD130 Lv.1"
+    AchDescription: "\uC2A4\uCE74\uC6B0\uD2B8 \uC13C\uD130\uB97C 1\uB2E8\uACC4 \uAC15\uD654\uD558\uB77C"
+    CompleteNumber: 1
+    PrevAchievement: null
+    Category: 6
+    Condition: 6
+    Reward: 0
+    State: 0
+  - ID: A7021
+    AchName: "\uD6C8\uB828 \uC13C\uD130 Lv.1"
+    AchDescription: "\uD6C8\uB828 \uC13C\uD130\uB97C 1\uB2E8\uACC4 \uAC15\uD654\uD558\uB77C"
+    CompleteNumber: 1
+    PrevAchievement: null
+    Category: 6
+    Condition: 7
+    Reward: 0
+    State: 0
+  - ID: A7031
+    AchName: "\uC758\uB8CC \uC13C\uD130 Lv.1"
+    AchDescription: "\uC758\uB8CC \uC13C\uD130\uB97C 1\uB2E8\uACC4 \uAC15\uD654\uD558\uB77C"
+    CompleteNumber: 1
+    PrevAchievement: null
+    Category: 6
+    Condition: 8
+    Reward: 0
+    State: 0
+  - ID: A7041
+    AchName: "\uC219\uC18C Lv.1"
+    AchDescription: "\uC219\uC18C\uB97C 1\uB2E8\uACC4 \uAC15\uD654\uD558\uB77C"
+    CompleteNumber: 1
+    PrevAchievement: null
+    Category: 6
+    Condition: 9
+    Reward: 0
+    State: 0
+  - ID: A8001
+    AchName: "\uCCAB \uC601\uC785!"
+    AchDescription: "\uCCAB \uC120\uC218\uB97C \uC601\uC785\uD558\uB77C"
+    CompleteNumber: 1
+    PrevAchievement: null
+    Category: 7
+    Condition: 10
+    Reward: 0
+    State: 0
+  - ID: A8002
+    AchName: "\uC804\uB825 \uBCF4\uAC15"
+    AchDescription: "\uC120\uC218\uB97C 5\uBA85 \uC601\uC785\uD558\uB77C"
+    CompleteNumber: 5
+    PrevAchievement: A8001
+    Category: 7
+    Condition: 10
+    Reward: 1
+    State: 1
+  - ID: A9001
+    AchName: "\uC9C0\uB3C4\uC790\uC758 \uAE38"
+    AchDescription: "\uC740\uD1F4 \uD6C4 \uCF54\uCE58\uAC00 \uB41C \uC120\uC218 1\uBA85
+      \uBCF4\uC720"
+    CompleteNumber: 1
+    PrevAchievement: null
+    Category: 8
+    Condition: 11
+    Reward: 2
+    State: 0
+  - ID: A11001
+    AchName: "\uC791\uBCC4\uC758 \uC21C\uAC04"
+    AchDescription: "\uC120\uC218\uB97C 3\uBA85 \uC740\uD1F4\uC2DC\uD0B4"
+    CompleteNumber: 3
+    PrevAchievement: null
+    Category: 5
+    Condition: 12
+    Reward: 0
+    State: 0

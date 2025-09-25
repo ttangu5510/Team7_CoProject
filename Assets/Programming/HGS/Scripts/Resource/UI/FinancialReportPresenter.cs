@@ -91,6 +91,10 @@ namespace SHG
       this.view.SetRawTextByRole(
         (int)TextRole.TotalAmount,
         $"{report.Total} G");
+
+      this.view.SetRawTextByRole(
+        (int)TextRole.CoinLabel,
+        $"{IResourceController.FAME_COIN_INCOME_FOR_SEASON}개");
     }
 
     int GetIncome(IncomeType type, SeasonFinanceData report) 

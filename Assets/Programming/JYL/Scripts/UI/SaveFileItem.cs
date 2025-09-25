@@ -26,6 +26,10 @@ namespace JYL
 
         [Header("Set References")] 
         [SerializeField] private DeleteSavePUI deletePopUp;
+
+        [Header("Set MainScene")] 
+        [SerializeField] private string mainSceneName = "JYL_MainScene";
+        
         
         [Inject] private ISaveManager saveManager;
         [Inject] private IUiManager uiManager;
@@ -93,7 +97,7 @@ namespace JYL
                 Debug.Log("이거 널임");
             }
             saveManager.LoadProgress(save);
-            SceneManager.LoadSceneAsync("MMJ_MainScene");
+            SceneManager.LoadSceneAsync(mainSceneName);
         }
 
         private void OnClickDeleteButton(SaveData save)

@@ -15,6 +15,11 @@ namespace SHG
     IContenderController contenderController;
     IResourceController resourceController;
 
+    // TODO : 경기 참가 여부는 CurrentMatch의 Null체크로 함.
+    // 경기 결과는 CurrentMatch의 CurrentState의 값이 Ended가 됐을 때 가져옴.
+    // Ended 일 때, CurrentMatch의 UserResult의 GetHighestRank를 가져와야 함.
+    // Match의 Data의 IsSingleSports를 체크해서, false이면 종합경기임.
+    
     public ReactiveProperty<Match> CurrentMatch { get; private set; }
     public ReactiveProperty<Nullable<MatchData>> NextMatch { get; private set; }
     public ReactiveCollection<MatchData> ScheduledMatches { get; private set; }
