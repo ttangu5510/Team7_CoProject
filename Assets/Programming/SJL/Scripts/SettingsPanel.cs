@@ -120,6 +120,7 @@ namespace SJL
         {
             // 저장 구현
             Debug.Log("수동 저장!");
+            
         }
         private void OnLoad()
         {

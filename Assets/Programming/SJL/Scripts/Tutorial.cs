@@ -47,7 +47,7 @@ namespace SJL
             // 문장별로 켜고 싶은 highlightObjects 인덱스를 지정 (-1은 모두 비활성)
             highlightStepIdxs = new List<int[]>
             {
-                new int[] { 0, 1, 2, 3, 4 }, // tutorialGreetings
+                new int[] { -1, -1, -1, -1, -1 }, // tutorialGreetings
                 new int[] { 0, -1, 1, -1, -1, -1, -1, 2, -1, -1, 3, 4, 5, 6, 7 }, // tutorialMainScreen
                 new int[] { 8, 9, 10, 11, 12, 13 }, // tutorialfacilities
                 new int[] { -1, -1, -1, 14 }, // tutorialStartOfTheFirstGame
