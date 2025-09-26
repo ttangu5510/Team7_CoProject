@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using StatefulUI.Runtime.Core;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
@@ -11,6 +12,7 @@ namespace JYL
     public interface IDomAthRepository
     {
         DomAthEntity FindByName(string name);
+        DomAthEntity FindById(int id);
         List<DomAthEntity> FindAll();
         List<DomAthEntity> FindAllRecruited();
         List<DomAthEntity> FindAllCanRecruit();
@@ -54,6 +56,11 @@ namespace JYL
         {
             return  athleteDict.GetValueOrDefault(name);
         }
+
+        public DomAthEntity FindById(int id)
+        {
+            return athleteDict.Values.Where(ent => ent.id == id) as DomAthEntity;
+        }
         
         public List<DomAthEntity> FindAll() // 전체 선수들 리스트로 내보내기
         {
@@ -77,7 +84,23 @@ namespace JYL
 
         public void Update(DomAthEntity entity) // 선수의 변동사항을 세이브객체에 저장.
         {
-            saveManager.GetCurrentSave().FindAthlete(entity).UpdateStatus(entity); // 선수 세이브 객체 최신화
+            AthleteSave entitySave = saveManager.GetCurrentSave().FindAthlete(entity);
+            // 부상 체크. 엔티티는 최신화 되어서 부상에서 벗어난 경우, 치료배치 배열에서 제외시킴.
+            if (entitySave.state == AthleteState.Injured && entity.curState != AthleteState.Injured)
+            {
+                int[] array = saveManager.GetCurrentSave().treatmentAssign;
+                for (int i = 0; i < array.Length; i++)
+                {
+                    if (array[i] == entity.id)
+                    {
+                        array[i] = -1; 
+                    }
+                }
+            }
+            
+            entitySave.UpdateStatus(entity); // 선수 세이브 객체 최신화
+            
+            // 은퇴 체크
             if (entity.affiliation != AthleteAffiliation.일반선수 && entity.curState == AthleteState.Retired) // 만약 후보급 이상의 선수고 은퇴한 경우 
             {
                 // 세이브 파일에서 은퇴 나이(28세)와 코치 목록에 활성화.

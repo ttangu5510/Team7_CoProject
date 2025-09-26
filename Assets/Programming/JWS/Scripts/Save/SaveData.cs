@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using JYL;
+using UnityEngine;
 
 namespace JWS
 {
@@ -44,7 +45,8 @@ namespace JWS
         public List<QuestState> quests = new(); // 전체 목록 + 진행/클리어 여부
 
         // 업적
-        public List<AchievementState> achievements = new(); // 전체 목록 + 진행/달성
+        public List<AchievementSave> achievements = new(); // 전체 목록 + 진행/달성
+        public AchievementRecord achievementRecord = new(); // 업적 관련 카운터 관리.
 
         // 도감
         public List<EncyclopediaState> encyclopedia = new(); // 전체 목록 + 트로피/메달 보유 여부
@@ -52,13 +54,21 @@ namespace JWS
         // 코치 배치 배열. id를 저장함
         public int[] coachAssign;
 
+        // 치료실 슬롯 (A~H, 총 8칸)
+        public int[] treatmentAssign;
+        
         // ==== Init 메서드 ====
         public void Init(string userId, string userName, string clanName)
         {
             this.userId = userId;
             playerName = userName;
             this.clanName = clanName;
+
+            // 코치 슬롯 초기화
             coachAssign = new[] { -1, -1, -1, -1 };
+
+            // 치료실 슬롯 초기화 (8칸)
+            treatmentAssign = new[] { -1, -1, -1, -1, -1, -1, -1, -1 };
             
             // 시간 초기화
             time.yearCycle = 1;
@@ -84,6 +94,7 @@ namespace JWS
             quests.Clear();
             achievements.Clear();
             encyclopedia.Clear();
+            achievements = CreateAchievementSaves();
         }
         
         // 세이브데이터 객체 복사
@@ -92,6 +103,7 @@ namespace JWS
             SaveData newSave = this with
             {
                 coachAssign =  (int[])coachAssign?.Clone(), 
+                treatmentAssign = (int[])treatmentAssign?.Clone(),
                 time = time with { },
                 currencies = currencies with { },
                 buildings = buildings.ConvertAll(building => building with { }),
@@ -99,6 +111,7 @@ namespace JWS
                 coachSaves = coachSaves.ConvertAll(coachSave => coachSave with { }),
                 quests = quests.ConvertAll(quest => quest with { }),
                 achievements = achievements.ConvertAll(achievement => achievement with { }),
+                achievementRecord = achievementRecord with { },
                 encyclopedia = encyclopedia.ConvertAll(encyclopedia => encyclopedia with { })
             };
             return newSave;
@@ -117,6 +130,25 @@ namespace JWS
         public CoachSave FindCoach(int id)
         {
             return coachSaves.Find(coach => coach.id == id);
+        }
+
+        public AchievementSave FindAchievementSaveByID(string id) // ID를 통해 업적 세이브파일 찾음
+        {
+            Debug.Log($"업적리스트 확인{achievements.Count}__아이템 잇는지 확인.{id}__{achievements.Find(save => save.id == id) != null}");
+            return achievements.Find(save => save.id == id);
+        }
+        
+        private List<AchievementSave> CreateAchievementSaves() // 업적 최초 생성
+        {
+            Debug.Log("이거들어오는지 확인");
+            var list = CsvReader.ReadAchievements("AchievementDataTable");
+            List<AchievementSave> achievements = new List<AchievementSave>();
+            foreach (var data in list)
+            {
+                achievements.Add(new AchievementSave(data.ID,data.state));
+            }
+
+            return achievements;
         }
     }
 
@@ -196,17 +228,43 @@ namespace JWS
 /* ========================= 업적 ========================= */
 
     [Serializable]
-    public record AchievementState
+    public record AchievementSave
     {
         public string id; // 업적 ID(전체 목록 포함)
-        public AchievementProgress progress;
+        public AchievementState state;
+        public int progress = 0;
+        public string completeTime  = "";
+
+        public AchievementSave(string id, AchievementState state)
+        {
+            this.id = id;
+            this.state = state;
+            progress = 0;
+            completeTime = ""; // TODO: 업적 완료 시간 표기
+        }
     }
 
-    public enum AchievementProgress
+    [Serializable]
+    public enum AchievementState
     {
+        CanComplete, // 달성 완료 가능
+        Unlocked, // 공개됨
         Locked, // 미진행/잠금
-        InProgress, // 진행 중
-        Unlocked // 달성
+        Completed, // 달성 완료
+        Hidden // 숨겨짐
+    }
+    [Serializable]
+    public record AchievementRecord
+    {
+        // AchievementCondition 참고 필요함.
+        public int matchEntryCount; // 경기 참가
+        public int matchWinCount; // 우승
+        public int trainCount; // 훈련 진행
+        public int recoverCount; // 회복 진행
+        public int specialTrainCount; // 특훈 진행
+        public int athleteRecruitCount; // 선수 영입
+        public int coachRecruitCount; // 코치 영입
+        public int athleteRetireCount; // 선수 은퇴
     }
 
 /* ========================= 도감 ========================= */

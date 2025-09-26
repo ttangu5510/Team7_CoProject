@@ -12,10 +12,9 @@ namespace JYL
     public class DomAthService : MonoBehaviour
     {
         [Inject] private readonly IDomAthRepository repository;
-        private IDisposable subscription;
         
-        // TODO : 테스트 용 리스트
-        [SerializeField] public List<DomAthEntity> testList = new();
+        private IDisposable subscription;
+
         
         private void Awake()
         {
@@ -36,10 +35,6 @@ namespace JYL
                     .Subscribe(x => RetireAthlete(athlete)) // 은퇴 구독
                     .AddTo(this); // 서비스 객체 파괴 시 이벤트 구독 해제
             }
-            
-            // TODO : 테스트 리스트
-            testList = GetAllRecruitedAthleteList();
-
         }
 
         #region 선수 목록
@@ -94,7 +89,7 @@ namespace JYL
             repository.Delete(athlete);
         }
 
-        public void AhtleteAgeUpdate(DomAthEntity entity) // 선수 나이 업데이트
+        public void AthleteAgeUpdate(DomAthEntity entity) // 선수 나이 업데이트
         {
             entity.GetAge();
             repository.Update(entity);
@@ -148,11 +143,12 @@ namespace JYL
         
         #region 선수 회복
         // 선수가 회복하는 함수. 파라매터만 변경 하는 것이기 때문에, 결과 처리는 UI에서 필요함. 마찬가지로, 부상 상태가 아니면 수행 못하게 해야함
-        public void RecoverAthlete(DomAthEntity athlete, int  amount = 1)
+        public void RecoverAthlete(DomAthEntity athlete, int amount = 0)
         {
             if (athlete.curState == AthleteState.Injured && athlete.leftInjury > 0)
             {
-                athlete.RecoverAthlete(amount); // 리커버리. 부상을 한 턴 감소.
+                athlete.RecoverAthlete(); // 리커버리. 부상을 한 턴 감소.
+                athlete.stats.SetFatigue(-amount);
                 repository.Update(athlete); // 진행상황을 선수의 세이브 객체에 반영
                 Debug.Log($"{athlete.entityName} 부상 회복");
             }

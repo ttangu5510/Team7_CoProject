@@ -121,6 +121,7 @@ namespace SHG
       return (point);
     }
 
+    // TODO : 업적에서 필요한 값.
     public int GetHighestRank()
     {
       if (this.Type == ResultType.Domestic) {
