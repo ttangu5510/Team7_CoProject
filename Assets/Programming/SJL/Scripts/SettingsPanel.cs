@@ -34,6 +34,8 @@ namespace SJL
         [Header("오디오 믹서")]
         [SerializeField] private AudioMixer audioMixer;
 
+        UIManager UIManager;
+
         private void Awake()
         {
             // 볼륨 슬라이더/토글 이벤트 연결
@@ -120,7 +122,6 @@ namespace SJL
         {
             // 저장 구현
             Debug.Log("수동 저장!");
-            
         }
         private void OnLoad()
         {
@@ -131,7 +132,7 @@ namespace SJL
         {
             // 타이틀 화면 이동
             Debug.Log("타이틀 화면 이동!");
-            
+            SceneManager.LoadScene("JYL_TIlteScene");
         }
 
         // ---- 팝업 ----
