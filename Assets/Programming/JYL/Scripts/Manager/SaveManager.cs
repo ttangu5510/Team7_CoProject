@@ -371,6 +371,27 @@ namespace JYL
         }
         #endregion
         
+        #region 휴게실(라운지) 배치
+        /// 현재 휴게실에 배치된 선수 ID 배열 반환
+        public int[] GetAssignedRestAthletes()
+        {
+            return (int[])curSave.restAssign.Clone();
+        }
+
+        /// 휴게실 슬롯 전체를 갱신
+        public void SetAssignedRestAthletes(int[] assignedAthletes)
+        {
+            curSave.restAssign = (int[])assignedAthletes.Clone();
+        }
+
+        /// 휴게실 전체 리셋 (모든 슬롯 해제)
+        public void ResetRestAssign()
+        {
+            for (int i = 0; i < curSave.restAssign.Length; i++)
+                curSave.restAssign[i] = -1;
+        }
+        #endregion
+        
         #region 리스트 추출
         // 세이브 데이터 리스트 반환
         public List<SaveData> GetAllSave()

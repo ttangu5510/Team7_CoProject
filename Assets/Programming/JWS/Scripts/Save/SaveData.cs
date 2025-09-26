@@ -57,6 +57,9 @@ namespace JWS
         // 치료실 슬롯 (A~H, 총 8칸)
         public int[] treatmentAssign;
         
+        // 휴게실 슬롯 (A~H, 총 8칸)
+        public int[] restAssign;
+        
         // ==== Init 메서드 ====
         public void Init(string userId, string userName, string clanName)
         {
