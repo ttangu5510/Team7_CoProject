@@ -68,7 +68,7 @@ namespace SHG
           .AddTo(this);
       }
     }
-    void RecoverAtheletes()
+    void RecoverAthletes()
     {
       var saveData = this.saveManager.GetCurrentSave();
       int[] ids = saveData.treatmentAssign;
