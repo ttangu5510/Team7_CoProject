@@ -3,6 +3,7 @@ using UniRx;
 using Zenject;
 using EditorAttributes;
 using Cysharp.Threading.Tasks;
+using Unity.VisualScripting;
 
 namespace SHG
 {
@@ -22,8 +23,9 @@ namespace SHG
     Rigidbody cameraFollowRb;
     (float time, Vector2 offset) lastPanning;
 
-    void Start() {
-      this.cameraFollowRb = this.cameraFollow.GetComponent<Rigidbody>();
+    void Start()
+    {
+      this.cameraFollowRb = this.cameraFollow.GetOrAddComponent<Rigidbody>();
       this.cameraMoveFactor = this.cameraMoveVelocity * CAMERA_PAN_RATIO;
       this.touchController.OnPanning.Subscribe(this.TouchController_OnPanning)
       .AddTo(this);
