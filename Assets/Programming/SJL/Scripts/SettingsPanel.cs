@@ -74,7 +74,7 @@ namespace SJL
 
         public void Start()
         {
-            SoundManager.Instance.PlayMusic(0); // 시작시 배경음 재생
+            //SoundManager.Instance.PlayMusic(0); // 시작시 배경음 재생
         }
 
         // 볼륨 슬라이더 연동 (AudioMixer Exposed Parameters와 연동 권장)

@@ -14,17 +14,19 @@ namespace SJL
         [SerializeField] private TextMeshProUGUI tutorialText;  // 대사 출력 텍스트
         [SerializeField] private GameObject[] highlightObjects; // 하이라이트 대상 UI들
         [SerializeField] private Button clickAreaButton;        // 클릭 영역(이미지 혹은 투명 버튼)
+        [SerializeField] private Image nextImage;               // 다음 대사로 넘어가는 이미지(화살표 등)
 
-        public float lineDelay = 1f; // 대사 한줄 출력 간격
+        public float lineDelay = 2f; // 대사 한줄 출력 간격
 
-        private List<string[]> tutorialSteps;
-        private int currentStepIdx = 0;
-        private Coroutine currentRoutine;
+        private List<string[]> tutorialSteps;   // 모든 튜토리얼 단계 배열 리스트
+        private List<int[]> highlightStepIdxs;  // 각 단계별 하이라이트 대상 인덱스 배열 리스트
+        private int currentStepIdx = 0; // 현재 튜토리얼 단계 인덱스
+        private Coroutine currentRoutine;   // 현재 실행중인 코루틴 참조
         private bool waitForClick = false; // 대사 끝나고 클릭 대기 상태
 
         private void Awake()
         {
-            clickAreaButton.onClick.AddListener(OnClickAreaClick);
+            clickAreaButton.onClick.AddListener(OnClickAreaClick);  // 클릭 이벤트 연결
         }
 
         private void Start()
@@ -42,19 +44,32 @@ namespace SJL
                 // 필요하면 더 추가
             };
 
+            // 문장별로 켜고 싶은 highlightObjects 인덱스를 지정 (-1은 모두 비활성)
+            highlightStepIdxs = new List<int[]>
+            {
+                new int[] { 0, 1, 2, 3, 4 }, // tutorialGreetings
+                new int[] { 0, -1, 1, -1, -1, -1, -1, 2, -1, -1, 3, 4, 5, 6, 7 }, // tutorialMainScreen
+                new int[] { 8, 9, 10, 11, 12, 13 }, // tutorialfacilities
+                new int[] { -1, -1, -1, 14 }, // tutorialStartOfTheFirstGame
+                new int[] { -1, -1, -1, -1 }, // tutorialEndOfTheFirstGame
+                new int[] { -1, -1, -1, 15 }, // tutorialFinalCompetition
+                new int[] { -1, -1, -1, -1, -1, -1 }, // tutorialSecondYearStartAnnouncement
+            };
+
             // 시작시 튜토리얼 표시
             ShowStep(currentStepIdx);
         }
 
-        public void ShowStep(int stepIdx)
+        public void ShowStep(int stepIdx)   // 특정 단계의 튜토리얼 표시
         {
-            if (currentRoutine != null)
-                StopCoroutine(currentRoutine);
-            waitForClick = false;
-            currentRoutine = StartCoroutine(RevealLines(tutorialSteps[stepIdx]));
+            if (currentRoutine != null) // 기존 코루틴이 실행중이면 중지
+                StopCoroutine(currentRoutine);  // 기존 코루틴 중지
+            waitForClick = false;   // 클릭 대기 상태 해제
+            nextImage.gameObject.SetActive(false); // 다음 화살표는 라인 출력 중엔 숨김
+            currentRoutine = StartCoroutine(RevealLines(tutorialSteps[stepIdx], highlightStepIdxs[stepIdx]));   // 해당 단계 코루틴 시작
         }
 
-        IEnumerator RevealLines(string[] lines)    // 각 줄을 순차적으로 표시
+        private IEnumerator RevealLines(string[] lines, int[] highlightIndices)    // 각 줄을 순차적으로 표시
         {
             //tutorialText.text = ""; // 텍스트 초기화
             //for (int i = 0; i < lines.Length; i++)  // 각 줄 표시
@@ -64,25 +79,24 @@ namespace SJL
             //    yield return new WaitForSeconds(lineDelay); // 지연
             //}
 
-            List<string> shownLines = new List<string>();
-            tutorialText.text = "";
+            List<string> shownLines = new List<string>();   // 현재 표시된 줄들
+            tutorialText.text = ""; // 텍스트 초기화
 
-            for (int i = 0; i < lines.Length; i++)
+            for (int i = 0; i < lines.Length; i++)  // 각 줄 표시
             {
                 // 새 줄 추가
                 shownLines.Add(lines[i]);
-
                 // 최대 4줄로 제한
-                if (shownLines.Count > 4)
+                if (shownLines.Count > 1)
                     shownLines.RemoveAt(0);
-
                 // 텍스트 UI에 표시
                 tutorialText.text = string.Join("\n", shownLines);
                 // 해당 줄에 맞는 UI 하이라이트
-                HighlightUI(i);
+                HighlightUI(highlightIndices[i]);
                 yield return new WaitForSeconds(lineDelay); // 지연
             }
             waitForClick = true; // 대사 모두 표시 후 다음 진입 대기 모드
+            nextImage.gameObject.SetActive(true); // 다 끝나면 클릭 안내 화살표 보이게
 
             // 현 배열이 끝나면 다음 배열 단계로 자동 진행
             //currentStepIdx++;   // 다음 단계로 인덱스 증가
@@ -96,34 +110,55 @@ namespace SJL
             //}
         }
 
-        // 텍스트 UI가 클릭되면 실행됨
-        public void OnClickAreaClick()
+        // 모든 UI는 항상 활성화하고, 강조 idx만 노란 테두리
+        private void HighlightUI(int highlightIdx)
         {
-            if (!waitForClick)
+            for (int i = 0; i < highlightObjects.Length; i++)
+            {
+                highlightObjects[i].SetActive(true); // 항상 보임
+
+                var outline = highlightObjects[i].GetComponent<Outline>();
+                if (outline != null)
+                {
+                    outline.effectColor = Color.yellow; // 테두리 색은 노란색
+                    outline.enabled = (i == highlightIdx); // 강조할 idx만 켬
+                }
+            }
+        }
+
+        // 텍스트 UI가 클릭되면 실행됨
+        public void OnClickAreaClick()  // 클릭 영역 클릭 이벤트
+        {
+            if (!waitForClick)  // 대기 상태가 아니면 무시
                 return;
 
-            currentStepIdx++;
-            if (currentStepIdx < tutorialSteps.Count)
-                ShowStep(currentStepIdx);
+            nextImage.gameObject.SetActive(false); // 클릭하면 다시 숨김
+            currentStepIdx++;   // 다음 단계로 인덱스 증가
+
+            if (currentStepIdx < tutorialSteps.Count)   // 다음 단계가 있으면
+            {
+                ShowStep(currentStepIdx);   // 다음 단계 표시
+            }
             else
             {
-                // 모든 튜토리얼 종료 시 처리 (예: 팝업 닫기)
+                // 종료 시 모두 활성화, 강조 없음
+                foreach (var obj in highlightObjects)
+                {
+                    obj.SetActive(true);
+                    var outline = obj.GetComponent<Outline>();
+                    if (outline != null)
+                        outline.enabled = false;
+                }
+                gameObject.SetActive(false);
                 Debug.Log("튜토리얼 종료");
             }
         }
 
-        private void HighlightUI(int idx)
-        {
-            for (int i = 0; i < highlightObjects.Length; i++)
-            {
-                highlightObjects[i].SetActive(i == idx);
-            }
-        }
 
         // 각 단계별 튜토리얼 텍스트 배열
         private string[] tutorialGreetings = new string[]
         {
-            "안녕하세요! 000 단장님! (NPC 대화창 첫 등장)",
+            "안녕하세요! 000 단장님!",
             "저는 선수단 매니저를 맡고 있는 '이유리'라고 합니다.",
             "잘 부탁드려요!",
             "본격적인 단장 업무를 수행하시기 전에 간략한 정보를 알려드려도 괜찮을까요?",
@@ -131,30 +166,30 @@ namespace SJL
         };
         private string[] tutorialMainScreen = new string[]
         {
-            "여기서는 훈련이나 경기를 진행할 때마다 시간이 지나갑니다. (시간 UI 하이라이트, 반짝임)",
+            "여기서는 훈련이나 경기를 진행할 때마다 시간이 지나갑니다.",
             "계절마다 10주씩, 1년에 총 40주이니 유념해주세요.",
-            "여기에는 재화가 표시됩니다. (재화 UI 하이라이트, 반짝임)",
+            "여기에는 재화가 표시됩니다.",
             "왼쪽부터 명성, 특훈 코인, 골드입니다.",
             "명성은 시설 업그레이드와 코치 영입과 관련된 재화입니다.",
             "특훈 코인은 특정 선수의 강도 높은 훈련을 위한 재화입니다.",
             "골드는 시설 업그레이드와 선수 영입 등에 사용되는 재화입니다.",
-            "여기에는 경기 일정이 표시됩니다. (경기 일정 UI 하이라이트, 반짝임)",
+            "여기에는 경기 일정이 표시됩니다.",
             "1년동안 펼쳐질 경기 일정들이 보여지는 공간입니다.",
             "드래그하여 일정을 확인하고, 클릭하면 대회 참가 신청 화면이 등장합니다.",
-            "여기는 정보, 캐릭터, 도감, 퀘스트/업적을 확인할 수 있습니다. (하단 UI 아이콘 전체 하이라이트, 반짝임)",
-            "정보는 선수단의 전반적인 정보를 확인할 수 있습니다. (정보 아이콘 UI 하이라이트, 반짝임)",
-            "캐릭터는 보유 선수와 보유 코치를 확인할 수 있습니다. (캐릭터 아이콘 UI 하이라이트, 반짝임)",
-            "도감에서는 획득 또는 미획득한 메달, 트로피, 선수들을 확인할 수 있습니다. (도감 아이콘 UI 하이라이트, 반짝임)",
-            "퀘스트/업적에서는 퀘스트, 업적의 진행 상황과 달성 여부를 확인할 수 있습니다. (퀘스트/업적 아이콘 UI 하이라이트 ,반짝임)",
+            "여기는 정보, 캐릭터, 도감, 퀘스트/업적을 확인할 수 있습니다.",
+            "정보는 선수단의 전반적인 정보를 확인할 수 있습니다.",
+            "캐릭터는 보유 선수와 보유 코치를 확인할 수 있습니다.",
+            "도감에서는 획득 또는 미획득한 메달, 트로피, 선수들을 확인할 수 있습니다.",
+            "퀘스트/업적에서는 퀘스트, 업적의 진행 상황과 달성 여부를 확인할 수 있습니다.",
         };
         private string[] tutorialfacilities = new string[]
         {
-            "선수단 시설은 숙소, 휴게실, 훈련 센터, 의료 센터, 스카우트 센터가 있습니다. (시설 전체, 하이라이트, 반짝임)",
-            "숙소는 선수단 수용 인원을 관리합니다. (숙소 건물 하이라이트, 반짝임)",
-            "휴게실은 선수들의 피로도를 줄여주는 시설입니다. (휴게실 건물 하이라이트, 반짝임)",
-            "훈련 센터는 선수를 훈련시키고 육성하는 시설입니다. (훈련 센터 건물 하이라이트, 반짝임)",
-            "의료 센터는 부상 당한 선수를 회복시키는 시설입니다. (의료 센터 건물 하이라이트, 반짝임)",
-            "스카우트 센터는 선수와 코치를 영입할 수 있는 시설입니다. (스카우트 센터 건물 하이라이트, 반짝임)",
+            "선수단 시설은 숙소, 휴게실, 훈련 센터, 의료 센터, 스카우트 센터가 있습니다.",
+            "숙소는 선수단 수용 인원을 관리합니다.",
+            "휴게실은 선수들의 피로도를 줄여주는 시설입니다.",
+            "훈련 센터는 선수를 훈련시키고 육성하는 시설입니다.",
+            "의료 센터는 부상 당한 선수를 회복시키는 시설입니다.",
+            "스카우트 센터는 선수와 코치를 영입할 수 있는 시설입니다.",
         };
         private string[] tutorialStartOfTheFirstGame = new string[]
         {
