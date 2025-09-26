@@ -15,7 +15,6 @@ namespace JYL
     public class AchievementManager : MonoBehaviour
     {
         [Header("Set References")]
-        [SerializeField] private RectTransform parentContent;
         [SerializeField] private AchievementNotification notification;
         [SerializeField] private AchievementDatabase databaseSo;
         
