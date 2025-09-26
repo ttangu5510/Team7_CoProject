@@ -77,44 +77,77 @@ namespace JYL
             fatigue = 0;
         }
 
-        public AthleteStats ApplyTrainValue(in Ability ability, int amount, int maxStat)
+        public AthleteStats ApplyTrainValue(in Ability firstAbility, in Ability secondAbility, int amount, int maxStat)
         {
             AthleteStats newStat = new(this.health,this.quickness,this.flexibility,this.technic,this.speed,this.balance);
-            switch (ability)
+            switch (firstAbility)
             {
                 case Ability.Health:
                     health += amount;
-                    speed += amount;
                     if (health >= maxStat) health = maxStat;
-                    if (speed >= maxStat) speed = maxStat;  
                     break;
                 case Ability.Quickness:
                     quickness += amount;
-                    health += amount;
                     if(quickness >= maxStat) quickness = maxStat;
-                    if(health >= maxStat)  health = maxStat;
                     break;
                 case Ability.Flexibility:
                     flexibility += amount;
-                    technic += amount;
                     if (flexibility >= maxStat) flexibility = maxStat;
-                    if (technic >= maxStat) technic = maxStat;
                     break;
                 case Ability.Balance:
                     balance += amount;
-                    speed += amount;
                     if (balance >= maxStat) balance = maxStat;
+                    break;
+                case Ability.Technic:
+                    technic += amount;
+                    if (technic >= maxStat) technic = maxStat;
+                    break;
+                case Ability.Speed:
+                    speed += amount;
                     if (speed >= maxStat) speed = maxStat;
                     break;
-                // case AthleteStatus.Technic:
-                //     technic += amount;
-                //     if (technic >= maxStat) technic = maxStat;
-                //     break;
-                // case AthleteStatus.Speed:
-                //     speed += amount;
-                //     if (speed >= maxStat) speed = maxStat;
-                //     break;
             }
+
+            switch (secondAbility)
+            {
+                case Ability.Health:
+                    health += amount;
+                    if (health >= maxStat) health = maxStat;
+                    break;
+                case Ability.Quickness:
+                    quickness += amount;
+                    if(quickness >= maxStat) quickness = maxStat;
+                    break;
+                case Ability.Flexibility:
+                    flexibility += amount;
+                    if (flexibility >= maxStat) flexibility = maxStat;
+                    break;
+                case Ability.Balance:
+                    balance += amount;
+                    if (balance >= maxStat) balance = maxStat;
+                    break;
+                case Ability.Technic:
+                    technic += amount;
+                    if (technic >= maxStat) technic = maxStat;
+                    break;
+                case Ability.Speed:
+                    speed += amount;
+                    if (speed >= maxStat) speed = maxStat;
+                    break;
+            }
+            return newStat;
+        }
+
+        public AthleteStats ApplySpecialTrainValue(in int times, in int value, in int maxStat)
+        {
+            int newHealth = Mathf.Clamp(health + value * times, 0, maxStat);
+            int newQuickness = Mathf.Clamp(quickness + value * times, 0, maxStat);
+            int newFlexibility = Mathf.Clamp(flexibility + value * times, 0, maxStat);
+            int newTechnic = Mathf.Clamp(technic + value * times, 0, maxStat);
+            int newSpeed = Mathf.Clamp(speed + value * times, 0, maxStat);
+            int newBalance = Mathf.Clamp(balance + value * times, 0, maxStat);
+            
+            AthleteStats newStat = new(newHealth, newQuickness, newFlexibility, newTechnic, newSpeed, newBalance);
             return newStat;
         }
 

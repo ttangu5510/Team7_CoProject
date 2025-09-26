@@ -4,6 +4,7 @@ using JYL;
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
+using System.Collections;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -14,6 +15,8 @@ public class UIManager : MonoBehaviour, IUiManager
 
     // Rx 공개
     public static readonly BoolReactiveProperty IsUIOpenRx = new BoolReactiveProperty(false);
+
+    public static HashSet<string> isUIOpen { get; private set; }
 
     private static UIManager instance;
     public static UIManager Instance => instance;
@@ -60,6 +63,7 @@ public class UIManager : MonoBehaviour, IUiManager
         if (instance == null) { instance = this; DontDestroyOnLoad(gameObject); }
         else { Destroy(gameObject); return; }
 
+        isUIOpen = new();
         // 초기 바인딩
         AutoBindPanels();
         AutoBindButtons();
@@ -185,7 +189,7 @@ public class UIManager : MonoBehaviour, IUiManager
             kv.Value?.SetActive(kv.Key == key);
 
         currentPanelKey = key;
-
+        //isUIOpen.Add(key);
         UpdateUIState();
     }
 
@@ -413,15 +417,30 @@ public class UIManager : MonoBehaviour, IUiManager
         bool hasPopup = popupStack.Count > 0;
         bool hasToast = activeToasts.Count > 0;
 
-        IsUIOpenRx.Value = hasPanel || hasPopup || hasToast;
+
+        IsUIOpenRx.Value = hasPanel || hasPopup || hasToast || isUIOpen.Count > 0 ;
         UIManager.IsUIOpen = IsUIOpenRx.Value;
     }
     #endregion
 
 
 
- 
+    
+    public void AddHashSet<T>(T manjun)
+    {
+        string a = manjun.GetType().Name;
+        isUIOpen.Add(a);
+        IsUIOpen = true;
+        IsUIOpenRx.Value = true;
+    }
 
+    public void RemoveHashSet<T>(T manjun)
+    {
+        string a = manjun.GetType().Name;
+        isUIOpen.Remove(a);
+
+        UpdateUIState();
+    }
 
 
     public void TestPopup(int num)

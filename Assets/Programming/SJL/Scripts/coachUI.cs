@@ -31,7 +31,7 @@ namespace SJL
         private int recruitSuccessRate; // 영입 성공 확률
 
         [Inject] private IResourceController resourceController;
-        [Inject] private CoachService coachService;
+        [Inject] private CoachService coachService; 
 
 
         public void SetPlayer(CoachEntity coach)
@@ -91,7 +91,7 @@ namespace SJL
             if (dice <= recruitSuccessRate)
             {
                 //coachData.Recruit();
-                coachService.RecruitCoach(coachData.entityName);
+                coachService.RecruitCoach(coachData);
                 Debug.Log($"{nameText.text} 영입 성공!");
                 resourceController.SpendMoney(recruitCost, ExpensesType.Scout);
                 Debug.Log($"남은 돈: {resourceController.Money.Value}");
