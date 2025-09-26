@@ -26,6 +26,7 @@ namespace JWS
         [Header("Panels")]
         [SerializeField] private GameObject restPanelPUI;     // 팝업 루트(블로커)
         [SerializeField] private RestListPanel restListPanel; // 후보 리스트 패널
+        [SerializeField] private InjureAthInfoPanel injureAthInfoPanel;
 
         private CompositeDisposable _enableCd;
         private readonly CompositeDisposable _wireCd = new();
