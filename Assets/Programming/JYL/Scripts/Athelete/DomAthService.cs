@@ -15,8 +15,6 @@ namespace JYL
         
         private IDisposable subscription;
 
-        // TODO : 테스트 용 리스트
-        [SerializeField] public List<DomAthEntity> testList = new();
         
         private void Awake()
         {
@@ -37,10 +35,6 @@ namespace JYL
                     .Subscribe(x => RetireAthlete(athlete)) // 은퇴 구독
                     .AddTo(this); // 서비스 객체 파괴 시 이벤트 구독 해제
             }
-            
-            // TODO : 테스트 리스트
-            testList = GetAllRecruitedAthleteList();
-
         }
 
         #region 선수 목록
