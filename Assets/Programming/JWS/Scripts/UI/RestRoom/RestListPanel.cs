@@ -55,7 +55,7 @@ namespace JWS
             gameObject.SetActive(true);
             Clear();
 
-            var list = allCandidates?.Where(a => a.curState != AthleteState.Injured && a.fatigue > 0).ToList() ?? new();
+            var list = allCandidates?.Where(a => a.curState != AthleteState.Injured && a.stats.fatigue > 0).ToList() ?? new();
             foreach (var ath in list)
             {
                 var ui = Instantiate(itemPrefab, content, false);

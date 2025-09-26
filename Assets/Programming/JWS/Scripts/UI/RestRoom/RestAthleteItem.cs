@@ -32,7 +32,7 @@ namespace JWS
         {
             _ath = ath;
             if (nameText)    nameText.text = ath.entityName;
-            if (fatigueText) fatigueText.text = $"Fatigue {ath.fatigue}";
+            if (fatigueText) fatigueText.text = $"Fatigue {ath.stats.fatigue}";
             SetAssigned(assigned);
         }
 
