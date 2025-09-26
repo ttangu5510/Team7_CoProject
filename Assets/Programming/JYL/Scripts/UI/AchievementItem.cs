@@ -115,7 +115,7 @@ namespace JYL
                     slider.value = 1f;
                     break;
                 case AchievementState.Completed:
-                    canvasGroup.alpha = 0.3f;
+                    canvasGroup.alpha = 0.7f;
                     slider.value = 1f;
                     break;
             }
@@ -127,6 +127,8 @@ namespace JYL
             rewardUI.gameObject.SetActive(true);
             rewardUI.Init(achieveController);
             _ = rewardUI.ClosePopUp();
+            // TODO : 여기서 업적 완료에 대한 이벤트 발행 후, 패널 쪽에서
+            // 후행 업적을 찾아서 UpdateUI 해줘야 함.
         }
     } 
 }
