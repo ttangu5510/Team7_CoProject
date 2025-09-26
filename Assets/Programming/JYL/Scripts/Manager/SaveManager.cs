@@ -19,6 +19,8 @@ namespace JYL
         private static string savePath = Application.persistentDataPath + "/Save";
         #endif
 
+        private AchievementWrapper achievementWrapper;
+        
         private List<SaveData> saves = new();
         private SaveData curSave;
 
@@ -81,6 +83,7 @@ namespace JYL
             save.Init(uid,playerName,clanName);
             saves.Add(save);
             curSave = save;
+            achievementWrapper = new(curSave.achievementRecord);
             AutoSave();
         }
 
@@ -174,11 +177,13 @@ namespace JYL
         {
             SaveData newSave = save.CloneSave();
             curSave = newSave;
+            achievementWrapper = new AchievementWrapper(curSave.achievementRecord);
         }
 
         public void LoadProgress(string fileName) // 이름으로 불러올 수 있게 만듦. 어떤 걸 쓰게 될 지 모름.
         {
             curSave = saveDataByName[fileName];
+            achievementWrapper = new AchievementWrapper(curSave.achievementRecord);
         }
         
         #endregion
@@ -208,6 +213,7 @@ namespace JYL
         {
             AthleteSave athlete = new(entity);
             curSave.athleteSaves.Add(athlete);
+            achievementWrapper.AthleteRecruitCount.Value++;
         }
 
         // 은퇴는 파라매터만 바뀌고, 저장됨
@@ -215,6 +221,7 @@ namespace JYL
         {
             AthleteSave athlete = curSave.FindAthlete(entity);
             athlete.state = AthleteState.Retired;
+            achievementWrapper.AthleteRetireCount.Value++;
         }
         public void OutAthlete(DomAthEntity entity) //선수 방출. 세이브 객체에서 삭제
         {
@@ -260,6 +267,8 @@ namespace JYL
                     CoachSave save = new(entity);
                     curSave.coachSaves.Add(save);
                 }
+                // 업적 카운트 적용
+                achievementWrapper.CoachRecruitCount.Value++;
             }
         }
 
@@ -341,6 +350,27 @@ namespace JYL
         }
         #endregion
         
+        #region 치료실 배치
+        /// 현재 치료실에 배치된 선수 ID 배열 반환
+        public int[] GetAssignedTreatmentAthletes()
+        {
+            return (int[])curSave.treatmentAssign.Clone();
+        }
+        
+        /// 치료실 슬롯 전체를 갱신
+        public void SetAssignedTreatmentAthletes(int[] assignedAthletes)
+        {
+            curSave.treatmentAssign = (int[])assignedAthletes.Clone();
+        }
+        
+        /// 치료실 전체 리셋 (모든 슬롯 해제)
+        public void ResetTreatmentAssign()
+        {
+            for (int i = 0; i < curSave.treatmentAssign.Length; i++)
+                curSave.treatmentAssign[i] = -1;
+        }
+        #endregion
+        
         #region 리스트 추출
         // 세이브 데이터 리스트 반환
         public List<SaveData> GetAllSave()
@@ -371,6 +401,13 @@ namespace JYL
                 return null;
             }
             return autoSave;
+        }
+        #endregion
+        
+        #region 업적
+        public AchievementWrapper GetAchievementWrapper() // 업적 Reactive 전달.
+        {
+            return achievementWrapper;
         }
         #endregion
     }

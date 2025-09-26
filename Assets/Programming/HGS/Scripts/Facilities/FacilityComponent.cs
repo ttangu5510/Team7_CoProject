@@ -16,8 +16,6 @@ namespace SHG
 
     [SerializeField]
     IFacility.FacilityType facilityType;
-    [SerializeField] [Required]
-    Transform model;
     int layer;
 
     // Start is called before the first frame update
