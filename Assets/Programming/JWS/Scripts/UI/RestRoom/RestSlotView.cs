@@ -1,9 +1,9 @@
 using System;
+using TMPro;
 using UniRx;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using TMPro;
+using UnityEngine.EventSystems;
 
 namespace JWS
 {
@@ -36,11 +36,11 @@ namespace JWS
             img.color = new Color(1, 1, 1, 0.001f);
         }
 
-        public void ShowAssigned(DomAthEntity ath)
+        public void ShowAssigned(JYL.DomAthEntity ath)
         {
             SetState(player:true);
             if (nameText)     nameText.text = ath.entityName;
-            if (fatigueText)  fatigueText.text = $"Fatigue {ath.fatigue}";
+            if (fatigueText)  fatigueText.text = $"피로도 {ath.stats.fatigue}";
             _isLocked = _isNoAvailable = false;
         }
 
