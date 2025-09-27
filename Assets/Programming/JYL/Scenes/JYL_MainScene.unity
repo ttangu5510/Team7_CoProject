@@ -1456,25 +1456,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &1056358438 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1281120978255517944, guid: c6d8748d62735b94daa0717c3cbf49ca,
-    type: 3}
-  m_PrefabInstance: {fileID: 1718212500}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1056358440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1056358438}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcd39053cb1805d44b3dada6eed7295c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  coachCountText: {fileID: 538225892}
 --- !u!1001 &1121361735
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1586,25 +1567,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1183489496 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7403839412852567571, guid: c6d8748d62735b94daa0717c3cbf49ca,
-    type: 3}
-  m_PrefabInstance: {fileID: 1718212500}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1183489500
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1183489496}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80f5959d244844a448fe5186f23039f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AthleteCountText: {fileID: 1005375224}
 --- !u!114 &1206228596 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5658593295316871516, guid: c6d8748d62735b94daa0717c3cbf49ca,
@@ -6090,14 +6052,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1457606674}
-    - targetCorrespondingSourceObject: {fileID: 7403839412852567571, guid: c6d8748d62735b94daa0717c3cbf49ca,
+    - targetCorrespondingSourceObject: {fileID: 4145465020635127630, guid: c6d8748d62735b94daa0717c3cbf49ca,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1183489500}
-    - targetCorrespondingSourceObject: {fileID: 1281120978255517944, guid: c6d8748d62735b94daa0717c3cbf49ca,
+      addedObject: {fileID: 2112111611}
+    - targetCorrespondingSourceObject: {fileID: 4145465020635127630, guid: c6d8748d62735b94daa0717c3cbf49ca,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1056358440}
+      addedObject: {fileID: 2112111612}
   m_SourcePrefab: {fileID: 100100000, guid: c6d8748d62735b94daa0717c3cbf49ca, type: 3}
 --- !u!224 &1718212501 stripped
 RectTransform:
@@ -6518,6 +6480,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e29fe1919f0d9efe9c8264c2e331918, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2112111609 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4145465020635127630, guid: c6d8748d62735b94daa0717c3cbf49ca,
+    type: 3}
+  m_PrefabInstance: {fileID: 1718212500}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2112111611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2112111609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80f5959d244844a448fe5186f23039f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AthleteCountText: {fileID: 1005375224}
+--- !u!114 &2112111612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2112111609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcd39053cb1805d44b3dada6eed7295c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coachCountText: {fileID: 538225892}
 --- !u!1001 &3469117240490266648
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7057,7 +7051,7 @@ PrefabInstance:
     - target: {fileID: 3504317524282162260, guid: 338fd2708fba02643b10be8686553766,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 120.00051
+      value: 120.000824
       objectReference: {fileID: 0}
     - target: {fileID: 3557518042474429634, guid: 338fd2708fba02643b10be8686553766,
         type: 3}
