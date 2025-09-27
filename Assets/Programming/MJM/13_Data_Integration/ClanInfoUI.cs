@@ -84,8 +84,7 @@ public class ClanInfoUI : MonoBehaviour
         achievementCountText.text = $"{save.achievements.Count(a => a.state == AchievementState.Completed)}개";
 
         // 획득한 메달 수 (금, 은, 동 각각 모두 합산한 수치)
-        medalCountText.text = $"{goldMedal + silverMedal + bronzeMedal}";
-
+        medalCountText.text = $"금 : {goldMedal}, 은 : {silverMedal}, 동 : {bronzeMedal}";
     }
 
     private void MedalCount(Match match)
