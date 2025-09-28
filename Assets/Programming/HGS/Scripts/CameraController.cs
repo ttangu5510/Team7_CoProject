@@ -44,17 +44,6 @@ namespace SHG
 
         void Update()
         {
-#if UNITY_EDITOR || UNITY_STANDALONE
-            // 에디터/PC 환경에서는 마우스 휠로 확대/축소 테스트
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
-            if (Mathf.Abs(scroll) > 0.01f)
-            {
-                Debug.Log($"[CameraController] Mouse Scroll Input: {scroll}");
-                ApplyZoom(scroll * 500f); // 감도 보정
-            }
-#endif
-
-            // 모바일 환경 핀치 줌
             if (Input.touchCount == 2)
             {
                 Touch touch0 = Input.GetTouch(0);
@@ -125,18 +114,11 @@ namespace SHG
         {
             if (!mainCamera) return;
 
-            if (mainCamera.orthographic)
-            {
-                mainCamera.orthographicSize = Mathf.Clamp(
-                  mainCamera.orthographicSize - delta * zoomSpeed,
-                  minZoom, maxZoom);
-            }
-            else
-            {
-                mainCamera.fieldOfView = Mathf.Clamp(
-                  mainCamera.fieldOfView - delta * zoomSpeed,
-                  minZoom, maxZoom);
-            }
+            mainCamera.fieldOfView = Mathf.Clamp(
+                mainCamera.fieldOfView - delta * zoomSpeed,
+                minZoom, maxZoom);
+
+            Debug.Log($"[CameraController] FOV = {mainCamera.fieldOfView}");
         }
     }
 }
