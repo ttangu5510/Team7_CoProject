@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -11,8 +12,7 @@ namespace SHG
   /// 사용자의 터치에 따른 이벤트를 관리하는 역할
   /// UI를 표시하고 있는 동안에는 동작하지 않음
   /// </summary>
-  public class TouchController : MonoBehaviour
-  {
+  public class TouchController : MonoBehaviour {
     [Inject]
     IFacilitiesController facilitiesController;
 
@@ -28,24 +28,33 @@ namespace SHG
     /// 터치한 상태에서 움직였을 때 움직임을 알려주는 기능
     /// </summary>
     public Subject<Vector2> OnTouchMove;
+    public Subject<PanGesture> OnPanning;
     Vector2 lastTouchPosition;
     int uiLayer;
+    PanGesture? lastGesture;
 
-    void Awake()
-    {
+    void Awake() {
+      this.lastGesture = null;
       this.uiLayer = LayerMask.NameToLayer("UI");
       this.OnTouchUp = new Subject<(int fingerId, Vector2 position)>();
       this.OnTouchDown = new Subject<(int fingerId, Vector2 position)>();
       this.OnTouchMove = new Subject<Vector2>();
+      this.OnPanning = new Subject<PanGesture>();
     }
 
-    void Update()
-    {
-      if (Input.touchCount > 0 && !this.IsUiPresenting() && 
+    void Update() {
+      if (Input.touchCount > 0 &&
+        !this.IsUiPresenting() &&
         !this.IsPointerOverUIObject()) {
         this.UpdateTouchDown();
         this.UpdateTouchUp();
         this.UpdateTouchMove();
+      } else if ((Input.touchCount == 0 || this.IsPointerOverUIObject()) &&
+        this.lastGesture != null) {
+        // Touch canceled?
+        var newGesture = this.lastGesture.EndGesture();
+        this.lastGesture = null;
+        this.OnPanning.OnNext(newGesture);
       }
     }
 
@@ -62,39 +71,49 @@ namespace SHG
       return (false);
     }
 
-    void UpdateTouchDown()
-    {
+    void UpdateTouchDown() {
       if (Input.GetTouch(0).phase == TouchPhase.Began) {
         this.lastTouchPosition = Input.touches[0].position;
         this.OnTouchDown.OnNext((
             fingerId: Input.touches[0].fingerId,
             position: this.lastTouchPosition));
+        this.lastGesture = PanGesture.Create();
+        this.lastGesture.AddPosition(this.lastTouchPosition);
+        this.OnPanning.OnNext(this.lastGesture);
       }
     }
 
-    void UpdateTouchUp()
-    {
+    void UpdateTouchUp() {
       if (Input.GetTouch(0).phase == TouchPhase.Ended) {
         this.OnTouchUp.OnNext((
             fingerId: Input.touches[0].fingerId,
             position: Input.touches[0].position));
-      } 
+        if (this.lastGesture != null) {
+          var newGesture = this.lastGesture.EndGesture();
+          this.lastGesture = null;
+          this.OnPanning.OnNext(newGesture);
+        }
+      }
     }
 
-    void UpdateTouchMove()
-    {
+    void UpdateTouchMove() {
       var touch = Input.GetTouch(0);
       if (touch.phase == TouchPhase.Moved) {
         var position = Input.touches[0].position;
         var offset = position - this.lastTouchPosition;
         this.lastTouchPosition = position;
         this.OnTouchMove.OnNext(offset);
+        if (this.lastGesture != null) {
+          var newGesture = this.lastGesture;
+          newGesture.AddPosition(position);
+          this.lastGesture = newGesture;
+          this.OnPanning.OnNext(newGesture);
+        }
       }
     }
 
     // TODO: Check UI
-    bool IsUiPresenting()
-    {
+    bool IsUiPresenting() {
       return (this.facilitiesController.Selected.Value != null);
     }
 

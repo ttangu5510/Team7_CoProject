@@ -18,6 +18,7 @@ namespace SHG
   /// </summary>
   public interface IResourceController
   {
+    public const int FAME_COIN_INCOME_FOR_SEASON = 1;
     /// <summary>
     /// 현재 가진 돈, 가진 돈보다 많은 관리비가 지출될 때는 음수 값이 될 수 있음
     /// </summary>

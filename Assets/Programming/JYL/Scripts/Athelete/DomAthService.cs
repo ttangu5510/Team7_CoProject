@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,16 +6,16 @@ using SJL;
 using UnityEngine;
 using UniRx;
 using Zenject;
+using MMJ;
 
 namespace JYL
 {
     public class DomAthService : MonoBehaviour
     {
         [Inject] private readonly IDomAthRepository repository;
-        private IDisposable subscription;
         
-        // TODO : 테스트 용 리스트
-        [SerializeField] public List<DomAthEntity> testList = new();
+        private IDisposable subscription;
+
         
         private void Awake()
         {
@@ -36,10 +36,6 @@ namespace JYL
                     .Subscribe(x => RetireAthlete(athlete)) // 은퇴 구독
                     .AddTo(this); // 서비스 객체 파괴 시 이벤트 구독 해제
             }
-            
-            // TODO : 테스트 리스트
-            testList = GetAllRecruitedAthleteList();
-
         }
 
         #region 선수 목록
@@ -73,6 +69,9 @@ namespace JYL
                 .TakeWhile(_ => entity.curState != AthleteState.Unrecruited && entity.curState != AthleteState.Retired)// 방출 전, 은퇴 전까지 구독
                 .Subscribe(sendAge => RetireAthlete(entity))
                 .AddTo(this);
+
+            // 만준 추가 코드, 영입 이벤트
+            MessageBroker.Default.Publish(new AthleteRecruitedEvent(entity.id));
         }
 
         // 선수 은퇴 함수는 선수의 나이에 의해 자동으로 수행 됨.
@@ -81,7 +80,9 @@ namespace JYL
                                                        // 코치 동적, 세이브 객체의 상태를 Hidden -> Unrecruited로 변경
         {
             entity.Retire(); // 도메인 로직 수행
-            MessageBroker.Default.Publish(new AthleteRetiredEvent(entity.entityName, entity.affiliation)); // 이벤트 발행
+
+            // 만준 추가 코드, 은퇴 이벤트
+            MessageBroker.Default.Publish(new AthleteRetiredEvent(entity.id));
         }
 
         public void OutAthlete(string athleteName) // 선수 방출할 때 쓰는 함수
@@ -92,9 +93,13 @@ namespace JYL
             athlete.OutAthlete();
             // 레포지토리를 통해서 변경사항을 저장
             repository.Delete(athlete);
+
+            // 만준 추가 코드, 방출 이벤트
+            MessageBroker.Default.Publish(new AthleteOutEvent(athlete.id));
+
         }
 
-        public void AhtleteAgeUpdate(DomAthEntity entity) // 선수 나이 업데이트
+        public void AthleteAgeUpdate(DomAthEntity entity) // 선수 나이 업데이트
         {
             entity.GetAge();
             repository.Update(entity);
@@ -148,11 +153,12 @@ namespace JYL
         
         #region 선수 회복
         // 선수가 회복하는 함수. 파라매터만 변경 하는 것이기 때문에, 결과 처리는 UI에서 필요함. 마찬가지로, 부상 상태가 아니면 수행 못하게 해야함
-        public void RecoverAthlete(DomAthEntity athlete, int  amount = 1)
+        public void RecoverAthlete(DomAthEntity athlete, int amount = 0)
         {
             if (athlete.curState == AthleteState.Injured && athlete.leftInjury > 0)
             {
-                athlete.RecoverAthlete(amount); // 리커버리. 부상을 한 턴 감소.
+                athlete.RecoverAthlete(); // 리커버리. 부상을 한 턴 감소.
+                athlete.stats.SetFatigue(-amount);
                 repository.Update(athlete); // 진행상황을 선수의 세이브 객체에 반영
                 Debug.Log($"{athlete.entityName} 부상 회복");
             }
