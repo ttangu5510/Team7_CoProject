@@ -120,5 +120,10 @@ namespace SHG
 
             Debug.Log($"[CameraController] FOV = {mainCamera.fieldOfView}");
         }
+        
+        public void FocusOnTarget(Transform target)
+        {
+            cameraFollow.position = Vector3.Lerp(cameraFollow.position, target.position, 1f); // 즉시 포커스
+        }
     }
 }
