@@ -29,6 +29,7 @@ namespace SJL
         [SerializeField] private Transform scoutTarget;
 
         private float lineDelay = 1.5f; // 대사 한줄 출력 간격
+        private bool next; // 다음 대사로 넘어가라는 신호
 
         private List<string[]> tutorialSteps;   // 모든 튜토리얼 단계 배열 리스트
         private List<int[]> highlightStepIdxs;  // 각 단계별 하이라이트 대상 인덱스 배열 리스트
@@ -60,12 +61,12 @@ namespace SJL
             highlightStepIdxs = new List<int[]>
             {
                 new int[] { -1, -1, -1, -1, -1 }, // tutorialGreetings
-                new int[] { 0, -1, 1, -1, -1, -1, -1, 2, -1, -1, 3, 4, 5, 6, 7 }, // tutorialMainScreen
-                new int[] { 8, 9, 10, 11, 12, 13 }, // tutorialfacilities
-                new int[] { -1, -1, -1, 14 }, // tutorialStartOfTheFirstGame
-                new int[] { -1, -1, -1, -1 }, // tutorialEndOfTheFirstGame
-                new int[] { -1, -1, -1, 15 }, // tutorialFinalCompetition
-                new int[] { -1, -1, -1, -1, -1, -1 }, // tutorialSecondYearStartAnnouncement
+                new int[] { -1, 0, -1, 1, -1, -1, -1, -1, 2, -1, -1, 3, 4, 5, 6, 7 }, // tutorialMainScreen
+                new int[] { -1 ,8, 9, 10, 11, 12, 13 }, // tutorialfacilities
+                new int[] { -1, -1, -1, -1, 14 }, // tutorialStartOfTheFirstGame
+                new int[] { -1, -1, -1, -1, -1 }, // tutorialEndOfTheFirstGame
+                new int[] { -1, -1, -1, -1, 15 }, // tutorialFinalCompetition
+                new int[] { -1, -1, -1, -1, -1, -1, -1 }, // tutorialSecondYearStartAnnouncement
             };
 
             // 시작시 튜토리얼 표시
@@ -84,14 +85,6 @@ namespace SJL
         // RevealLines 내에서 시설 튜토리얼 단계라면 인덱스별로 포커스
         private IEnumerator RevealLines(string[] lines, int[] highlightIndices)    // 각 줄을 순차적으로 표시
         {
-            //tutorialText.text = ""; // 텍스트 초기화
-            //for (int i = 0; i < lines.Length; i++)  // 각 줄 표시
-            //{
-            //    tutorialText.text += lines[i] + "\n";   // 줄 추가
-            //    HighlightUIObject(i);   // 해당 줄에 맞는 UI 하이라이트
-            //    yield return new WaitForSeconds(lineDelay); // 지연
-            //}
-
             List<string> shownLines = new List<string>();   // 현재 표시된 줄들
             tutorialText.text = ""; // 텍스트 초기화
 
@@ -110,47 +103,45 @@ namespace SJL
                 Outlinable outlinable = null;
                 // 시설 튜토리얼이면 인덱스에 따라 카메라 이동
                 if (lines == tutorialfacilities)
-                { 
+                {
                     switch (i)
                     {
-                        case 1: cameraController.FocusOnTarget(dormTarget);
+                        case 1:
+                            cameraController.FocusOnTarget(dormTarget);
                             outlinable = dormTarget.GetComponent<Outlinable>();
                             break;      // 숙소
-                        case 2: cameraController.FocusOnTarget(loungeTarget);
+                        case 2:
+                            cameraController.FocusOnTarget(loungeTarget);
                             outlinable = loungeTarget.GetComponent<Outlinable>();
                             break;    // 휴게실
-                        case 3: cameraController.FocusOnTarget(trainingTarget);
+                        case 3:
+                            cameraController.FocusOnTarget(trainingTarget);
                             outlinable = trainingTarget.GetComponent<Outlinable>();
                             break;  // 훈련센터
-                        case 4: cameraController.FocusOnTarget(medicalTarget);
+                        case 4:
+                            cameraController.FocusOnTarget(medicalTarget);
                             outlinable = medicalTarget.GetComponent<Outlinable>();
                             break;   // 의료센터
-                        case 5: cameraController.FocusOnTarget(scoutTarget);
+                        case 5:
+                            cameraController.FocusOnTarget(scoutTarget);
                             outlinable = scoutTarget.GetComponent<Outlinable>();
                             break;     // 스카우트 센터
                     }
-                    if(outlinable != null)
+                    if (outlinable != null)
                         outlinable.enabled = true;
                 }
-                yield return new WaitForSeconds(lineDelay); // 지연
-                if(outlinable != null)
+                //yield return new WaitForSeconds(lineDelay); // 지연
+                yield return new WaitUntil(() => next); // next 신호 대기
+                next = false; // 신호 초기화
+                if (outlinable != null)
                 {
                     outlinable.enabled = false;
                 }
+                
             }
+            next = false; // 신호 초기화
             waitForClick = true; // 대사 모두 표시 후 다음 진입 대기 모드
             nextImage.gameObject.SetActive(true); // 다 끝나면 클릭 안내 화살표 보이게
-
-            // 현 배열이 끝나면 다음 배열 단계로 자동 진행
-            //currentStepIdx++;   // 다음 단계로 인덱스 증가
-            //if (currentStepIdx < tutorialSteps.Count)   // 다음 단계가 있으면
-            //{
-            //    ShowDialogueStep(currentStepIdx);   // 다음 단계 표시
-            //}
-            //else
-            //{
-            //    // 튜토리얼 종료 처리(팝업 닫기, 다음 씬 이동 등)
-            //}
         }
 
         // 모든 UI는 항상 활성화하고, 강조 idx만 노란 테두리
@@ -165,7 +156,7 @@ namespace SJL
                 {
                     //outline.effectColor = Color.yellow; // 테두리 색은 노란색
                     var color = new Color(0f, 0f, 0f, 0f);
-                    DOTween.To(() => color, x => 
+                    DOTween.To(() => color, x =>
                     outline.effectColor = x, new Color(1f, 0.87f, 0f, 1f), 1f).SetEase(Ease.InOutSine).
                     SetLoops(2, LoopType.Yoyo); // 테두리 두께 애니메이션
                     outline.enabled = (i == highlightIdx); // 강조할 idx만 켬
@@ -176,6 +167,7 @@ namespace SJL
         // 텍스트 UI가 클릭되면 실행됨
         public void OnClickAreaClick()  // 클릭 영역 클릭 이벤트
         {
+            next = true;    // 다음 대사로 넘어가라는 신호
             if (!waitForClick)  // 대기 상태가 아니면 무시
                 return;
 
@@ -213,6 +205,7 @@ namespace SJL
         };
         private string[] tutorialMainScreen = new string[]
         {
+            "",
             "여기서는 훈련이나 경기를 진행할 때마다 시간이 지나갑니다.",
             "계절마다 10주씩, 1년에 총 40주이니 유념해주세요.",
             "여기에는 재화가 표시됩니다.",
@@ -231,6 +224,7 @@ namespace SJL
         };
         private string[] tutorialfacilities = new string[]
         {
+            "",
             "선수단 시설은 숙소, 휴게실, 훈련 센터, 의료 센터, 스카우트 센터가 있습니다.",
             "숙소는 선수단 수용 인원을 관리합니다.",
             "휴게실은 선수들의 피로도를 줄여주는 시설입니다.",
@@ -240,6 +234,7 @@ namespace SJL
         };
         private string[] tutorialStartOfTheFirstGame = new string[]
         {
+            "",
             "00 단장님! 벌써 첫 경기가 있는 날이네요!",
             "아직 부임하신지 얼마되지 않으셨으니 결과에 연연하지 않는게 좋겠습니다!",
             "다 같이 선수들을 응원해 보도록 하죠!",
@@ -247,6 +242,7 @@ namespace SJL
         };
         private string[] tutorialEndOfTheFirstGame = new string[]
         {
+            "",
             "(첫번째 경기 종료 이후)",
             "첫 경기만에 이런 결과를!",
             "대단하십니다! 단장님과 선수들 모두 수고하셨어요.",
@@ -254,6 +250,7 @@ namespace SJL
         };
         private string[] tutorialFinalCompetition = new string[]
         {
+            "",
             "00단장님! 드디어 지난 1년간 선수들의 노력이 결실을 맺는 날입니다!",
             "이번 대회에서는 모든 종목에 도전하게 되니 주의해 주세요.",
             "선수들의 활약을 지켜보며 열심히 응원해보죠!",
@@ -261,6 +258,7 @@ namespace SJL
         };
         private string[] tutorialSecondYearStartAnnouncement = new string[]
         {
+            "",
             "(1회차 2년차 시작)",
             "벌써 부임하신지 1년이 지났군요?",
             "00 단장님 덕분에 선수단이 어느 정도 자리를 잡았습니다. 선수단을 대신해 감사드립니다!",

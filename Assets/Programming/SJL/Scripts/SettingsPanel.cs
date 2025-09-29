@@ -69,9 +69,9 @@ namespace SJL
             versionText.text = "버전. v1.0.0";
 
             // 슬라이더 값 초기화(필요 시 저장값에서 불러올 것)
-            //masterVolumeSlider.value = 50;
-            //musicVolumeSlider.value = 50;
-            //sfxVolumeSlider.value = 50;
+            musicVolumeSlider.value = 0.5f;
+            sfxVolumeSlider.value = 0.5f;
+            masterVolumeSlider.value = 0.5f;
         }
 
         public void Start()
@@ -115,6 +115,10 @@ namespace SJL
         {
             // 데이터 초기화
             Debug.Log("데이터 리셋됨");
+            QualitySettings.SetQualityLevel(1);
+            musicVolumeSlider.value = 0.5f;
+            sfxVolumeSlider.value = 0.5f;
+            masterVolumeSlider.value = 0.5f;
         }
 
         // ---- 하단 기능 ----
