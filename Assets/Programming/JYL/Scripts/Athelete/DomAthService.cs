@@ -69,6 +69,9 @@ namespace JYL
                 .TakeWhile(_ => entity.curState != AthleteState.Unrecruited && entity.curState != AthleteState.Retired)// 방출 전, 은퇴 전까지 구독
                 .Subscribe(sendAge => RetireAthlete(entity))
                 .AddTo(this);
+
+            // 만준 추가 코드, 영입 이벤트
+            MessageBroker.Default.Publish(new AthleteRecruitedEvent(entity.id));
         }
 
         // 선수 은퇴 함수는 선수의 나이에 의해 자동으로 수행 됨.
@@ -77,7 +80,9 @@ namespace JYL
                                                        // 코치 동적, 세이브 객체의 상태를 Hidden -> Unrecruited로 변경
         {
             entity.Retire(); // 도메인 로직 수행
-            MessageBroker.Default.Publish(new AthleteRetiredEvent(entity.entityName, entity.affiliation)); // 이벤트 발행
+
+            // 만준 추가 코드, 은퇴 이벤트
+            MessageBroker.Default.Publish(new AthleteRetiredEvent(entity.id));
         }
 
         public void OutAthlete(string athleteName) // 선수 방출할 때 쓰는 함수
@@ -89,7 +94,7 @@ namespace JYL
             // 레포지토리를 통해서 변경사항을 저장
             repository.Delete(athlete);
 
-            // 만준추가 방출 이벤트 필요해서 작성함
+            // 만준 추가 코드, 방출 이벤트
             MessageBroker.Default.Publish(new AthleteOutEvent(athlete.id));
 
         }

@@ -12,7 +12,7 @@ namespace MMJ
 
         public List<PlayerPrefabData> playerPrefabs;
         private Dictionary<int, GameObject> prefabDict = new();
-        private Dictionary<int, GameObject> activePlayers = new(); // 현재 필드에 배치된 선수(id→오브젝트)
+        private Dictionary<int, GameObject> activePlayers = new();
 
         void Awake()
         {
@@ -27,7 +27,7 @@ namespace MMJ
 
         void Start()
         {
-            // 초기화: 이미 영입된 선수들 배치
+            // 초기화: 현재 영입된 선수들 모두 배치
             SyncAllRecruited();
 
             // 이벤트 구독
@@ -40,7 +40,7 @@ namespace MMJ
                 .AddTo(this);
 
             MessageBroker.Default.Receive<AthleteRetiredEvent>()
-                .Subscribe(evt => DespawnAthleteByName(evt.athleteName)) // Retired 이벤트는 이름 기반이라면 id로 바꾸는 게 좋음
+                .Subscribe(evt => DespawnAthlete(evt.athleteId))
                 .AddTo(this);
         }
 
@@ -56,7 +56,7 @@ namespace MMJ
 
         void SpawnAthlete(int id)
         {
-            if (activePlayers.ContainsKey(id)) return; // 이미 있음
+            if (activePlayers.ContainsKey(id)) return; // 이미 존재
 
             if (prefabDict.TryGetValue(id, out var prefab))
             {
@@ -87,13 +87,6 @@ namespace MMJ
             }
         }
 
-        void DespawnAthleteByName(string name)
-        {
-            // 이름→id 매핑 필요, 아니면 DomAthService.FindByName(name).id 사용
-            var entity = domAthService.GetAllAthleteList().Find(x => x.entityName == name);
-            if (entity != null) DespawnAthlete(entity.id);
-        }
-
         Waypoint FindRandomBuilding()
         {
             Waypoint[] all = GameObject.FindObjectsOfType<Waypoint>();
@@ -112,18 +105,5 @@ namespace MMJ
     {
         public int athleteId;
         public GameObject prefab;
-    }
-
-    // 이벤트 구조체 정의
-    public struct AthleteRecruitedEvent
-    {
-        public int athleteId;
-        public AthleteRecruitedEvent(int id) { athleteId = id; }
-    }
-
-    public struct AthleteOutEvent
-    {
-        public int athleteId;
-        public AthleteOutEvent(int id) { athleteId = id; }
     }
 }
