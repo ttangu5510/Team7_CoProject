@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
@@ -69,7 +69,7 @@ namespace SHG
       }
     }
     void RecoverAthletes()
-    {
+        {
       var saveData = this.saveManager.GetCurrentSave();
       int[] ids = saveData.treatmentAssign;
       int recoveryAmount = facilityController.MedicalCenter.RecoveryAmount.Value > 0 ? facilityController.MedicalCenter.RecoveryAmount.Value: 1;

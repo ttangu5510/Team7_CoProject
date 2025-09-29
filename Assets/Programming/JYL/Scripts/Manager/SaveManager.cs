@@ -81,6 +81,10 @@ namespace JYL
         {
             SaveData save = new SaveData();
             save.Init(uid,playerName,clanName);
+
+            // (만준추가
+            save.foundedUtcIso = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+
             saves.Add(save);
             curSave = save;
             achievementWrapper = new(curSave.achievementRecord);
