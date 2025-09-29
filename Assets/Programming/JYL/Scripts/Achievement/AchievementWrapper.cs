@@ -12,7 +12,7 @@ public class AchievementWrapper
     public ReactiveProperty<int> RecoverCount { get; } // 연결완료. SaveAdaptor
     public ReactiveProperty<int> SpecialTrainCount { get; } // 연결완료. SPTrainingBox
     public ReactiveProperty<int> AthleteRecruitCount { get; } // 연결완료. DomAthRepository
-    public ReactiveProperty<int> CoachRecruitCount { get; } // 연결완료. DomAthRepository
+    public ReactiveProperty<int> CoachRecruitCount { get; } // 연결완료. CoachAthRepository
     public ReactiveProperty<int> AthleteRetireCount { get; } // 연결완료. DomAthRepository
 
     private AchievementRecord data; // 세이브에 포함되는 기록용 객체
