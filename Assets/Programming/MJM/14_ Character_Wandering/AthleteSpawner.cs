@@ -1,71 +1,97 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using Zenject;
+using UniRx;
+using JYL;
 
-namespace JYL
+namespace MMJ
 {
     public class AthleteSpawner : MonoBehaviour
     {
         [Inject] private DomAthService domAthService;
 
-        // 선수 이름과 프리팹 연결 (Inspector에서 할당)
         public List<PlayerPrefabData> playerPrefabs;
-
-        private Dictionary<string, GameObject> prefabDict = new();
+        private Dictionary<int, GameObject> prefabDict = new();
+        private Dictionary<int, GameObject> activePlayers = new(); // 현재 필드에 배치된 선수(id→오브젝트)
 
         void Awake()
         {
             foreach (var data in playerPrefabs)
             {
-                if (data.prefab != null && !string.IsNullOrEmpty(data.athleteName))
+                if (data.prefab != null)
                 {
-                    prefabDict[data.athleteName] = data.prefab;
+                    prefabDict[data.athleteId] = data.prefab;
                 }
             }
         }
 
         void Start()
         {
-            SpawnRecruitedAthletes();
+            // 초기화: 이미 영입된 선수들 배치
+            SyncAllRecruited();
+
+            // 이벤트 구독
+            MessageBroker.Default.Receive<AthleteRecruitedEvent>()
+                .Subscribe(evt => SpawnAthlete(evt.athleteId))
+                .AddTo(this);
+
+            MessageBroker.Default.Receive<AthleteOutEvent>()
+                .Subscribe(evt => DespawnAthlete(evt.athleteId))
+                .AddTo(this);
+
+            MessageBroker.Default.Receive<AthleteRetiredEvent>()
+                .Subscribe(evt => DespawnAthleteByName(evt.athleteName)) // Retired 이벤트는 이름 기반이라면 id로 바꾸는 게 좋음
+                .AddTo(this);
         }
 
-        void SpawnRecruitedAthletes()
+        void SyncAllRecruited()
         {
-            // DomAthService를 통해 영입된 선수 목록 가져오기
             List<DomAthEntity> recruited = domAthService.GetAllRecruitedAthleteList();
-
             foreach (var athlete in recruited)
             {
-                // 은퇴 선수는 제외
                 if (athlete.curState == AthleteState.Retired) continue;
-
-                // 선수 이름으로 프리팹 찾기
-                if (prefabDict.TryGetValue(athlete.entityName, out var prefab))
-                {
-                    // 프리팹 생성
-                    GameObject go = Instantiate(prefab);
-                    go.name = athlete.entityName;
-
-                    // 시작 위치 = 랜덤 건물 웨이포인트
-                    Waypoint start = FindRandomBuilding();
-                    if (start != null)
-                    {
-                        var wander = go.GetComponent<PlayerWander>();
-                        if (wander != null)
-                        {
-                            wander.currentWaypoint = start;
-                        }
-                        else
-                        {
-                            Debug.LogWarning($"{athlete.entityName} 프리팹에 PlayerWander 스크립트가 없습니다.");
-                        }
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning($"프리팹이 없는 선수: {athlete.entityName}");
-                }
+                SpawnAthlete(athlete.id);
             }
+        }
+
+        void SpawnAthlete(int id)
+        {
+            if (activePlayers.ContainsKey(id)) return; // 이미 있음
+
+            if (prefabDict.TryGetValue(id, out var prefab))
+            {
+                GameObject go = Instantiate(prefab);
+                go.name = $"Athlete_{id}";
+
+                Waypoint start = FindRandomBuilding();
+                if (start != null)
+                {
+                    var wander = go.GetComponent<PlayerWander>();
+                    if (wander != null) wander.currentWaypoint = start;
+                }
+
+                activePlayers[id] = go;
+            }
+            else
+            {
+                Debug.LogWarning($"프리팹이 없는 선수 id: {id}");
+            }
+        }
+
+        void DespawnAthlete(int id)
+        {
+            if (activePlayers.TryGetValue(id, out var go))
+            {
+                Destroy(go);
+                activePlayers.Remove(id);
+            }
+        }
+
+        void DespawnAthleteByName(string name)
+        {
+            // 이름→id 매핑 필요, 아니면 DomAthService.FindByName(name).id 사용
+            var entity = domAthService.GetAllAthleteList().Find(x => x.entityName == name);
+            if (entity != null) DespawnAthlete(entity.id);
         }
 
         Waypoint FindRandomBuilding()
@@ -84,7 +110,20 @@ namespace JYL
     [System.Serializable]
     public class PlayerPrefabData
     {
-        public string athleteName;
+        public int athleteId;
         public GameObject prefab;
+    }
+
+    // 이벤트 구조체 정의
+    public struct AthleteRecruitedEvent
+    {
+        public int athleteId;
+        public AthleteRecruitedEvent(int id) { athleteId = id; }
+    }
+
+    public struct AthleteOutEvent
+    {
+        public int athleteId;
+        public AthleteOutEvent(int id) { athleteId = id; }
     }
 }

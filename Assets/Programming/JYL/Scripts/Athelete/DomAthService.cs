@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +6,7 @@ using SJL;
 using UnityEngine;
 using UniRx;
 using Zenject;
+using MMJ;
 
 namespace JYL
 {
@@ -87,6 +88,10 @@ namespace JYL
             athlete.OutAthlete();
             // 레포지토리를 통해서 변경사항을 저장
             repository.Delete(athlete);
+
+            // 만준추가 방출 이벤트 필요해서 작성함
+            MessageBroker.Default.Publish(new AthleteOutEvent(athlete.id));
+
         }
 
         public void AthleteAgeUpdate(DomAthEntity entity) // 선수 나이 업데이트
