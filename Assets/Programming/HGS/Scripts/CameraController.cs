@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UniRx;
 using Zenject;
 using EditorAttributes;
@@ -31,6 +31,11 @@ namespace SHG
         this.cameraFollow.position = Vector3.MoveTowards(
           this.cameraFollow.position, targetPos, this.cameraMoveSpeed);
       }
+    }
+
+    public void FocusOnTarget(Transform target)
+    {
+        cameraFollow.position = Vector3.Lerp(cameraFollow.position, target.position, 1f); // 즉시 포커스
     }
   }
 }

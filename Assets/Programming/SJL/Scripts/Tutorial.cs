@@ -1,22 +1,34 @@
-﻿using System.Collections;
+﻿using SHG;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using DG.Tweening;
 using static UnityEngine.ParticleSystem;
+using Unity.VisualScripting;
+using EPOOutline;
 
 namespace SJL
 {
     public class Tutorial : MonoBehaviour
     {
+        [Header("UI 관련")]
         [SerializeField] private TextMeshProUGUI tutorialText;  // 대사 출력 텍스트
         [SerializeField] private GameObject[] highlightObjects; // 하이라이트 대상 UI들
         [SerializeField] private Button clickAreaButton;        // 클릭 영역(이미지 혹은 투명 버튼)
         [SerializeField] private Image nextImage;               // 다음 대사로 넘어가는 이미지(화살표 등)
+        [Header("카메라 관련")]
+        [SerializeField] private CameraController cameraController;
+        [SerializeField] private Transform dormTarget;
+        [SerializeField] private Transform loungeTarget;
+        [SerializeField] private Transform trainingTarget;
+        [SerializeField] private Transform medicalTarget;
+        [SerializeField] private Transform scoutTarget;
 
-        public float lineDelay = 2f; // 대사 한줄 출력 간격
+        private float lineDelay = 1.5f; // 대사 한줄 출력 간격
 
         private List<string[]> tutorialSteps;   // 모든 튜토리얼 단계 배열 리스트
         private List<int[]> highlightStepIdxs;  // 각 단계별 하이라이트 대상 인덱스 배열 리스트
@@ -69,6 +81,7 @@ namespace SJL
             currentRoutine = StartCoroutine(RevealLines(tutorialSteps[stepIdx], highlightStepIdxs[stepIdx]));   // 해당 단계 코루틴 시작
         }
 
+        // RevealLines 내에서 시설 튜토리얼 단계라면 인덱스별로 포커스
         private IEnumerator RevealLines(string[] lines, int[] highlightIndices)    // 각 줄을 순차적으로 표시
         {
             //tutorialText.text = ""; // 텍스트 초기화
@@ -86,14 +99,44 @@ namespace SJL
             {
                 // 새 줄 추가
                 shownLines.Add(lines[i]);
-                // 최대 4줄로 제한
+                // 최대 1줄로 제한
                 if (shownLines.Count > 1)
                     shownLines.RemoveAt(0);
                 // 텍스트 UI에 표시
                 tutorialText.text = string.Join("\n", shownLines);
                 // 해당 줄에 맞는 UI 하이라이트
                 HighlightUI(highlightIndices[i]);
+
+                Outlinable outlinable = null;
+                // 시설 튜토리얼이면 인덱스에 따라 카메라 이동
+                if (lines == tutorialfacilities)
+                { 
+                    switch (i)
+                    {
+                        case 1: cameraController.FocusOnTarget(dormTarget);
+                            outlinable = dormTarget.GetComponent<Outlinable>();
+                            break;      // 숙소
+                        case 2: cameraController.FocusOnTarget(loungeTarget);
+                            outlinable = loungeTarget.GetComponent<Outlinable>();
+                            break;    // 휴게실
+                        case 3: cameraController.FocusOnTarget(trainingTarget);
+                            outlinable = trainingTarget.GetComponent<Outlinable>();
+                            break;  // 훈련센터
+                        case 4: cameraController.FocusOnTarget(medicalTarget);
+                            outlinable = medicalTarget.GetComponent<Outlinable>();
+                            break;   // 의료센터
+                        case 5: cameraController.FocusOnTarget(scoutTarget);
+                            outlinable = scoutTarget.GetComponent<Outlinable>();
+                            break;     // 스카우트 센터
+                    }
+                    if(outlinable != null)
+                        outlinable.enabled = true;
+                }
                 yield return new WaitForSeconds(lineDelay); // 지연
+                if(outlinable != null)
+                {
+                    outlinable.enabled = false;
+                }
             }
             waitForClick = true; // 대사 모두 표시 후 다음 진입 대기 모드
             nextImage.gameObject.SetActive(true); // 다 끝나면 클릭 안내 화살표 보이게
@@ -120,7 +163,11 @@ namespace SJL
                 var outline = highlightObjects[i].GetComponent<Outline>();
                 if (outline != null)
                 {
-                    outline.effectColor = Color.yellow; // 테두리 색은 노란색
+                    //outline.effectColor = Color.yellow; // 테두리 색은 노란색
+                    var color = new Color(0f, 0f, 0f, 0f);
+                    DOTween.To(() => color, x => 
+                    outline.effectColor = x, new Color(1f, 0.87f, 0f, 1f), 1f).SetEase(Ease.InOutSine).
+                    SetLoops(2, LoopType.Yoyo); // 테두리 두께 애니메이션
                     outline.enabled = (i == highlightIdx); // 강조할 idx만 켬
                 }
             }
