@@ -29,7 +29,7 @@ namespace JYL
 
         [Header("Set MainScene")] 
         // [SerializeField] private string mainSceneName = "MMJ_MainScene";
-        private string mainSceneName = "MMJ_MainScene";
+        private string mainSceneName = "JYL_MainScene";
 
         [Inject] private ISaveManager saveManager;
         [Inject] private IUiManager uiManager;
