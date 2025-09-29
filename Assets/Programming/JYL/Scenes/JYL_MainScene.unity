@@ -4298,7 +4298,6 @@ GameObject:
   - component: {fileID: 505961353}
   - component: {fileID: 505961357}
   - component: {fileID: 505961356}
-  - component: {fileID: 505961355}
   - component: {fileID: 505961354}
   m_Layer: 5
   m_Name: Rest List Panel
@@ -4347,18 +4346,6 @@ MonoBehaviour:
   restPanelPUI: {fileID: 0}
   confirmButton: {fileID: 0}
   resetButton: {fileID: 0}
---- !u!114 &505961355
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 505961352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb219b23cdf4b314f94a27bca3cc8012, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &505961356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20420,9 +20407,8 @@ GameObject:
   - component: {fileID: 1893877379}
   - component: {fileID: 1893877382}
   - component: {fileID: 1893877381}
-  - component: {fileID: 1893877380}
   m_Layer: 5
-  m_Name: Rest Info Panel
+  m_Name: Rest Result Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20450,18 +20436,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1893877380
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893877378}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb219b23cdf4b314f94a27bca3cc8012, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1893877381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22255,7 +22229,7 @@ GameObject:
   - component: {fileID: 2103632581}
   - component: {fileID: 2103632584}
   - component: {fileID: 2103632583}
-  - component: {fileID: 2103632582}
+  - component: {fileID: 2103632585}
   m_Layer: 5
   m_Name: Rest Ath Info Panel
   m_TagString: Untagged
@@ -22284,18 +22258,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2103632582
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2103632580}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb219b23cdf4b314f94a27bca3cc8012, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2103632583
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22333,6 +22295,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2103632580}
   m_CullTransparentMesh: 1
+--- !u!114 &2103632585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2103632580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8c1c216dc906684ba43bc3deb46ab0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  closeButton: {fileID: 619871841}
+  profileImage: {fileID: 1451303099}
+  outlineText: {fileID: 1743380193}
+  statBars:
+  - {fileID: 462798241}
+  - {fileID: 650991070}
+  - {fileID: 1068416631}
+  - {fileID: 1056213459}
+  - {fileID: 1688126803}
+  - {fileID: 951033890}
+  - {fileID: 1198050700}
 --- !u!1 &2104926340
 GameObject:
   m_ObjectHideFlags: 0
@@ -23964,7 +23949,7 @@ PrefabInstance:
     - target: {fileID: 3504317524282162260, guid: 338fd2708fba02643b10be8686553766,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 120.000145
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 3557518042474429634, guid: 338fd2708fba02643b10be8686553766,
         type: 3}
@@ -25619,6 +25604,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 3799182540808168354, guid: 338fd2708fba02643b10be8686553766,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6321105759111936880}
     - targetCorrespondingSourceObject: {fileID: 3553975889737239294, guid: 338fd2708fba02643b10be8686553766,
         type: 3}
       insertIndex: -1
@@ -25630,6 +25619,36 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 6321105759111936877}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6321105759111936879 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3799182540808168354, guid: 338fd2708fba02643b10be8686553766,
+    type: 3}
+  m_PrefabInstance: {fileID: 6321105759111936877}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6321105759111936880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6321105759111936879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 119f313351cbb8748bcd2b2a5b48c2ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slots:
+  - {fileID: 1529672444}
+  - {fileID: 1296733021}
+  - {fileID: 264609087}
+  - {fileID: 36344171}
+  - {fileID: 850692228}
+  - {fileID: 509313756}
+  - {fileID: 659904251}
+  - {fileID: 86421764}
+  restPanelPUI: {fileID: 832532947}
+  restListPanel: {fileID: 505961354}
+  injureAthInfoPanel: {fileID: 2103632585}
 --- !u!1001 &7816843159335876005
 PrefabInstance:
   m_ObjectHideFlags: 0
