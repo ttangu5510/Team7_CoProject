@@ -77,6 +77,9 @@ namespace JWS
             // 치료실 슬롯 초기화 (8칸)
             treatmentAssign = new[] { -1, -1, -1, -1, -1, -1, -1, -1 };
             
+            // 휴게실 슬롯 초기화 (8칸)
+            restAssign = new[] { -1, -1, -1, -1, -1, -1, -1, -1 };
+            
             // 시간 초기화
             time.yearCycle = 1;
             time.season = Season.Spring;
@@ -111,6 +114,7 @@ namespace JWS
             {
                 coachAssign =  (int[])coachAssign?.Clone(), 
                 treatmentAssign = (int[])treatmentAssign?.Clone(),
+                restAssign = (int[])restAssign?.Clone(),
                 time = time with { },
                 currencies = currencies with { },
                 buildings = buildings.ConvertAll(building => building with { }),
