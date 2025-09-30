@@ -26,7 +26,8 @@ namespace JWS
         [Header("Panels")]
         [SerializeField] private GameObject restPanelPUI;     // 팝업 루트(블로커)
         [SerializeField] private RestListPanel restListPanel; // 후보 리스트 패널
-        [SerializeField] private InjureAthInfoPanel injureAthInfoPanel;
+        [SerializeField] private InjureAthInfoPanel injureAthInfoPanel; // 상세 스탯 패널
+        [SerializeField] private RestResultPanel restResultPanel; // 휴식 결과 패널
 
         private CompositeDisposable _enableCd;
         private readonly CompositeDisposable _wireCd = new();
@@ -88,11 +89,14 @@ namespace JWS
         {
             var candidates = athleteService.GetAllRecruitedAthleteList()
                 .Where(a => a.stats.fatigue > 0)
+                .OrderByDescending(a => a.stats.fatigue)
                 .ToList();
             if (candidates.Count == 0) { Debug.Log("휴식 가능한 선수가 없습니다."); return; }
 
             restPanelPUI.SetActive(true);
             restListPanel.gameObject.SetActive(true);
+            if (injureAthInfoPanel) injureAthInfoPanel.gameObject.SetActive(false);
+            if (restResultPanel) restResultPanel.gameObject.SetActive(false);
 
             _draftAssigned = (DomAthEntity[])_assigned.Clone();
             restListPanel.Open(candidates, GetAssignedIdSet(draft: true));
