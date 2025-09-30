@@ -87,7 +87,7 @@ namespace JWS
         private void OpenAssignPanel(int _)
         {
             var candidates = athleteService.GetAllRecruitedAthleteList()
-                .Where(a => a.curState != AthleteState.Injured && a.stats.fatigue > 0)
+                .Where(a => a.stats.fatigue > 0)
                 .ToList();
             if (candidates.Count == 0) { Debug.Log("휴식 가능한 선수가 없습니다."); return; }
 
@@ -118,7 +118,7 @@ namespace JWS
             var all  = athleteService.GetAllRecruitedAthleteList() ?? new List<DomAthEntity>();
             var byId = all.ToDictionary(a => a.id, a => a);
 
-            var restable = all.Where(a => a.curState != AthleteState.Injured && a.stats.fatigue > 0).ToList();
+            var restable = all.Where(a => a.stats.fatigue > 0).ToList();
             var restableIdSet = restable.Select(a => a.id).ToHashSet();
 
             int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
@@ -172,21 +172,18 @@ namespace JWS
                     _assigned[i] = i < picked.Count ? picked[i] : null;
             }
 
-            // 4) 슬롯 그리기 (가용 후보 중 아직 배치 안 된 수로 Empty/NoAvailable 결정)
-            var pickedIds = picked.Where(x => x != null).Select(x => x.id).ToHashSet();
-            int unpickedCount = restable.Count(a => !pickedIds.Contains(a.id));
-
-            for (int i = 0; i < usable; i++)
+            // 4) 슬롯 그리기
+            int iWrite = 0;
+            for (; iWrite < usable; iWrite++)
             {
-                var ent = (i < picked.Count) ? picked[i] : null;
-                if (ent != null)
-                {
-                    slots[i].ShowAssigned(ent);
-                }
+                var ent = (iWrite < picked.Count) ? picked[iWrite] : null;
+                if (ent != null) slots[iWrite].ShowAssigned(ent);
                 else
                 {
-                    if (unpickedCount > 0) { slots[i].ShowEmpty(); unpickedCount--; }
-                    else                   { slots[i].ShowNoAvailable(); }
+                    int alreadyPicked = picked.Count(x => x != null);
+                    int unpicked = Math.Max(0, restable.Count - alreadyPicked);
+                    if (unpicked > 0) slots[iWrite].ShowEmpty();
+                    else              slots[iWrite].ShowNoAvailable();
                 }
             }
         }
@@ -261,7 +258,13 @@ namespace JWS
         private int GetUsableSlots()
         {
             var level = facilitiesController.Lounge.CurrentStage.Value; // 휴게실 단계
-            return level switch { 0 => 2, 1 => 4, 2 => 6, _ => 8 };
+            switch (level)
+            {
+                case 0: return 2; // 2개 개방
+                case 1: return 4; // 4개 개방
+                case 2: return 6; // 6개 개방
+                default: return 8; // 전부 개방
+            }
         }
 
         public IReadOnlyList<int> GetAssignedIdsForSave()
@@ -271,7 +274,6 @@ namespace JWS
             return list;
         }
 
-        // === 저장본 로드: 유효성(비부상 + 피로>0) 재검증 ===
         private void LoadAssignedFromSave()
         {
             var ids = saveManager.GetAssignedRestAthletes(); // int[8], -1=빈칸
@@ -282,7 +284,7 @@ namespace JWS
             var all  = athleteService.GetAllRecruitedAthleteList() ?? new List<DomAthEntity>();
             var byId = all.ToDictionary(a => a.id, a => a);
             var restableIdSet = all
-                .Where(a => a.curState != AthleteState.Injured && a.stats.fatigue > 0)
+                .Where(a => a.stats.fatigue > 0)
                 .Select(a => a.id)
                 .ToHashSet();
 
