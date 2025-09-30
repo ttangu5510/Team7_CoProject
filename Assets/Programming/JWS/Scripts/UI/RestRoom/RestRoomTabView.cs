@@ -76,6 +76,15 @@ namespace JWS
             var lounge = facilitiesController.Lounge;
             lounge.CurrentStage     .Subscribe(_ => Refresh()).AddTo(_enableCd);
             lounge.NumberOfAthletes .Subscribe(_ => Refresh()).AddTo(_enableCd);
+            
+            if (restButton)
+                restButton.OnClickAsObservable()
+                    .Subscribe(_ =>
+                        {
+                            if (!HasAnyAssigned()) { NudgeRestButton(); return; }
+                            StartRest();
+                        })
+                        .AddTo(_enableCd);
         }
 
         private void OnDisable()
@@ -288,7 +297,7 @@ namespace JWS
                 default: return 8; // 전부 개방
             }
         }
-
+        
         public IReadOnlyList<int> GetAssignedIdsForSave()
         {
             var list = new List<int>(_assigned.Length);
@@ -323,5 +332,87 @@ namespace JWS
             }
             for (int i = usable; i < _assigned.Length; i++) _assigned[i] = null;
         }
+
+        private bool HasAnyAssigned()
+        {
+            int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
+            for (int i = 0; i < usable; i++)
+                if (_assigned[i] != null) return true;
+            return false;
+        }
+
+        private void StartRest()
+        {
+            Debug.Log("휴식시작");
+        
+            int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
+        
+            if (!HasAnyAssigned())
+            {
+                NudgeRestButton();
+                Debug.Log("휴식 진행할 선수가 없습니다.");
+                return;
+            }
+            
+            int lv = Mathf.Clamp(facilitiesController.Lounge.CurrentStage.Value, 0, 4);
+            int recover = lv switch { 0=>40, 1=>50, 2=>55, 3=>60, 4=>70, _=>40 };
+            
+            var ids = new List<int>(usable);
+            for (int i = 0; i < usable; i++)
+            {
+                var ath = _assigned[i];
+                if (ath != null) ids.Add(ath.id);
+            }
+            
+            athleteService.ApplyRestRecovery(ids, recover);
+            
+            // 애니메이션 재생
+
+            
+
+            
+            // UI 슬롯 전부 비우기
+            for (int i = 0; i < _assigned.Length; i++) _assigned[i] = null;
+
+            // 세이브 슬롯도 전부 -1로 초기화
+            _savedAssignedIds = Enumerable.Repeat(-1, _assigned.Length).ToList();
+            saveManager.SetAssignedRestAthletes(_savedAssignedIds.ToArray());
+
+            Refresh();
+
+            // 다음주로 만든 후 저장
+            
+            
+            
+        //     // 결과 팝업 오픈
+        //     if (restPanelPUI) restPanelPUI.SetActive(true);
+        //     if (restResultPanel)
+        //     {
+        //         restResultPanel.gameObject.SetActive(true);
+        //         restResultPanel.Open(results); // 네 패널 API에 맞게 전달
+        //     }
+        //     if (restListPanel) restListPanel.gameObject.SetActive(false);
+        //     if (injureAthInfoPanel) injureAthInfoPanel.gameObject.SetActive(false);
+        //
+        }
+        
+        public void NudgeRestButton()
+        {
+            var btn = restButton ? restButton.transform : transform;
+            StartCoroutine(NudgeCo(btn));
+        }
+
+        private System.Collections.IEnumerator NudgeCo(Transform t)
+        {
+            var basePos = t.localPosition;
+            float d = 6f, dur = 0.08f;
+            for (int i = 0; i < 3; i++)
+            {
+                t.localPosition = basePos + Vector3.right * d; yield return new WaitForSeconds(dur);
+                t.localPosition = basePos - Vector3.right * d; yield return new WaitForSeconds(dur);
+            }
+            t.localPosition = basePos;
+        }
+
     }
 }

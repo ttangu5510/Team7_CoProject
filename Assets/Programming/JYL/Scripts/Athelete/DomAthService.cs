@@ -168,5 +168,22 @@ namespace JYL
             }
         }
         #endregion
+
+        #region 선수휴식
+        public void ApplyRestRecovery(IReadOnlyList<int> athleteIds, int recover)
+        {
+            if (athleteIds == null || athleteIds.Count == 0) return;
+
+            foreach (var id in athleteIds)
+            {
+                var ath = repository.FindById(id);
+                if (ath == null) continue;
+                int cur = ath.stats.fatigue;
+                ath.stats.SetFatigue(-recover);
+                repository.Update(ath);
+            }
+        }
+        #endregion
+        
     }
 }
