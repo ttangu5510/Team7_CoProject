@@ -91,6 +91,48 @@ namespace JWS
             Canvas.ForceUpdateCanvases();
         }
 
+        // 오버로드 추가
+        public void Open(IEnumerable<DomAthEntity> source,
+            HashSet<int> restAssigned,
+            HashSet<int> treatmentAssigned)
+        {
+            gameObject.SetActive(true);
+            Clear();
+
+            var list = source?.ToList() ?? new List<DomAthEntity>();
+            if (!content.gameObject.activeSelf) content.gameObject.SetActive(true);
+
+            foreach (var ath in list.OrderByDescending(a => a.stats.fatigue))
+            {
+                var ui = Instantiate(itemPrefab, content, false);
+                if (!ui.gameObject.activeSelf) ui.gameObject.SetActive(true);
+
+                _spawned.Add(ui.gameObject);
+                _items.Add(ui);
+                _itemById[ath.id] = ui;
+
+                bool inTreatment = treatmentAssigned != null && treatmentAssigned.Contains(ath.id);
+                bool inRest      = restAssigned      != null && restAssigned.Contains(ath.id);
+
+                // 의료센터 배치 우선
+                bool isAssigned = inTreatment || inRest;
+                ui.Bind(ath, isAssigned);
+
+                // (선택) 배치 사유 뱃지 표기 지원 시
+                // if (inTreatment) ui.SetAssignedReason("의료센터 배치중");
+                // else if (inRest) ui.SetAssignedReason("휴게실 배치중");
+
+                ui.OnAssign   .Subscribe(_reqAssign.OnNext)   .AddTo(ui);
+                ui.OnUnassign .Subscribe(_reqUnassign.OnNext) .AddTo(ui);
+                ui.OnOpenInfo .Subscribe(a => ShowInfo(a))    .AddTo(ui);
+            }
+
+            Canvas.ForceUpdateCanvases();
+            var rt = content as RectTransform;
+            if (rt != null) UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
+            Canvas.ForceUpdateCanvases();
+        }
+
         
         private void ShowInfo(DomAthEntity ath)
         {

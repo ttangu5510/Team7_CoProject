@@ -6,6 +6,8 @@ using Zenject;
 using UniRx;
 using JYL;
 using SHG;
+using TMPro;
+using UnityEngine.UI;
 
 namespace JWS
 {
@@ -23,7 +25,11 @@ namespace JWS
         [Inject] private IFacilitiesController facilitiesController;
         [Inject] private SaveManager saveManager;
 
-        [Header("Panels")]
+        [Header("Assign Pannel")]
+        [SerializeField] private TextMeshProUGUI assignText;
+        [SerializeField] private Button restButton;
+        
+        [Header("Popup Panels")]
         [SerializeField] private GameObject restPanelPUI;     // 팝업 루트(블로커)
         [SerializeField] private RestListPanel restListPanel; // 후보 리스트 패널
         [SerializeField] private InjureAthInfoPanel injureAthInfoPanel; // 상세 스탯 패널
@@ -99,7 +105,14 @@ namespace JWS
             if (restResultPanel) restResultPanel.gameObject.SetActive(false);
 
             _draftAssigned = (DomAthEntity[])_assigned.Clone();
-            restListPanel.Open(candidates, GetAssignedIdSet(draft: true));
+            
+            // 휴게실에 이미 담긴 선수
+            var restAssigned = GetAssignedIdSet(draft: true);
+            // 의료센터(치료실)에 배치된 선수
+            var treatIds = saveManager.GetAssignedTreatmentAthletes() ?? Array.Empty<int>();
+            var treatmentAssigned = treatIds.Where(id => id >= 0).ToHashSet();
+            // 의료센터 배치 우선 표기
+            restListPanel.Open(candidates, restAssigned, treatmentAssigned);
 
             WireListPanelHandlers();
         }
@@ -249,6 +262,11 @@ namespace JWS
                     saveManager.SetAssignedRestAthletes(ids); // SaveManager에 API 필요
                     saveManager.SaveProgress(saveManager.GetCurrentSlotIndex());
                     _savedAssignedIds = ids.ToList();
+                    
+                    int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
+                    int assignedCnt = 0;
+                    for (int i = 0; i < usable; i++) if (_assigned[i] != null) assignedCnt++;
+                    assignText?.SetText($"휴식 진행할 선수 배치 ({assignedCnt}/{usable})");
 
                     Refresh();
                     restPanelPUI?.SetActive(false);

@@ -27,6 +27,7 @@ namespace JWS
         [Inject] private IFacilitiesController facilitiesController;
         [Inject] private SaveManager saveManager;
 
+        [Header("Popup Panels")]
         [SerializeField] private GameObject injuredAthleteInfoPUI; // 팝업 루트
         [SerializeField] private InjureListPanel injureListPanel;  // 부상자 목록 패널
         [SerializeField] private InjureAthInfoPanel injureAthInfoPanel; // 상세 스탯 패널

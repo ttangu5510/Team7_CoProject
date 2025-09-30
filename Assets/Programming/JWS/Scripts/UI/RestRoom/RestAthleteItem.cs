@@ -57,7 +57,15 @@ namespace JWS
         {
             _ath = ath;
 
-            if (nameText)       nameText.text = $"{ath.entityName} ({ath.curAge.Value}세)";
+            if (nameText)
+            {
+                var injured = ath.curState == AthleteState.Injured;
+                nameText.text =
+                    injured
+                        ? $"{ath.entityName} ({ath.curAge.Value}세) <color=#dd0000>(부상)</color>"
+                        : $"{ath.entityName} ({ath.curAge.Value}세)";
+            }
+
             if (fatigueText) fatigueText.text = $"피로도 {ath.stats.fatigue}";
 
             // 프로필 이미지 있으면 여기서 설정
