@@ -19,3 +19,5 @@ public struct AthleteRetiredEvent
     public int athleteId;
     public AthleteRetiredEvent(int id) { athleteId = id; }
 }
+
+

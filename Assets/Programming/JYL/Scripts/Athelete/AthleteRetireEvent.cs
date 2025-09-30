@@ -8,27 +8,28 @@
         public string athleteName { get; }
         public AthleteAffiliation affiliation { get; }
 
-        // public AthleteRetiredEvent(string athleteName,  AthleteAffiliation affiliation)
-        // {
-        //     this.athleteName = athleteName;
-        //     this.affiliation = affiliation;
-        // }
-
-        // 기존 호환: name + affiliation 기반
-        public AthleteRetiredEvent(string athleteName, AthleteAffiliation affiliation)
+        // 수정된 코드
+        public AthleteRetiredEvent(string athleteName,  AthleteAffiliation affiliation, int athleteId)
         {
-            this.athleteId = -1;
-            this.athleteName = athleteName;
-            this.affiliation = affiliation;
-        }
-
-        // 만준 추가 코드
-        public AthleteRetiredEvent(int athleteId)
-        {
-            this.athleteId = athleteId;
             this.athleteName = null;
             this.affiliation = default;
+            this.athleteId = athleteId;
         }
+
+        // 원본 코드
+        //public AthleteRetiredEvent(string athleteName, AthleteAffiliation affiliation)
+        //{
+        //    this.athleteName = athleteName;
+        //    this.affiliation = affiliation;
+        //}
+
+        // 만준 추가 코드
+        //public AthleteRetiredEvent(int athleteId)
+        //{
+        //    this.athleteId = athleteId;
+        //    this.athleteName = null;
+        //    this.affiliation = default;
+        //}
 
 
     }

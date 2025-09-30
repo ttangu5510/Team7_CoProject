@@ -81,8 +81,9 @@ namespace JYL
         {
             entity.Retire(); // 도메인 로직 수행
 
+            MessageBroker.Default.Publish(new AthleteRetiredEvent(entity.entityName, entity.affiliation, entity.id)); // 이벤트 발행
             // 만준 추가 코드, 은퇴 이벤트
-            MessageBroker.Default.Publish(new AthleteRetiredEvent(entity.id));
+            // MessageBroker.Default.Publish(new AthleteRetiredEvent(entity.id));
         }
 
         public void OutAthlete(string athleteName) // 선수 방출할 때 쓰는 함수
