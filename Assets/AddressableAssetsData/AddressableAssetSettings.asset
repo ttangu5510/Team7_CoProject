@@ -44,9 +44,14 @@ MonoBehaviour:
   m_BuildAddressablesWithPlayerBuild: 0
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
+  - {fileID: 11400000, guid: 4102ae5ecfc678e4d9445ee5050b9663, type: 2}
+  - {fileID: 11400000, guid: 1ed23aa31e4a92e49a6a096f87dda4db, type: 2}
   - {fileID: 11400000, guid: edf6ea71f50c93042a5af57cc95ea816, type: 2}
-  - {fileID: 11400000, guid: 7e2b93560ab692949aa3a8b2c28e3e6d, type: 2}
   - {fileID: 11400000, guid: 04feacf13d4e87d46b21bbc7ff7cc397, type: 2}
+  - {fileID: 11400000, guid: 6637ddc6cd4e0244aa0d99455458b109, type: 2}
+  - {fileID: 11400000, guid: a6bdc5e2a503ce7499f2a7673330e0cd, type: 2}
+  - {fileID: 11400000, guid: e54d631b1fb94024a90586815b24f3ed, type: 2}
+  - {fileID: 11400000, guid: a08535b09689f3c46adb2564a95fae59, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -61,7 +66,7 @@ MonoBehaviour:
       - m_Id: 0b4de8b65a66cb34bae3deb054dee31c
         m_Value: '[UnityEngine.AddressableAssets.Addressables.BuildPath]/[BuildTarget]'
       - m_Id: 60f13284a0061c2469f80fa2661a847c
-        m_Value: gs://olympic_go/[BuildTarget]/
+        m_Value: https://storage.googleapis.com/olympic_go/[BuildTarget]/
       - m_Id: 6b51bae20bb6bf34f898df9dfefcc02e
         m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
       - m_Id: 95df06e643d13434eaff25e3b1881df9
@@ -89,6 +94,11 @@ MonoBehaviour:
     m_LabelNames:
     - default
     - Image
+    - Video
+    - UILayout
+    - Audio
+    - Prefab
+    - ALL
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: d9d4d695e259be94bb3f03dffdfbe41e, type: 2}
