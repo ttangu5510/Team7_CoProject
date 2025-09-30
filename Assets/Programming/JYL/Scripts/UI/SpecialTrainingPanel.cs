@@ -8,6 +8,7 @@ using SJL;
 using TMPro;
 using UniRx;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 using Zenject;
 
@@ -39,8 +40,6 @@ public class SpecialTrainingPanel : MonoBehaviour
     private List<DomAthEntity> athleteList;
     private Dictionary<DomAthEntity, TrainingType> assignDict = new();
     private IDisposable subscription;
-
-    private string iconPath = "AthleteIcon";
 
     private int trainingTimes;
     
@@ -121,15 +120,21 @@ public class SpecialTrainingPanel : MonoBehaviour
         {
             if (pair.Value == TrainingType.Special)
             {
-                // TODO : 아이콘 로드
-                //athleteIcon[count].sprite = Resources.Load<Sprite>($"{iconPath}{pair.Key.id}");
+                var handle = Addressables.LoadAssetAsync<Sprite>($"ImageAssets/character profile/ID순/{pair.Key.id}.png");
+                var count1 = count;
+                handle.Completed += h =>
+                {
+                    athleteIcon[count1].sprite = h.Result;
+                };
+                
                 nameText[count].text = pair.Key.entityName;
                 count++;
             }
         }
+        
         for(int i = count ; i < nameText.Length ; i++)
         {
-            // athleteIcon[i].sprite = null;
+            athleteIcon[i].sprite = null;
             nameText[i].text = "";
         }
 

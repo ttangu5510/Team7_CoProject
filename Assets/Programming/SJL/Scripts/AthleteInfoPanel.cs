@@ -1,6 +1,7 @@
 ﻿using SJL;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using JYL;
 using TMPro;
 using UniRx;
@@ -42,7 +43,7 @@ namespace SJL
         [SerializeField] private TextMeshProUGUI balanceRatingText;
         [SerializeField] private TextMeshProUGUI fatigueRatingText;
 
-        private string iconPath = "AthleteIcon/";
+        private UIAnimator animator;
 
         private void Awake()
         {
@@ -50,6 +51,7 @@ namespace SJL
             closeButton.OnClickAsObservable()
                 .Subscribe(_=>OnCloseButtonClicked())
                 .AddTo(this);
+            animator = GetComponent<UIAnimator>();
         }
         
         public void SetInfo(DomAthEntity athlete)
@@ -86,7 +88,14 @@ namespace SJL
         {
             // 정보 패널 닫기
             Debug.Log("정보 패널 닫힘");
-            Destroy(gameObject);
+            OnClose();
+        }
+
+        private async UniTaskVoid OnClose()
+        {
+            animator.PlayOut();
+            await UniTask.WaitForSeconds(animator.outDuration);
+            gameObject.SetActive(false);
         }
 
         private string GetRating(int value) // 등급 계산

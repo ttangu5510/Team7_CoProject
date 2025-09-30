@@ -23,7 +23,8 @@ namespace SJL
 
         [SerializeField] public GameObject playerUIPrefab;
         [SerializeField] public Transform playerListPanel; // 선수들을 담을 부모 오브젝트
-        [SerializeField] public GameObject playerInformationPanel; // ← 패널 오브젝트 직접 참조
+        
+        public AthleteInfoPanel playerInformationPanel; // ← 패널 오브젝트 직접 참조
 
 
 
@@ -74,7 +75,7 @@ namespace SJL
             {
                 PlayerUI ui = container.InstantiatePrefabForComponent<PlayerUI>(playerUIPrefab, playerListPanel);
                 ui.SetPlayer(shuffledList[i]);
-                ui.playerInormationPanel = playerInformationPanel;
+                ui.playerInfoPanel = playerInformationPanel;
                 
                 ui.playerData = shuffledList[i];
             }

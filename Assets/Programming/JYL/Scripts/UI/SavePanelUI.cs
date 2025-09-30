@@ -42,6 +42,9 @@ namespace JYL
         private void Awake()
         {
             Subscribe();
+            returnButton.OnClickAsObservable()
+                .Subscribe(_=>gameObject.SetActive(false))
+                .AddTo(this);
         }
 
         private void OnEnable()

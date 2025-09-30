@@ -8,6 +8,8 @@ namespace MMJ
 {
     public class AthleteManager : MonoBehaviour
     {
+        [Header("Set Athlete Prefab")] 
+        [SerializeField] private GameObject athletePrefabs;
         [Inject] private DomAthService domAthService;
 
         [System.Serializable]
@@ -74,6 +76,16 @@ namespace MMJ
             if (playerDict.TryGetValue(id, out var obj))
             {
                 obj.SetActive(false);
+            }
+        }
+
+        [ContextMenu("Set Athletes")]
+        private void SetAthletePrefabs()
+        {
+            playerObjects.Clear();
+            foreach (Rigidbody ath in athletePrefabs.GetComponentsInChildren<Rigidbody>())
+            {
+                playerObjects.Add(new PlayerObjectData() { athleteId = int.Parse(ath.gameObject.name), playerObject = ath.gameObject });
             }
         }
     }

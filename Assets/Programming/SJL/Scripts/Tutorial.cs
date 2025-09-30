@@ -10,6 +10,8 @@ using DG.Tweening;
 using static UnityEngine.ParticleSystem;
 using Unity.VisualScripting;
 using EPOOutline;
+using JYL;
+using Zenject;
 
 namespace SJL
 {
@@ -28,6 +30,8 @@ namespace SJL
         [SerializeField] private Transform medicalTarget;
         [SerializeField] private Transform scoutTarget;
 
+        [Inject] private ISaveManager saveManager;
+        
         private float lineDelay = 1.5f; // 대사 한줄 출력 간격
         private bool next; // 다음 대사로 넘어가라는 신호
 
@@ -40,6 +44,7 @@ namespace SJL
         private void Awake()
         {
             clickAreaButton.onClick.AddListener(OnClickAreaClick);  // 클릭 이벤트 연결
+            if(saveManager.GetCurrentSave().time.week > 1) gameObject.SetActive(false);
         }
 
         private void Start()
