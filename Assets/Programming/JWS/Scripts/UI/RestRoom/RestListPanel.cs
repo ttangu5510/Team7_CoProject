@@ -15,7 +15,9 @@ namespace JWS
 
         [Header("List")]
         [SerializeField] private Transform content;            // ScrollView/Viewport/Content
-        [SerializeField] private RestAthleteItem itemPrefab;   // ★ Prefab 에셋 연결
+        [SerializeField] private InjuredAthleteItem itemPrefab;   // ★ Prefab 에셋 연결
+        [SerializeField] private InjureAthInfoPanel infoPanel;
+        [SerializeField] private RestResultPanel restResultPanel;
         [SerializeField] private GameObject restPanelPUI;      // 팝업 루트
 
         [Header("Footer")]
@@ -32,7 +34,8 @@ namespace JWS
         public IObservable<Unit>         OnRequestReset    => _reqReset;
         public IObservable<Unit>         OnRequestConfirm  => _reqConfirm;
 
-        private readonly Dictionary<int, RestAthleteItem> _itemById = new();
+        private readonly List<InjuredAthleteItem> _items = new();
+        private readonly Dictionary<int, InjuredAthleteItem> _itemById = new();
         private readonly List<GameObject> _spawned = new();
 
         private void Awake()
@@ -55,21 +58,47 @@ namespace JWS
             gameObject.SetActive(true);
             Clear();
 
-            var list = allCandidates?.Where(a => a.curState != AthleteState.Injured && a.stats.fatigue > 0).ToList() ?? new();
-            foreach (var ath in list)
+            var list = allCandidates?.Where(a => a.stats.fatigue > 0).OrderByDescending(a => a.stats.fatigue).ToList()
+                       ?? new List<DomAthEntity>();
+            
+            if (!content.gameObject.activeSelf) content.gameObject.SetActive(true);
+            
+            // 피로도 ≥1만, 피로도 높은 순으로 표시
+            foreach (var ath in list.OrderByDescending(a => a.stats.fatigue))
             {
+                if (ath.stats.fatigue <= 0) continue;
+
                 var ui = Instantiate(itemPrefab, content, false);
+                if (!ui.gameObject.activeSelf) ui.gameObject.SetActive(true); // ★ prefab 비활성 강제 ON
+
                 _spawned.Add(ui.gameObject);
+                _items.Add(ui);
                 _itemById[ath.id] = ui;
 
                 bool isAssigned = assignedIds != null && assignedIds.Contains(ath.id);
                 ui.Bind(ath, isAssigned);
 
-                ui.OnAssign   .Subscribe(_reqAssign.OnNext).AddTo(ui);
-                ui.OnUnassign .Subscribe(_reqUnassign.OnNext).AddTo(ui);
+                ui.OnAssign   .Subscribe(_reqAssign.OnNext)   .AddTo(ui);
+                ui.OnUnassign .Subscribe(_reqUnassign.OnNext) .AddTo(ui);
+                ui.OnOpenInfo .Subscribe(a => ShowInfo(a))    .AddTo(ui);
             }
+
+            
+            // 레이아웃 강제 갱신(ScrollView/VerticalLayout/SizeFitter 모두 반영)
+            Canvas.ForceUpdateCanvases();
+            var rt = content as RectTransform;
+            if (rt != null) UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
+            Canvas.ForceUpdateCanvases();
         }
 
+        
+        private void ShowInfo(DomAthEntity ath)
+        {
+            if (!infoPanel.gameObject.activeSelf) infoPanel.gameObject.SetActive(true);
+            infoPanel.transform.SetAsLastSibling();
+            infoPanel.Open(ath);
+        }
+        
         public void UpdateItemAssigned(int athId, bool assigned)
         {
             if (_itemById.TryGetValue(athId, out var ui))
