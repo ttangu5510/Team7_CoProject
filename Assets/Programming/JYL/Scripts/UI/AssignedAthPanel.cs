@@ -3,6 +3,7 @@ using JYL;
 using SJL;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 
 public class AssignedAthPanel : MonoBehaviour
@@ -13,7 +14,6 @@ public class AssignedAthPanel : MonoBehaviour
     [Header("Set Text")] 
     [SerializeField] private TextMeshProUGUI[] nameText;
 
-    private string iconPath = $"AthleteIcon/";
 
     public void UpdateUI(Dictionary<DomAthEntity, TrainingType> dict, TrainingType type)
     {
@@ -22,8 +22,13 @@ public class AssignedAthPanel : MonoBehaviour
         {
             if (pair.Value == type)
             {
-                 athleteImg[count].gameObject.SetActive(true);
-                // athleteImg[count].sprite = Resources.Load<Sprite>($"{iconPath}{pair.Key.id}");
+                athleteImg[count].gameObject.SetActive(true);
+                var handle = Addressables.LoadAssetAsync<Sprite>($"ImageAssets/character profile/ID순/{pair.Key.id}.png");
+                var count1 = count;
+                handle.Completed += h =>
+                {
+                    athleteImg[count1].sprite = h.Result;
+                };
                 nameText[count].text = $"{pair.Key.entityName}";
                 count++;
             }

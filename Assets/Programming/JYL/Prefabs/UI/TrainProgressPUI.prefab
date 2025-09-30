@@ -60,7 +60,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.654902, g: 0.654902, b: 0.654902, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -269,7 +269,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -365,7 +365,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1943320535594515698}
   m_FillRect: {fileID: 3181126529807101682}
   m_HandleRect: {fileID: 0}
@@ -585,7 +585,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.654902, g: 0.654902, b: 0.654902, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -736,7 +736,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -764,7 +764,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d0968eb562000a498966a46aba930f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  progressImage: {fileID: 2218251260496212699}
   progressText: {fileID: 7179718744708070319}
   progressSlider: {fileID: 8427289567722123057}
-  progressTime: 5
+  progressTime: 3
   delayTime: 0.5
+  sprites:
+  - {fileID: 21300000, guid: bc60699f94c0d51499bba41273a1eeb5, type: 3}
+  - {fileID: 21300000, guid: ec3ba059d9b209b4ab42b4f9e6a8e7c5, type: 3}
+  - {fileID: 21300000, guid: 1abfad65d0374704e9c2af075e00102e, type: 3}

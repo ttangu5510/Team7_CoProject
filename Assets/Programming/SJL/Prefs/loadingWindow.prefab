@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.64779866, g: 0.6335389, b: 0.6335389, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -305,7 +305,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8385710062602180969
 RectTransform:
   m_ObjectHideFlags: 0
@@ -376,10 +376,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d0968eb562000a498966a46aba930f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  progressImage: {fileID: 8671389183789027654}
   progressText: {fileID: 8167596128305315163}
   progressSlider: {fileID: 6873541111262400654}
   progressTime: 5
   delayTime: 0.5
+  sprites:
+  - {fileID: 21300000, guid: bc60699f94c0d51499bba41273a1eeb5, type: 3}
+  - {fileID: 21300000, guid: ec3ba059d9b209b4ab42b4f9e6a8e7c5, type: 3}
+  - {fileID: 21300000, guid: 1abfad65d0374704e9c2af075e00102e, type: 3}
 --- !u!1 &5258296652099135156
 GameObject:
   m_ObjectHideFlags: 0
@@ -562,7 +567,7 @@ RectTransform:
   m_Father: {fileID: 6941290380632735537}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
