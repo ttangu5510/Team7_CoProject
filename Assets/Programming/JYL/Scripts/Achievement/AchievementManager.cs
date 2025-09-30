@@ -6,6 +6,7 @@ using Cysharp.Threading.Tasks.Triggers;
 using EditorAttributes;
 using JWS;
 using SHG;
+using StatefulUI.Runtime.Core;
 using UniRx;
 using UnityEngine;
 using Zenject;
@@ -25,14 +26,14 @@ namespace JYL
         private List<AchievementController> achievements = new();
 
         public AchievementWrapper wrapper;
-        
-        // 테스트
-        [Button]
-        void TestNotification()
-        {
-            notification.gameObject.SetActive(true);
-            notification.ShowNotification(achievements[0].achieve);
-        }
+        //
+        // // 테스트
+        // [Button]
+        // void TestNotification()
+        // {
+        //     notification.gameObject.SetActive(true);
+        //     notification.ShowNotification(achievements[0].achieve);
+        // }
         
         #region 라이프사이클
         void OnEnable()
@@ -72,7 +73,7 @@ namespace JYL
             foreach (var controller in result)
             {
                 controller.state
-                    .Where(s => s is not (AchievementState.Locked or AchievementState.Completed))
+                    .Where(s => s is not AchievementState.Locked)
                     .Skip(1)
                     .Subscribe(state =>OnStateChanged(controller, state))
                     .AddTo(this); // 상태 변화를 구독함.
@@ -217,11 +218,11 @@ namespace JYL
                 
                 // 업적 완료 시 후행 업적이 있을 경우 해당 업적을 언락한다.
                 case AchievementState.Completed:
-                    AchievementController achievementControllers 
-                        = achievements.Where(cont => cont.achieve.PrevAchievement == controller.achieve.ID) as AchievementController;
-                    if (achievementControllers != null)
+                    achievements.TryFindValue(cont => cont.achieve.PrevAchievement == controller.achieve.ID,out AchievementController nextAchieve);
+                    if (nextAchieve != null)
                     {
-                        achievementControllers.UnlockAchievement();
+                        Debug.Log($"후행 업적 찾음{nextAchieve.achieve.AchName}");
+                        nextAchieve.UnlockAchievement();
                     }
                     else
                     {

@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 468a46d0ae32c3544b7d98094e6448a9, type: 3}
   m_Name: AddressableAssetSettings
   m_EditorClassIdentifier: 
-  m_DefaultGroup: 005887943b15e3746a475a3ac6f1bb23
+  m_DefaultGroup: b66a29ab3d9ecb54c83be168bf5f21fc
   m_currentHash:
     serializedVersion: 2
-    Hash: 00000000000000000000000000000000
+    Hash: c50387594bc9664f58f09a6c64876f63
   m_OptimizeCatalogSize: 0
-  m_BuildRemoteCatalog: 0
+  m_BuildRemoteCatalog: 1
   m_BundleLocalCatalog: 0
   m_CatalogRequestsTimeout: 0
   m_DisableCatalogUpdateOnStart: 0
@@ -35,17 +35,22 @@ MonoBehaviour:
   m_CheckForContentUpdateRestrictionsOption: 0
   m_MonoScriptBundleCustomNaming: 
   m_RemoteCatalogBuildPath:
-    m_Id: 
+    m_Id: 95df06e643d13434eaff25e3b1881df9
   m_RemoteCatalogLoadPath:
-    m_Id: 
-  m_ContentStateBuildPathProfileVariableName: 
+    m_Id: 60f13284a0061c2469f80fa2661a847c
+  m_ContentStateBuildPathProfileVariableName: <default settings path>
   m_CustomContentStateBuildPath: 
   m_ContentStateBuildPath: 
   m_BuildAddressablesWithPlayerBuild: 0
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
-  - {fileID: 11400000, guid: 04feacf13d4e87d46b21bbc7ff7cc397, type: 2}
+  - {fileID: 11400000, guid: 4102ae5ecfc678e4d9445ee5050b9663, type: 2}
+  - {fileID: 11400000, guid: 1ed23aa31e4a92e49a6a096f87dda4db, type: 2}
   - {fileID: 11400000, guid: edf6ea71f50c93042a5af57cc95ea816, type: 2}
+  - {fileID: 11400000, guid: 04feacf13d4e87d46b21bbc7ff7cc397, type: 2}
+  - {fileID: 11400000, guid: 6637ddc6cd4e0244aa0d99455458b109, type: 2}
+  - {fileID: 11400000, guid: e54d631b1fb94024a90586815b24f3ed, type: 2}
+  - {fileID: 11400000, guid: a08535b09689f3c46adb2564a95fae59, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -54,39 +59,45 @@ MonoBehaviour:
   m_ProfileSettings:
     m_Profiles:
     - m_InheritedParent: 
-      m_Id: 69a0e9997f0548c4bba2a0450ff19a98
+      m_Id: 588e290974a3fce41ae65f3ed6aa0026
       m_ProfileName: Default
       m_Values:
-      - m_Id: 79084360244f41f419fd72c11333570e
-        m_Value: http://[PrivateIpAddress]:[HostingServicePort]
-      - m_Id: 7d3b66e4341f8d945a8ac14fc1195ef2
-        m_Value: ServerData/[BuildTarget]
-      - m_Id: a9cc1a9519221a44db8090168fb96a19
+      - m_Id: 0b4de8b65a66cb34bae3deb054dee31c
         m_Value: '[UnityEngine.AddressableAssets.Addressables.BuildPath]/[BuildTarget]'
-      - m_Id: ad88a14196a18684d9149de3a28ae0c4
-        m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
-      - m_Id: f5f44b78e53d30349b25555ab579f51b
+      - m_Id: 60f13284a0061c2469f80fa2661a847c
+        m_Value: https://storage.googleapis.com/olympic_go/[BuildTarget]/
+      - m_Id: 6b51bae20bb6bf34f898df9dfefcc02e
         m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
+      - m_Id: 95df06e643d13434eaff25e3b1881df9
+        m_Value: ServerData/[BuildTarget]
+      - m_Id: 9978e6279a76ea248b1d4eb6ea3e0a63
+        m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
     m_ProfileEntryNames:
-    - m_Id: 79084360244f41f419fd72c11333570e
-      m_Name: Remote.LoadPath
-      m_InlineUsage: 0
-    - m_Id: 7d3b66e4341f8d945a8ac14fc1195ef2
-      m_Name: Remote.BuildPath
-      m_InlineUsage: 0
-    - m_Id: a9cc1a9519221a44db8090168fb96a19
+    - m_Id: 0b4de8b65a66cb34bae3deb054dee31c
       m_Name: Local.BuildPath
       m_InlineUsage: 0
-    - m_Id: ad88a14196a18684d9149de3a28ae0c4
-      m_Name: BuildTarget
+    - m_Id: 60f13284a0061c2469f80fa2661a847c
+      m_Name: Remote.LoadPath
       m_InlineUsage: 0
-    - m_Id: f5f44b78e53d30349b25555ab579f51b
+    - m_Id: 6b51bae20bb6bf34f898df9dfefcc02e
       m_Name: Local.LoadPath
+      m_InlineUsage: 0
+    - m_Id: 95df06e643d13434eaff25e3b1881df9
+      m_Name: Remote.BuildPath
+      m_InlineUsage: 0
+    - m_Id: 9978e6279a76ea248b1d4eb6ea3e0a63
+      m_Name: BuildTarget
       m_InlineUsage: 0
     m_ProfileVersion: 1
   m_LabelTable:
     m_LabelNames:
     - default
+    - Image
+    - Video
+    - UILayout
+    - Audio
+    - Prefab
+    - ALL
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: d9d4d695e259be94bb3f03dffdfbe41e, type: 2}
@@ -100,7 +111,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 44f4e2b9bcb62ae4ca066f6f8a0310c3, type: 2}
   - {fileID: 11400000, guid: 78b1bc22af04dfc47935d9397424dfe1, type: 2}
   - {fileID: 11400000, guid: 02ec7f44e9e0dbd4d8d556b358aaf5e3, type: 2}
-  m_ActiveProfileId: 69a0e9997f0548c4bba2a0450ff19a98
+  m_ActiveProfileId: 588e290974a3fce41ae65f3ed6aa0026
   m_HostingServicesManager:
     m_HostingServiceInfos: []
     m_Settings: {fileID: 11400000}

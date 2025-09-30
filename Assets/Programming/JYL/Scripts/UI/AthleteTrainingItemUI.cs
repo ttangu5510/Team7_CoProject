@@ -5,13 +5,17 @@ using System.Linq;
 using TMPro;
 using UniRx;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 using SJL;
+using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace JYL
 {
     public class AthleteTrainingItemUI : MonoBehaviour
     {
+        [Header("Set UI")] 
+        [SerializeField] private Image profileImage;
         [Header("Athlete Text")]
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI gradeText;
@@ -53,6 +57,11 @@ namespace JYL
             this.athlete = athlete;
             trainingType = type;
             infoParent = parent;
+            Addressables.LoadAssetAsync<Sprite>($"ImageAssets/character profile/ID순/{athlete.id}.png").Completed +=
+                (handle) =>
+                {
+                    profileImage.sprite = handle.Result;
+                };
 
             // 부상당한 선수일 경우, 훈련 비활성화
             if (athlete.curState == AthleteState.Injured)
