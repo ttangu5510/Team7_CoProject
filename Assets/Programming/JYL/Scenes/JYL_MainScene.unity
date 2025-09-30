@@ -4442,12 +4442,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a51a030b47c87d841a5f6229a7e54de8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  closeButton: {fileID: 0}
-  content: {fileID: 0}
-  itemPrefab: {fileID: 0}
-  restPanelPUI: {fileID: 0}
-  confirmButton: {fileID: 0}
-  resetButton: {fileID: 0}
+  closeButton: {fileID: 89475505}
+  content: {fileID: 1144291931}
+  itemPrefab: {fileID: 6961173063204801951, guid: 6bb3bca3c0aed9a47b50269fb9ca70a8,
+    type: 3}
+  infoPanel: {fileID: 2103632585}
+  restResultPanel: {fileID: 1893877383}
+  restPanelPUI: {fileID: 832532947}
+  confirmButton: {fileID: 489598386}
+  resetButton: {fileID: 571693852}
 --- !u!114 &505961356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12824,7 +12827,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uBD80\uC0C1\uB2F9\uD55C \uC120\uC218 \uBAA9\uB85D"
+  m_text: "\uC120\uC218 \uBAA9\uB85D"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d0f49b9d1fa846846a0ec34621a134c3, type: 2}
   m_sharedMaterial: {fileID: 3767718567204531551, guid: d0f49b9d1fa846846a0ec34621a134c3,
@@ -20863,6 +20866,7 @@ GameObject:
   - component: {fileID: 1893877379}
   - component: {fileID: 1893877382}
   - component: {fileID: 1893877381}
+  - component: {fileID: 1893877383}
   m_Layer: 5
   m_Name: Rest Result Panel
   m_TagString: Untagged
@@ -20929,6 +20933,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1893877378}
   m_CullTransparentMesh: 1
+--- !u!114 &1893877383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1893877378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba0f1e9f8e0bc68448cc9edfb410ef27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1905592689
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24429,7 +24445,7 @@ PrefabInstance:
     - target: {fileID: 3504317524282162260, guid: 338fd2708fba02643b10be8686553766,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 120.00012
+      value: 120.00004
       objectReference: {fileID: 0}
     - target: {fileID: 3557518042474429634, guid: 338fd2708fba02643b10be8686553766,
         type: 3}
@@ -26129,6 +26145,7 @@ MonoBehaviour:
   restPanelPUI: {fileID: 832532947}
   restListPanel: {fileID: 505961354}
   injureAthInfoPanel: {fileID: 2103632585}
+  restResultPanel: {fileID: 1893877383}
 --- !u!1001 &7816843159335876005
 PrefabInstance:
   m_ObjectHideFlags: 0
