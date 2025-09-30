@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using JYL;
 using UnityEngine;
+using Zenject;
 
 namespace JWS
 {
@@ -19,6 +20,9 @@ namespace JWS
         // 선수단 이름
         public string clanName;
         
+        // (만준추가) 최초 세이브 생성 시점
+        public string foundedUtcIso;
+
         // 세이브 슬롯
         public int saveSlotIndex = -1;
 
@@ -265,6 +269,7 @@ namespace JWS
         public int athleteRecruitCount; // 선수 영입
         public int coachRecruitCount; // 코치 영입
         public int athleteRetireCount; // 선수 은퇴
+        public int coachRetireCount;   // 코치 은퇴 (추가)
     }
 
 /* ========================= 도감 ========================= */
