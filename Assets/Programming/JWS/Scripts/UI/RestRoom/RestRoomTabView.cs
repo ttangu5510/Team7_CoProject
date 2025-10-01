@@ -24,6 +24,8 @@ namespace JWS
         [Inject] private DomAthService athleteService;
         [Inject] private IFacilitiesController facilitiesController;
         [Inject] private SaveManager saveManager;
+        
+        [SerializeField] private Button closeButton;
 
         [Header("Assign Pannel")]
         [SerializeField] private TextMeshProUGUI assignText;
@@ -415,6 +417,7 @@ namespace JWS
                         int usableNow = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
                         assignText?.SetText($"휴식 진행할 선수 배치 (0/{usableNow})");
                         Refresh();
+                        closeButton?.onClick.Invoke();
                     }
                 );
             }).AddTo(this);
