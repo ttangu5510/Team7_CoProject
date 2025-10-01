@@ -23,31 +23,36 @@ namespace JWS
         [SerializeField] private Button confirmButton;
 
         // 외부에서 호출
-        public void Open(string yyyy, string season, string week, IReadOnlyList<RestResultData> results, int recoverAmount, System.Action onClose = null)
+        public void Open(
+            string yyyy, string season, string week,
+            IReadOnlyList<RestResultData> results,
+            int recoverAmount,
+            System.Action onClose = null)
         {
-            // 타이틀
+            // 1) 타이틀
             if (timelineTitleText)
                 timelineTitleText.text = $"{yyyy}년 {season} {week}주차 휴식 정보";
 
-            // 리스트 클리어
+            // 2) 리스트 클리어  ← 여기에 붙여
             for (int i = content.childCount - 1; i >= 0; i--)
                 Destroy(content.GetChild(i).gameObject);
 
-            // 아이템 생성
+            // 3) 아이템 생성     ← 여기에 붙여
             if (results != null && resultItemPrefab)
             {
                 foreach (var r in results)
                 {
                     var item = Instantiate(resultItemPrefab, content);
+                    item.gameObject.SetActive(true); // 프리팹이 비활성 템플릿이면 반드시 켜기
                     item.Bind(r.portrait, r.name, r.reducedFatigue);
                 }
             }
 
-            // 하단 요약
+            // 4) 풋터
             if (defaultRecoverAmountText) defaultRecoverAmountText.text = $"피로도 {recoverAmount} 회복";
             if (defaultRecoverCountText)  defaultRecoverCountText.text  = $"{(results?.Count ?? 0)}명";
 
-            // 확인 버튼
+            // 5) 확인 버튼
             if (confirmButton)
             {
                 confirmButton.onClick.RemoveAllListeners();
@@ -60,6 +65,7 @@ namespace JWS
 
             gameObject.SetActive(true);
         }
+
     }
 
     // 결과 전달용 DTO

@@ -36,6 +36,8 @@ namespace JWS
         [SerializeField] private RestResultPanel restResultPanel; // 휴식 결과 패널
         [SerializeField] private RestProgressPUI restProgressPUI;
 
+        [Inject] private ITimeFlowController flowController;
+        
         private CompositeDisposable _enableCd;
         private readonly CompositeDisposable _wireCd = new();
         private IDisposable _panelSubs;
@@ -365,16 +367,63 @@ namespace JWS
                 if (ath != null) ids.Add(ath.id);
             }
             
+            var results = new List<RestResultData>(ids.Count);
+            foreach (var id in ids)
+            {
+                var ent = _assigned.FirstOrDefault(a => a != null && a.id == id);
+                if (ent == null) continue;
+
+                int before  = ent.stats.fatigue;
+                int reduced = Mathf.Min(before, recover); // 실제 깎이는 양
+                results.Add(new RestResultData
+                {
+                    portrait = null,                 // 있으면 넣어(스프라이트)
+                    name     = ent.entityName,
+                    reducedFatigue = reduced
+                });
+            }
+            
             athleteService.ApplyRestRecovery(ids, recover);
             
             // 휴식 진행 팝업 표시
             if (restPanelPUI && !restPanelPUI.activeSelf) restPanelPUI.SetActive(true);
+            
             RestProgressPUI progPui = Instantiate(restProgressPUI, restPanelPUI.transform);
             progPui.gameObject.SetActive(true);
             progPui.Init();
-            progPui.Confirmed
-                .Subscribe(_ => OnRestDone(true))
-                .AddTo(progPui);
+            
+            progPui.Confirmed.Subscribe(_ =>
+            {
+                if (restPanelPUI && !restPanelPUI.activeSelf) restPanelPUI.SetActive(true);
+
+                int year = flowController.Year.Value;
+                string season = SeasonKo(flowController.CurrentSeason.Value);
+                int weekInSeason = ((flowController.WeekInYear.Value - 1) % SHG.ITimeFlowController.WEEK_FOR_SEASON) + 1;
+
+                var resultPanel = Instantiate(restResultPanel, restPanelPUI.transform);
+                resultPanel.gameObject.SetActive(true);
+                
+                resultPanel.Open(
+                    year.ToString(),
+                    season,
+                    weekInSeason.ToString(),
+                    results,
+                    recover,
+                    onClose: () =>
+                    {
+                        // ▶ 확인 버튼 눌렀을 때 실행
+                        flowController.ProgressWeek();                         // 다음 주차로
+                        saveManager.SaveProgress(saveManager.GetCurrentSlotIndex()); // 세이브
+                        restPanelPUI?.SetActive(false);                        // 오버레이 닫기
+
+                        // (옵션) UI 보정
+                        int usableNow = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
+                        assignText?.SetText($"휴식 진행할 선수 배치 (0/{usableNow})");
+                        Refresh();
+                    }
+                );
+            }).AddTo(progPui);
+
             
 
             
@@ -386,42 +435,8 @@ namespace JWS
             saveManager.SetAssignedRestAthletes(_savedAssignedIds.ToArray());
 
             Refresh();
-
-            // 다음주로 만든 후 저장
             
-            
-            
-        //     // 결과 팝업 오픈
-        //     if (restPanelPUI) restPanelPUI.SetActive(true);
-        //     if (restResultPanel)
-        //     {
-        //         restResultPanel.gameObject.SetActive(true);
-        //         restResultPanel.Open(results); // 네 패널 API에 맞게 전달
-        //     }
-        //     if (restListPanel) restListPanel.gameObject.SetActive(false);
-        //     if (injureAthInfoPanel) injureAthInfoPanel.gameObject.SetActive(false);
-        //
         }
-        
-        private void OnRestDone(bool success)
-        {
-            RestResultPanel pui = Instantiate(restResultPanel, restPanelPUI.transform);
-            pui.gameObject.SetActive(true);
-            // pui.Init(success);
-            // pui.ConfirmSubject.Subscribe(clicked =>
-            // {
-            //     if (clicked) OnPopUpOkClick();
-            // });
-        }
-        
-        // // 이벤트. 훈련 후, 시간 보내기
-        // private void OnPopUpOkClick()
-        // {
-        //     // 시간 보내기
-        //     flowController.ProgressWeek();
-        //     facilityPresenter.Hide();
-        //     achievementManager.wrapper.TrainCount.Value++; // 업적 카운트 적용
-        // }
         
         public void NudgeRestButton()
         {
@@ -440,6 +455,13 @@ namespace JWS
             }
             t.localPosition = basePos;
         }
-
+        private static string SeasonKo(SHG.Season s) => s switch
+        {
+            SHG.Season.Spring => "봄",
+            SHG.Season.Summer => "여름",
+            SHG.Season.Fall => "가을",
+            SHG.Season.Winter => "겨울",
+            _ => ""
+        };
     }
 }
