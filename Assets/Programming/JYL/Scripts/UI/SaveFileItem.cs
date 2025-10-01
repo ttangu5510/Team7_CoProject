@@ -28,9 +28,9 @@ namespace JYL
         [SerializeField] private DeleteSavePUI deletePopUp;
 
         [Header("Set MainScene")] 
-        [SerializeField] private string mainSceneName = "JYL_MainScene";
-        
-        
+        // [SerializeField] private string mainSceneName = "MMJ_MainScene";
+        private string mainSceneName = "JYL_MainScene";
+
         [Inject] private ISaveManager saveManager;
         [Inject] private IUiManager uiManager;
     

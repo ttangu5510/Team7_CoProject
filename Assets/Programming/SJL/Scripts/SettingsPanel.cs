@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using JYL;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -11,8 +12,6 @@ namespace SJL
 {
     public class SettingsPanel : MonoBehaviour
     {
-        [Header("닫기")]
-        [SerializeField] private Button closeButton;
         [Header("볼륨 설정")]
         [SerializeField] private Slider masterVolumeSlider;
         [SerializeField] private Slider musicVolumeSlider;
@@ -33,6 +32,12 @@ namespace SJL
         [SerializeField] private Button returnTitleButton;
         [Header("오디오 믹서")]
         [SerializeField] private AudioMixer audioMixer;
+
+        [Header("Set References")] 
+        [SerializeField] private IngameSaveUI saveProgressUI;
+        [SerializeField] private SavePanelUI loadProgressUI;
+        
+        UIManager UIManager;
 
         private void Awake()
         {
@@ -60,33 +65,32 @@ namespace SJL
             guideButton.onClick.AddListener(OnShowGuide);
             creditButton.onClick.AddListener(OnShowCredit);
 
-            // 닫기(X)
-            closeButton.onClick.AddListener(() => gameObject.SetActive(false));
-
             // 버전
             versionText.text = "버전. v1.0.0";
 
             // 슬라이더 값 초기화(필요 시 저장값에서 불러올 것)
-            masterVolumeSlider.value = 50;
-            musicVolumeSlider.value = 50;
-            sfxVolumeSlider.value = 50;
+            musicVolumeSlider.value = 0.5f;
+            sfxVolumeSlider.value = 0.5f;
+            masterVolumeSlider.value = 0.5f;
+        }
+
+        public void Start()
+        {
+            //SoundManager.Instance.PlayMusic(0); // 시작시 배경음 재생
         }
 
         // 볼륨 슬라이더 연동 (AudioMixer Exposed Parameters와 연동 권장)
         private void OnMasterVolumeChanged(float value)
         {
-            float dB = Mathf.Log10(Mathf.Max(value, 0.0001f)) * 20f;
-            audioMixer.SetFloat("MasterVolume", dB);
+            masterVolumeSlider.onValueChanged.AddListener(val => SoundManager.Instance.SetMasterVolume(val));
         }
         private void OnMusicVolumeChanged(float value)
         {
-            float dB = Mathf.Log10(Mathf.Max(value, 0.0001f)) * 20f;
-            audioMixer.SetFloat("MusicVolume", dB);
+            musicVolumeSlider.onValueChanged.AddListener(val => SoundManager.Instance.SetMusicVolume(val));
         }
         private void OnSfxVolumeChanged(float value)
         {
-            float dB = Mathf.Log10(Mathf.Max(value, 0.0001f)) * 20f;
-            audioMixer.SetFloat("SfxVolume", dB);
+            sfxVolumeSlider.onValueChanged.AddListener(val => SoundManager.Instance.SetSFXVolume(val));
         }
         private void OnMasterMuteChanged(bool mute)
         {
@@ -111,6 +115,10 @@ namespace SJL
         {
             // 데이터 초기화
             Debug.Log("데이터 리셋됨");
+            QualitySettings.SetQualityLevel(1);
+            musicVolumeSlider.value = 0.5f;
+            sfxVolumeSlider.value = 0.5f;
+            masterVolumeSlider.value = 0.5f;
         }
 
         // ---- 하단 기능 ----
@@ -118,17 +126,19 @@ namespace SJL
         {
             // 저장 구현
             Debug.Log("수동 저장!");
+            saveProgressUI.gameObject.SetActive(true);
         }
         private void OnLoad()
         {
             // 불러오기 구현
             Debug.Log("불러오기!");
+            loadProgressUI.gameObject.SetActive(true);
         }
         private void OnGotoTitle()
         {
             // 타이틀 화면 이동
             Debug.Log("타이틀 화면 이동!");
-            
+            SceneManager.LoadScene("JYL_TIlteScene");
         }
 
         // ---- 팝업 ----

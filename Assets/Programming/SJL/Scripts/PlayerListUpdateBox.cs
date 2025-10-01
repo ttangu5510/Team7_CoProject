@@ -21,7 +21,7 @@ namespace SJL
 
         [SerializeField] public PlayerUI playerUIPrefab;
         [SerializeField] public Transform playerListPanel; // 선수들을 담을 부모 오브젝트
-        [SerializeField] public GameObject playerInformationPanel;
+        [SerializeField] public AthleteInfoPanel playerInformationPanel;
 
         public List<DomAthEntity> playerDataList = new();    // 모든 선수 데이터 리스트
 
@@ -130,7 +130,7 @@ namespace SJL
             {
                 PlayerUI ui = container.InstantiatePrefabForComponent<PlayerUI>(playerUIPrefab, playerListPanel);   // Zenject로 생성
                 ui.SetPlayer(finalList[i]); // 변환 후 전달
-                ui.playerInormationPanel = playerInformationPanel;  // 정보 패널 연결
+                ui.playerInfoPanel = playerInformationPanel;  // 정보 패널 연결
                 ui.playerData = finalList[i];   // 선수 데이터 설정
             }
 

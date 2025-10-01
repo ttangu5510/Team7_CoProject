@@ -81,6 +81,10 @@ namespace JYL
         {
             SaveData save = new SaveData();
             save.Init(uid,playerName,clanName);
+
+            // (만준추가
+            save.foundedUtcIso = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+
             saves.Add(save);
             curSave = save;
             achievementWrapper = new(curSave.achievementRecord);
@@ -255,7 +259,7 @@ namespace JYL
                 curSave.coachSaves.Add(newCoach);
             }
             
-            else // 후보 이상급 코치면 세이브 파일이 있는지 먼저 체크한 후 로직 진행함. 은퇴해야지만 Hidden에서 Unrecruited로 됨.
+            else if(entity.grade == CoachGrade.선수출신)// 후보 이상급 코치면 세이브 파일이 있는지 먼저 체크한 후 로직 진행함. 은퇴해야지만 Hidden에서 Unrecruited로 됨.
             {
                 CoachSave newCoach = curSave.FindCoach(entity);
                 if (newCoach != null)
@@ -269,6 +273,10 @@ namespace JYL
                 }
                 // 업적 카운트 적용
                 achievementWrapper.CoachRecruitCount.Value++;
+            }
+            else
+            {
+                Debug.LogWarning($"코치 그레이드가 잘못 적용됨{entity.entityName}__{entity.grade}");
             }
         }
 

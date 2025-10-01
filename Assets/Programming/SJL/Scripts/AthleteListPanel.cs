@@ -28,6 +28,9 @@ namespace SJL
         [Header("Set Prefabs")] 
         [SerializeField] private AthleteTrainingItemUI athleteItem;
 
+        [Header("Set References")] 
+        [SerializeField] private AthleteInfoPanel infoPanel;
+
         [Inject] private DomAthService athleteService;
         
         private TrainingType trainingType; // 입력받은 훈련 타입
@@ -80,7 +83,7 @@ namespace SJL
                 {
                     changeDict[ath] = cachedDict[ath];
                     AthleteTrainingItemUI tmpItem = Instantiate(athleteItem, parentContent);
-                    tmpItem.Init(changeDict, type, ath, popUpParent);
+                    tmpItem.Init(changeDict, type, ath, infoPanel);
                     itemList.Add(tmpItem);
                 }
             }

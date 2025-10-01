@@ -6,6 +6,7 @@ using TMPro;
 using UniRx;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 using Zenject;
 using Zenject.SpaceFighter;
@@ -14,7 +15,8 @@ namespace SJL
 {
     public class PlayerUI : MonoBehaviour
     {
-        [Header("UI Components")]
+        [Header("UI Components")] 
+        [SerializeField] private Image profileImage;
         [SerializeField] private TextMeshProUGUI nameText;
         [SerializeField] private TextMeshProUGUI gradeText;
         [SerializeField] private TextMeshProUGUI ageText;
@@ -26,7 +28,6 @@ namespace SJL
         [SerializeField] private Button informationButton;
         [SerializeField] private Button recruitmentButton;
         [Header("Panels")]
-        [SerializeField] public GameObject playerInormationPanel;
         [SerializeField] public GameObject NotificationWindow;  // 알림창 패널
         [SerializeField] public GameObject ConfirmPlayerRecruitment;    // 선수 영입 확인 패널
 
@@ -34,6 +35,7 @@ namespace SJL
 
         private int recruitCost;    // 영입 비용
         private int recruitSuccessRate; // 영입 성공 확률
+        public AthleteInfoPanel playerInfoPanel;
 
         [Inject] private IResourceController resourceController;    // 자원 컨트롤러
         [Inject] private DomAthService athService;  // 국내 선수 서비스
@@ -46,6 +48,13 @@ namespace SJL
             ageText.text = player.recruitAge.ToString();
             typeText.text = player.maxGrade.ToString();
             playerData = player;
+            
+            // 비동기로 이미지 불러와서 아이콘 설정
+            var handle = Addressables.LoadAssetAsync<Sprite>($"ImageAssets/character profile/ID순/{player.id}.png");
+            handle.Completed += h =>
+            {
+                profileImage.sprite = h.Result;
+            };
 
             // 등급에 따른 성공률/비용 설정
             switch (player.affiliation)
@@ -85,14 +94,11 @@ namespace SJL
         private void OnInformationButtonClicked()    // 선수 정보
         {
             Debug.Log("선수 정보 버튼 클릭됨: " + nameText.text);
-            if (playerInormationPanel != null && playerData != null)
+            if (playerInfoPanel != null && playerData != null)
             {
-                playerInormationPanel.SetActive(true);
+                playerInfoPanel.gameObject.SetActive(true);
 
-                // 여기에서 PlayerInformationPanel로 캐스팅!
-                AthleteInfoPanel info = playerInormationPanel.GetComponent<AthleteInfoPanel>();
-                if (info != null)
-                    info.SetInfo(playerData); // 선수 데이터 넘기기
+                playerInfoPanel.SetInfo(playerData); // 선수 데이터 넘기기
             }
             else
             {
