@@ -34,6 +34,7 @@ namespace JWS
         [SerializeField] private RestListPanel restListPanel; // 후보 리스트 패널
         [SerializeField] private InjureAthInfoPanel injureAthInfoPanel; // 상세 스탯 패널
         [SerializeField] private RestResultPanel restResultPanel; // 휴식 결과 패널
+        [SerializeField] private RestProgressPUI restProgressPUI;
 
         private CompositeDisposable _enableCd;
         private readonly CompositeDisposable _wireCd = new();
@@ -366,8 +367,16 @@ namespace JWS
             
             athleteService.ApplyRestRecovery(ids, recover);
             
-            // 애니메이션 재생
-
+            // 휴식 진행 팝업 표시
+            // 훈련 진행 팝업 표시
+            RestProgressPUI progPui = Instantiate(restProgressPUI, restPanelPUI.transform);
+            progPui.gameObject.SetActive(true);
+            
+            _ = progPui.Init();
+            progPui.Confirmed.Subscribe(progress =>
+            {
+                if (progress) OnTrainingDone(result);
+            });
             
 
             
@@ -396,6 +405,16 @@ namespace JWS
         //
         }
         
+        private void OnTrainingDone(bool success)
+        {
+            RestResultPanel pui = Instantiate(restResultPanel, restPanelPUI.transform);
+            pui.gameObject.SetActive(true);
+            pui.Init(success);
+            pui.ConfirmSubject.Subscribe(clicked =>
+            {
+                if (clicked) OnPopUpOkClick();
+            });
+        }
         public void NudgeRestButton()
         {
             var btn = restButton ? restButton.transform : transform;
