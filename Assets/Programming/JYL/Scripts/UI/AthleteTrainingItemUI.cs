@@ -24,15 +24,13 @@ namespace JYL
         [SerializeField] private Button assignButton;
         [SerializeField] private TextMeshProUGUI assignText;
 
-        [Header("Athlete Info")] 
-        [SerializeField] private AthleteInfoPanel athleteInfoPanel;
+        private AthleteInfoPanel athleteInfoPanel;
 
 
         // Init에 의해서 외부에 의해 주입
         private Dictionary<DomAthEntity, TrainingType> trainingDict;
         private DomAthEntity athlete; 
         private TrainingType trainingType;
-        private RectTransform infoParent;
         
         // 아이템을 클릭하면 정보가 출력됨
         private Button itemButton;
@@ -51,12 +49,12 @@ namespace JYL
             trainingType = TrainingType.None;
         }
        
-        public void Init(Dictionary<DomAthEntity, TrainingType> dict, TrainingType type, DomAthEntity athlete, RectTransform parent) // 생성될 때 호출
+        public void Init(Dictionary<DomAthEntity, TrainingType> dict, TrainingType type, DomAthEntity athlete, AthleteInfoPanel infoPanel) // 생성될 때 호출
         {
             trainingDict = dict;
             this.athlete = athlete;
             trainingType = type;
-            infoParent = parent;
+            athleteInfoPanel = infoPanel;
             Addressables.LoadAssetAsync<Sprite>($"ImageAssets/character profile/ID순/{athlete.id}.png").Completed +=
                 (handle) =>
                 {
@@ -122,9 +120,8 @@ namespace JYL
 
         private void OnClickItemButton()
         {
-            AthleteInfoPanel athleteInfo = Instantiate(athleteInfoPanel, infoParent);
-            athleteInfo.gameObject.SetActive(true);
-            athleteInfo.SetInfo(athlete);
+            athleteInfoPanel.gameObject.SetActive(true);
+            athleteInfoPanel.SetInfo(athlete);
         }
 
     }

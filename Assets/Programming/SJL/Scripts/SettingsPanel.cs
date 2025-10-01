@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using JYL;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -11,8 +12,6 @@ namespace SJL
 {
     public class SettingsPanel : MonoBehaviour
     {
-        [Header("닫기")]
-        [SerializeField] private Button closeButton;
         [Header("볼륨 설정")]
         [SerializeField] private Slider masterVolumeSlider;
         [SerializeField] private Slider musicVolumeSlider;
@@ -34,6 +33,10 @@ namespace SJL
         [Header("오디오 믹서")]
         [SerializeField] private AudioMixer audioMixer;
 
+        [Header("Set References")] 
+        [SerializeField] private IngameSaveUI saveProgressUI;
+        [SerializeField] private SavePanelUI loadProgressUI;
+        
         UIManager UIManager;
 
         private void Awake()
@@ -61,9 +64,6 @@ namespace SJL
             // 가이드/크레딧
             guideButton.onClick.AddListener(OnShowGuide);
             creditButton.onClick.AddListener(OnShowCredit);
-
-            // 닫기(X)
-            closeButton.onClick.AddListener(() => gameObject.SetActive(false));
 
             // 버전
             versionText.text = "버전. v1.0.0";
@@ -126,11 +126,13 @@ namespace SJL
         {
             // 저장 구현
             Debug.Log("수동 저장!");
+            saveProgressUI.gameObject.SetActive(true);
         }
         private void OnLoad()
         {
             // 불러오기 구현
             Debug.Log("불러오기!");
+            loadProgressUI.gameObject.SetActive(true);
         }
         private void OnGotoTitle()
         {
