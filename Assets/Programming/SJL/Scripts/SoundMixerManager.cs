@@ -17,6 +17,7 @@ namespace SJL
         public void SetMusicVolume(float level)
         {
             audioMixer.SetFloat("musicVolume", Mathf.Log10(level) * 20f);
+            Debug.Log(" 셋뮤직볼륨 " + level);
         }
 
         public void SetSFXVolume(float level)

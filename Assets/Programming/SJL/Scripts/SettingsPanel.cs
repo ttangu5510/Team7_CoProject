@@ -67,30 +67,27 @@ namespace SJL
 
             // 버전
             versionText.text = "버전. v1.0.0";
-
-            // 슬라이더 값 초기화(필요 시 저장값에서 불러올 것)
-            musicVolumeSlider.value = 0.5f;
-            sfxVolumeSlider.value = 0.5f;
-            masterVolumeSlider.value = 0.5f;
         }
 
         public void Start()
         {
-            //SoundManager.Instance.PlayMusic(0); // 시작시 배경음 재생
+            masterVolumeSlider.value = SoundManager.Instance.GetMasterVolume();
+            musicVolumeSlider.value = SoundManager.Instance.GetMusicVolume();
+            sfxVolumeSlider.value = SoundManager.Instance.GetSFXVolume();
         }
 
         // 볼륨 슬라이더 연동 (AudioMixer Exposed Parameters와 연동 권장)
         private void OnMasterVolumeChanged(float value)
         {
-            masterVolumeSlider.onValueChanged.AddListener(val => SoundManager.Instance.SetMasterVolume(val));
+            SoundManager.Instance.SetMasterVolume(value);
         }
         private void OnMusicVolumeChanged(float value)
         {
-            musicVolumeSlider.onValueChanged.AddListener(val => SoundManager.Instance.SetMusicVolume(val));
+            SoundManager.Instance.SetMusicVolume(value);
         }
         private void OnSfxVolumeChanged(float value)
         {
-            sfxVolumeSlider.onValueChanged.AddListener(val => SoundManager.Instance.SetSFXVolume(val));
+            SoundManager.Instance.SetSFXVolume(value);
         }
         private void OnMasterMuteChanged(bool mute)
         {
