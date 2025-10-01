@@ -170,19 +170,21 @@ namespace JYL
         #endregion
 
         #region 선수휴식
-        public void ApplyRestRecovery(IReadOnlyList<int> athleteIds, int recover)
+        public void ApplyRestRecovery(IEnumerable<DomAthEntity> athletes, int recover)
         {
-            if (athleteIds == null || athleteIds.Count == 0) return;
+            if (athletes == null) return;
 
-            foreach (var id in athleteIds)
+            foreach (var ath in athletes)
             {
-                var ath = repository.FindById(id);
                 if (ath == null) continue;
+
                 int cur = ath.stats.fatigue;
-                ath.stats.SetFatigue(-recover);
+                int reduce = Mathf.Min(recover, cur);
+                ath.stats.SetFatigue(-reduce);
                 repository.Update(ath);
             }
         }
+
         #endregion
         
     }

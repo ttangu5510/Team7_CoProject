@@ -347,51 +347,49 @@ namespace JWS
         private void StartRest()
         {
             Debug.Log("휴식시작");
-        
+
             int usable = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
-        
+
             if (!HasAnyAssigned())
             {
                 NudgeRestButton();
                 Debug.Log("휴식 진행할 선수가 없습니다.");
                 return;
             }
-            
-            int lv = Mathf.Clamp(facilitiesController.Lounge.CurrentStage.Value, 0, 4);
-            int recover = lv switch { 0=>40, 1=>50, 2=>55, 3=>60, 4=>70, _=>40 };
-            
-            var ids = new List<int>(usable);
-            for (int i = 0; i < usable; i++)
-            {
-                var ath = _assigned[i];
-                if (ath != null) ids.Add(ath.id);
-            }
-            
-            var results = new List<RestResultData>(ids.Count);
-            foreach (var id in ids)
-            {
-                var ent = _assigned.FirstOrDefault(a => a != null && a.id == id);
-                if (ent == null) continue;
 
+            int lv = Mathf.Clamp(facilitiesController.Lounge.CurrentStage.Value, 0, 4);
+            int recover = lv switch { 0 => 40, 1 => 50, 2 => 55, 3 => 60, 4 => 70, _ => 40 };
+
+            // 슬롯에 실제 배치된 엔티티 목록
+            var assignedAthletes = _assigned.Take(usable).Where(a => a != null).ToList();
+
+            // 결과 패널용 데이터(감소량 계산은 적용 전 기준)
+            var results = new List<RestResultData>(assignedAthletes.Count);
+            foreach (var ent in assignedAthletes)
+            {
                 int before  = ent.stats.fatigue;
-                int reduced = Mathf.Min(before, recover); // 실제 깎이는 양
+                int reduced = Mathf.Min(before, recover);
                 results.Add(new RestResultData
                 {
-                    portrait = null,                 // 있으면 넣어(스프라이트)
-                    name     = ent.entityName,
+                    portrait       = null,              // 필요 시 세팅
+                    name           = ent.entityName,
                     reducedFatigue = reduced
                 });
             }
-            
-            athleteService.ApplyRestRecovery(ids, recover);
-            
-            // 휴식 진행 팝업 표시
+
+            // 같은 인스턴스에 직접 적용 + 업뎃
+            athleteService.ApplyRestRecovery(assignedAthletes, recover);
+
+            // 저장
+            saveManager.SaveProgress(saveManager.GetCurrentSlotIndex());
+
+            // 진행 팝업
             if (restPanelPUI && !restPanelPUI.activeSelf) restPanelPUI.SetActive(true);
-            
-            RestProgressPUI progPui = Instantiate(restProgressPUI, restPanelPUI.transform);
+
+            var progPui = Instantiate(restProgressPUI, restPanelPUI.transform);
             progPui.gameObject.SetActive(true);
             progPui.Init();
-            
+
             progPui.Confirmed.Subscribe(_ =>
             {
                 if (restPanelPUI && !restPanelPUI.activeSelf) restPanelPUI.SetActive(true);
@@ -402,7 +400,6 @@ namespace JWS
 
                 var resultPanel = Instantiate(restResultPanel, restPanelPUI.transform);
                 resultPanel.gameObject.SetActive(true);
-                
                 resultPanel.Open(
                     year.ToString(),
                     season,
@@ -411,32 +408,26 @@ namespace JWS
                     recover,
                     onClose: () =>
                     {
-                        // ▶ 확인 버튼 눌렀을 때 실행
-                        flowController.ProgressWeek();                         // 다음 주차로
-                        saveManager.SaveProgress(saveManager.GetCurrentSlotIndex()); // 세이브
-                        restPanelPUI?.SetActive(false);                        // 오버레이 닫기
+                        flowController.ProgressWeek();                                  // 주차 진행
+                        saveManager.SaveProgress(saveManager.GetCurrentSlotIndex());    // 확정 저장
+                        restPanelPUI?.SetActive(false);
 
-                        // (옵션) UI 보정
                         int usableNow = Mathf.Clamp(GetUsableSlots(), 0, slots.Count);
                         assignText?.SetText($"휴식 진행할 선수 배치 (0/{usableNow})");
                         Refresh();
                     }
                 );
-            }).AddTo(progPui);
+            }).AddTo(this);
 
-            
-
-            
-            // UI 슬롯 전부 비우기
+            // 슬롯/세이브 슬롯 초기화 + 리프레시
             for (int i = 0; i < _assigned.Length; i++) _assigned[i] = null;
-
-            // 세이브 슬롯도 전부 -1로 초기화
             _savedAssignedIds = Enumerable.Repeat(-1, _assigned.Length).ToList();
             saveManager.SetAssignedRestAthletes(_savedAssignedIds.ToArray());
 
             Refresh();
-            
         }
+
+
         
         public void NudgeRestButton()
         {
