@@ -368,15 +368,13 @@ namespace JWS
             athleteService.ApplyRestRecovery(ids, recover);
             
             // 휴식 진행 팝업 표시
-            // 훈련 진행 팝업 표시
+            if (restPanelPUI && !restPanelPUI.activeSelf) restPanelPUI.SetActive(true);
             RestProgressPUI progPui = Instantiate(restProgressPUI, restPanelPUI.transform);
             progPui.gameObject.SetActive(true);
-            
-            _ = progPui.Init();
-            progPui.Confirmed.Subscribe(progress =>
-            {
-                if (progress) OnTrainingDone(result);
-            });
+            progPui.Init();
+            progPui.Confirmed
+                .Subscribe(_ => OnRestDone(true))
+                .AddTo(progPui);
             
 
             
@@ -405,16 +403,26 @@ namespace JWS
         //
         }
         
-        private void OnTrainingDone(bool success)
+        private void OnRestDone(bool success)
         {
             RestResultPanel pui = Instantiate(restResultPanel, restPanelPUI.transform);
             pui.gameObject.SetActive(true);
-            pui.Init(success);
-            pui.ConfirmSubject.Subscribe(clicked =>
-            {
-                if (clicked) OnPopUpOkClick();
-            });
+            // pui.Init(success);
+            // pui.ConfirmSubject.Subscribe(clicked =>
+            // {
+            //     if (clicked) OnPopUpOkClick();
+            // });
         }
+        
+        // // 이벤트. 훈련 후, 시간 보내기
+        // private void OnPopUpOkClick()
+        // {
+        //     // 시간 보내기
+        //     flowController.ProgressWeek();
+        //     facilityPresenter.Hide();
+        //     achievementManager.wrapper.TrainCount.Value++; // 업적 카운트 적용
+        // }
+        
         public void NudgeRestButton()
         {
             var btn = restButton ? restButton.transform : transform;
