@@ -44,7 +44,7 @@ namespace SJL
         private void Awake()
         {
             clickAreaButton.onClick.AddListener(OnClickAreaClick);  // 클릭 이벤트 연결
-            if(saveManager.GetCurrentSave().time.week > 1) gameObject.SetActive(false);
+            //if(saveManager.GetCurrentSave().time.week > 1) gameObject.SetActive(false);
         }
 
         private void Start()
@@ -65,7 +65,7 @@ namespace SJL
             // 문장별로 켜고 싶은 highlightObjects 인덱스를 지정 (-1은 모두 비활성)
             highlightStepIdxs = new List<int[]>
             {
-                new int[] { -1, -1, -1, -1, -1 }, // tutorialGreetings
+                new int[] { -1, -1, -1, -1 }, // tutorialGreetings
                 new int[] { -1, 0, -1, 1, -1, -1, -1, -1, 2, -1, -1, 3, 4, 5, 6, 7 }, // tutorialMainScreen
                 new int[] { -1 ,8, 9, 10, 11, 12, 13 }, // tutorialfacilities
                 new int[] { -1, -1, -1, -1, 14 }, // tutorialStartOfTheFirstGame
@@ -206,7 +206,6 @@ namespace SJL
             "저는 선수단 매니저를 맡고 있는 '이유리'라고 합니다.",
             "잘 부탁드려요!",
             "본격적인 단장 업무를 수행하시기 전에 간략한 정보를 알려드려도 괜찮을까요?",
-            "(튜토리얼 시작 또는 스킵 팝업창 등장)",
         };
         private string[] tutorialMainScreen = new string[]
         {

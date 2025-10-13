@@ -19,6 +19,14 @@ namespace SJL
 
         [SerializeField] public int currentMusicIndex = 0; // 현재 재생중인 배경음 인덱스
 
+        private string masterVolumeKey = "masterVolume";
+        private string musicVolumeKey = "musicVolume";
+        private string sfxVolumeKey = "sfxVolume";
+
+        private float masterVolumeValue;
+        private float musicVolumeValue;
+        private float sfxVolumeValue;
+
         private void Awake()
         {
             // 싱글톤 패턴(중복 방지)
@@ -36,10 +44,17 @@ namespace SJL
             // 저장된 볼륨 불러오기
             LoadVolumeSettings();
 
-            // AudioSource는 Inspector에서 할당! (중복 할당 주의)
-            //musicSource = GetComponent<AudioSource>();
-            //sfxSource = GetComponent<AudioSource>();
-            //PlayMusic(currentMusicIndex); // 인덱스 번호로 배경음 재생
+            // 시작시 배경음 재생
+            PlayMusic(0); 
+
+        }
+
+        public void Update()
+        {
+           if(Input.GetMouseButtonDown(0) || Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+            {
+                PlaySFX(0); // 효과음 재생 테스트
+            }
         }
 
 
@@ -47,32 +62,35 @@ namespace SJL
         public void SetMasterVolume(float sliderValue)
         {
             float dB = Mathf.Log10(Mathf.Max(sliderValue, 0.0001f)) * 20f;  // 0.0001f 방지
-            audioMixer.SetFloat("MasterVolume", dB);    // Mixer에 적용
-            PlayerPrefs.SetFloat("MasterVolume", sliderValue);  // 값 저장
+            audioMixer.SetFloat(masterVolumeKey, dB);    // Mixer에 적용
+            PlayerPrefs.SetFloat(masterVolumeKey, sliderValue);  // 값 저장
+            masterVolumeValue = sliderValue;
             Debug.Log($"SetMasterVolume: value={sliderValue}, dB={dB}"); 
         }
         public void SetMusicVolume(float sliderValue)
         {
             float dB = Mathf.Log10(Mathf.Max(sliderValue, 0.0001f)) * 20f;
-            audioMixer.SetFloat("MusicVolume", dB);
-            PlayerPrefs.SetFloat("MusicVolume", sliderValue); // 저장
+            audioMixer.SetFloat(musicVolumeKey, dB);
+            PlayerPrefs.SetFloat(musicVolumeKey, sliderValue); // 저장
+            musicVolumeValue = sliderValue;
             Debug.Log($"SetMusicVolume: value={sliderValue}, dB={dB}");
         }
         public void SetSFXVolume(float sliderValue)
         {
             float dB = Mathf.Log10(Mathf.Max(sliderValue, 0.0001f)) * 20f;
-            audioMixer.SetFloat("SfxVolume", dB);
-            PlayerPrefs.SetFloat("SfxVolume", sliderValue); // 저장
+            audioMixer.SetFloat(sfxVolumeKey, dB);
+            PlayerPrefs.SetFloat(sfxVolumeKey, sliderValue); // 저장
+            sfxVolumeValue = sliderValue;
             Debug.Log($"SetSfxVolume: value={sliderValue}, dB={dB}");
         }
 
         // ---------------- 저장된 값 불러오기 ----------------
         private void LoadVolumeSettings()
         {
-            float master = PlayerPrefs.GetFloat("MasterVolume", 0.5f);
-            float music = PlayerPrefs.GetFloat("MusicVolume", 0.5f);
-            float sfx = PlayerPrefs.GetFloat("SfxVolume", 0.5f);
-
+            float master = PlayerPrefs.GetFloat(masterVolumeKey, 0.5f);
+            float music = PlayerPrefs.GetFloat(musicVolumeKey, 0.5f);
+            float sfx = PlayerPrefs.GetFloat(sfxVolumeKey, 0.5f);
+            Debug.Log($"LoadVolumeSettings: master={master}, music={music}, sfx={sfx}");
             SetMasterVolume(master);
             SetMusicVolume(music);
             SetSFXVolume(sfx);
@@ -94,6 +112,21 @@ namespace SJL
             if (index < 0 || index >= sfxClips.Length) return;
             sfxSource.PlayOneShot(sfxClips[index]);
         }
+
+        // 현재 볼륨 값 반환 (0~1)
+        public float GetMasterVolume()
+        {
+            return masterVolumeValue;
+        }
+        public float GetMusicVolume()
+        {
+            return musicVolumeValue;
+        }
+        public float GetSFXVolume()
+        {
+            return sfxVolumeValue;
+        }
+
 
 
     }
