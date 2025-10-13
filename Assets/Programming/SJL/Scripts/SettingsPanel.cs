@@ -91,15 +91,15 @@ namespace SJL
         }
         private void OnMasterMuteChanged(bool mute)
         {
-            audioMixer.SetFloat("MasterVolume", mute ? -80f : Mathf.Log10(Mathf.Max(masterVolumeSlider.value, 0.0001f)) * 20f);
+            audioMixer.SetFloat("masterVolume", mute ? -80f : Mathf.Log10(Mathf.Max(masterVolumeSlider.value, 0.0001f)) * 20f);
         }
         private void OnMusicMuteChanged(bool mute)
         {
-            audioMixer.SetFloat("MusicVolume", mute ? -80f : Mathf.Log10(Mathf.Max(musicVolumeSlider.value, 0.0001f)) * 20f);
+            audioMixer.SetFloat("musicVolume", mute ? -80f : Mathf.Log10(Mathf.Max(musicVolumeSlider.value, 0.0001f)) * 20f);
         }
         private void OnSfxMuteChanged(bool mute)
         {
-            audioMixer.SetFloat("SfxVolume", mute ? -80f : Mathf.Log10(Mathf.Max(sfxVolumeSlider.value, 0.0001f)) * 20f);
+            audioMixer.SetFloat("sfxVolume", mute ? -80f : Mathf.Log10(Mathf.Max(sfxVolumeSlider.value, 0.0001f)) * 20f);
         }
 
         // ---- 그래픽/데이터 ----
