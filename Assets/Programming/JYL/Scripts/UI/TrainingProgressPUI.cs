@@ -25,6 +25,7 @@ namespace SJL
 
         [Header("Set Sprite")] 
         [SerializeField] private Sprite[] sprites = new Sprite[3];
+        
         private Animator animator;
 
         // 이벤트 발행

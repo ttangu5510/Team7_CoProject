@@ -23,7 +23,7 @@ namespace JYL
         [Inject] private IFacilitiesController  facilitiesController;
         [Inject] private IMatchController matchController;
         
-        private List<AchievementController> achievements = new();
+        public List<AchievementController> achievements = new();
 
         public AchievementWrapper wrapper;
         //
